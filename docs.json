@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "venus",
+  "theme": "mint",
   "name": "Holdstation Pay",
   "logo": {
     "light": "/logo/light.svg",
