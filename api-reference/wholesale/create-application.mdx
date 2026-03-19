@@ -1,0 +1,37 @@
+---
+title: "Create Wholesale Application"
+api: "POST https://pay-api.holdstation.com/api/v1/wholesale/applications"
+description: "Create a wholesale application for the authenticated user."
+---
+
+## Overview
+
+Create a wholesale application for the authenticated user. This allows partners to apply for wholesale rates.
+
+<ParamField body="default_rate" type="number" required>
+  Optional default wholesale rate. For example, `0.01` for 1 percent. Pass `null` if not applicable.
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "default_rate": 0.01
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "application": {
+      "id": "app-123",
+      "user_id": "user-456",
+      "default_rate": 0.01,
+      "status": 1
+    }
+  }
+}
+```
+</ResponseExample>

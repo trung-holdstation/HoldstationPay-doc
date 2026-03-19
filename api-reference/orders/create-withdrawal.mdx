@@ -1,0 +1,106 @@
+---
+title: "Create Withdrawal Order"
+api: "POST https://pay-api.holdstation.com/partners/orders/withdrawal"
+description: "Create a new withdrawal (offramp) order to sell tokens for VND."
+---
+
+## Overview
+
+Create a new withdrawal order to sell tokens for VND. The user will transfer tokens to the provided recipient address, and Holdstation Pay will send VND to the user's bank account.
+
+<ParamField body="amount" type="string" required>
+  Amount to withdraw in USD.
+</ParamField>
+
+<ParamField body="currency" type="string" required>
+  Currency of the amount: `vnd` or `usd`.
+</ParamField>
+
+<ParamField body="chain_id" type="integer" required>
+  Blockchain network ID.
+</ParamField>
+
+<ParamField body="token_address" type="string" required>
+  Token contract address.
+</ParamField>
+
+<ParamField body="callback" type="string" required>
+  Callback URL for receiving withdrawal updates via [webhooks](/guides/webhooks).
+</ParamField>
+
+<ParamField body="reference_no" type="string" required>
+  Reference number for the withdrawal.
+</ParamField>
+
+<ParamField body="buffer" type="number" required>
+  Optional buffer rate override (fractional). If set, effective buffer = max(override, configured buffer). Example: `0.005` = 0.5%.
+</ParamField>
+
+<ParamField body="payment_info" type="object" required>
+  Payment information for the withdrawal.
+
+  <Expandable title="payment_info properties">
+    <ParamField body="bank_id" type="integer" required>
+      Bank ID from the [List Banks](/api-reference/banks/list-banks) endpoint.
+    </ParamField>
+    <ParamField body="full_name" type="string" required>
+      Full name of the account holder.
+    </ParamField>
+    <ParamField body="account_type" type="integer" required>
+      Type of account number. `1` = Bank account number, `2` = ATM card number.
+    </ParamField>
+    <ParamField body="account_number" type="string" required>
+      Bank account number.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "amount": "100",
+  "currency": "usd",
+  "chain_id": 56,
+  "token_address": "0x55d398326f99059ff775485246999027b3197955",
+  "callback": "https://yourapp.com/api/webhooks/payment",
+  "reference_no": "WITHDRAW-001",
+  "buffer": 0.005,
+  "payment_info": {
+    "bank_id": 1,
+    "full_name": "NGUYEN VAN A",
+    "account_type": 1,
+    "account_number": "1234567890"
+  }
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "order": {
+      "id": "660e8400-e29b-41d4-a716-446655440001",
+      "code": 100002,
+      "order_type": 2,
+      "state": 2,
+      "processing_state": 20,
+      "amount": "100",
+      "currency": "usd",
+      "rate": "25750",
+      "token_address": "0x55d398326f99059ff775485246999027b3197955",
+      "chain_id": 56,
+      "recipient": "0xABCD...1234",
+      "reference_no": "WITHDRAW-001",
+      "fees": {
+        "service_fee": 0.01,
+        "min_fee": 5000
+      },
+      "total_fee_vnd": 25750,
+      "callback": "https://yourapp.com/api/webhooks/payment"
+    }
+  }
+}
+```
+</ResponseExample>

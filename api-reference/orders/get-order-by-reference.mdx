@@ -1,0 +1,36 @@
+---
+title: "Get Order by Reference"
+api: "GET https://pay-api.holdstation.com/partners/orders/reference-no/{reference_no}"
+description: "Query a payment order by its reference number."
+---
+
+## Overview
+
+Partners can query a payment order by its reference number to obtain the latest state of the payment order.
+
+<ParamField path="reference_no" type="string" required>
+  Reference number of the order.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "orders": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "code": 100001,
+        "order_type": 1,
+        "state": 3,
+        "processing_state": 14,
+        "amount": "1000000",
+        "rate": "25850",
+        "reference_no": "ORDER-001"
+      }
+    ],
+    "total_count": 1
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,74 @@
+---
+title: "Signature Algorithm"
+description: "Generate Ed25519 signatures for request validation."
+---
+
+## Basic Rules
+
+1. The signature is generated using the **Ed25519** cryptographic signature scheme on a formatted string.
+2. All fields are separated by underscore `_`, even if the field is empty.
+3. All sign message characters are **lowercase**.
+
+## Sign Message Format
+
+### Onramp (Buy)
+
+```
+{amount}_{callback}_{chain_id}_{currency}_{recipient}_{reference_no}_{token_address}
+```
+
+### Offramp (Sell)
+
+```
+{amount}_{callback}_{chain_id}_{currency}_{bank_bin_code}_{bank_account_number}_{token_address}
+```
+
+## Example
+
+<CodeGroup>
+```go Go
+package main
+
+import (
+    "crypto/ed25519"
+    "encoding/base64"
+    "strings"
+)
+
+var sampleSignKey = "Qd2XliU6/I6YD3OELdeBQ57z6Q9/OHGBTjCNVLB8s/1KpvoU6aiuuBTgQ72IW/yA0aYYnfbCX31zhJKsPnRE5Q=="
+
+func sign(msg string) string {
+    signKey, _ := base64.StdEncoding.DecodeString(sampleSignKey)
+    signature := ed25519.Sign(ed25519.PrivateKey(signKey), []byte(msg))
+    return base64.StdEncoding.EncodeToString(signature)
+}
+
+func main() {
+    params := []string{
+        "1000000",  // amount
+        "",         // callback
+        "56",       // chain_id
+        "",         // currency
+        "0x0000000000000000000000000000000000000000", // recipient
+        "rmtbPVEKwLzz27Qs51Jio",                      // reference_no
+        "0x55d398326f99059ff775485246999027b3197955", // token_address
+    }
+    signMessage := strings.Join(params, "_")
+    signMessage = strings.ToLower(signMessage)
+    signature := sign(signMessage)
+    println("Message:", signMessage)
+    println("Signature:", signature)
+}
+```
+</CodeGroup>
+
+### Output
+
+```
+Message: 1000000__56__0x0000000000000000000000000000000000000000_rmtbpvekwlzz27qs51jio_0x55d398326f99059ff775485246999027b3197955
+Signature: +EEox+pWc3dC854Av3eIzLbGthud0p2/xrosE9tcOHvLEji8uajyJzDwV95IFClhmCnCqPXtjQsZmYS0jrtgBw==
+```
+
+<Warning>
+  Remember to convert the entire sign message to **lowercase** before signing.
+</Warning>

@@ -1,0 +1,68 @@
+---
+title: "Widget Events"
+description: "Handle events from the Holdstation Pay Widget using postMessage."
+---
+
+## Event Listener
+
+The widget sends events to the parent window using `window.postMessage`. Listen for these events to respond to widget actions.
+
+```javascript
+window.addEventListener('message', (event) => {
+    if (event.data?.type === 'close_frame') {
+        // Close the modal or remove the iframe
+    }
+});
+```
+
+## Available Events
+
+| Event Type      | Description                                      |
+|-----------------|--------------------------------------------------|
+| `close_frame`   | Emitted when the user closes the widget.         |
+
+## React Example
+
+```jsx
+function PayHoldstation() {
+    const [isLoading, setIsLoading] = useState(true);
+
+    const urlIframe = useMemo(() => {
+        return `https://pay.capybera.xyz/?wallet=${wallet}&theme=dark&method=buy&token_address=0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d&chain_id=56`;
+    }, [wallet]);
+
+    useEffect(() => {
+        const handleMessage = (event) => {
+            if (event.data?.type === 'close_frame') {
+                // Remove view
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => {
+            window.removeEventListener('message', handleMessage);
+            setIsLoading(true);
+        };
+    }, []);
+
+    return (
+        <>
+            <iframe
+                src={urlIframe}
+                className="w-full h-full p-4 rounded-xl overflow-hidden"
+                style={{ opacity: isLoading ? 0 : 1 }}
+                onLoad={() => {
+                    setTimeout(() => {
+                        setIsLoading(false);
+                    }, 1000);
+                }}
+            />
+            {isLoading && (
+                <div className="absolute flex flex-col items-center justify-center">
+                    <p>Connecting to Holdstation Pay...</p>
+                </div>
+            )}
+        </>
+    );
+}
+```

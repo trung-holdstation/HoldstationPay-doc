@@ -1,0 +1,58 @@
+---
+title: "Order Flow"
+description: "Understand order states and processing states in Holdstation Pay."
+---
+
+## Order States
+
+Holdstation Pay uses specific order states and processing states to track the status of each order. When creating an order, you can use the `callback` parameter to receive real-time updates about order status changes via [webhooks](/guides/webhooks).
+
+| State        | Value | Description                                                |
+|--------------|-------|------------------------------------------------------------|
+| **New**      | 1     | Order has been created (you should never see this state)   |
+| **Processing** | 2   | Order is being processed                                   |
+| **Completed** | 3    | Order has been completed successfully                      |
+| **Failed**   | 4     | Order has failed                                           |
+| **Closed**   | 5     | Order has been closed                                      |
+
+```mermaid
+stateDiagram-v2
+    state "Processing = 2" as P
+    state "Completed = 3" as C
+    state "Failed = 4" as F
+    state "Closed = 5" as CL
+
+    [*] --> P: Create new order
+    P --> C: Complete USDT/VND transfer
+    P --> F: Failed at some step
+    P --> CL: Expired or closed manually
+    C --> [*]
+    F --> [*]
+    CL --> [*]
+```
+
+## Processing States
+
+When the order state is `Processing`, it will have more detailed processing states depending on order type.
+
+### Deposit Orders (Onramp)
+
+| Processing State    | Value | Description                          |
+|---------------------|-------|--------------------------------------|
+| Fiat Pending        | 10    | Waiting for user to deposit fiat     |
+| Fiat Confirmed      | 11    | Fiat deposit confirmed               |
+| Fiat Failed         | 12    | Fiat failed to deposit               |
+| Crypto Pending      | 13    | Waiting for USDT transfer on-chain   |
+| Crypto Confirmed    | 14    | USDT transfer confirmed              |
+| Crypto Failed       | 15    | USDT failed to transfer              |
+
+### Withdrawal Orders (Offramp)
+
+| Processing State    | Value | Description                          |
+|---------------------|-------|--------------------------------------|
+| Crypto Pending      | 20    | Waiting for user to transfer USDT    |
+| Crypto Confirmed    | 21    | USDT transfer confirmed              |
+| Crypto Failed       | 22    | USDT failed to transfer              |
+| Fiat Pending        | 23    | Waiting for VND transfer             |
+| Fiat Confirmed      | 24    | VND transfer confirmed               |
+| Fiat Failed         | 25    | VND failed to transfer               |

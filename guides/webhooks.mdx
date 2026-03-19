@@ -1,0 +1,154 @@
+---
+title: "Webhooks"
+description: "Receive real-time notifications about order status changes."
+---
+
+## Overview
+
+Webhooks allow you to receive real-time notifications about order status changes. When creating an order, provide a webhook URL via the `callback` parameter to receive automatic updates.
+
+## Setting Up Webhooks
+
+Include the `callback` parameter when creating an order:
+
+```json
+{
+  "callback": "https://yourapp.com/api/webhooks/payment"
+}
+```
+
+<Note>
+  The webhook URL **must** be a valid HTTPS URL. Your endpoint should respond with HTTP 200 and within a 30-second timeout.
+</Note>
+
+## Webhook Payload
+
+When an order status changes, Holdstation Pay sends a **POST** request to your webhook URL.
+
+### HTTP Headers
+
+```
+Content-Type: application/json
+User-Agent: HSPay-Webhook-Dispatcher/1.0
+X-HSPay-Event-Topic: pay.order.status-updated
+X-HSPay-Event-Signature: base64_encoded_ed25519_signature
+```
+
+### Payload Example
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "topic": "pay.order.status-updated",
+  "ts": "2024-01-15T10:30:00Z",
+  "payload": {
+    "order_id": "00000000-0000-0000-0000-000000000000",
+    "old_order_state": 2,
+    "new_order_state": 3,
+    "old_order_processing_state": 13,
+    "new_order_processing_state": 14
+  }
+}
+```
+
+<Warning>
+  The `type` and `timestamp` fields are deprecated and will be removed in a future version. Use `topic` and `ts` instead.
+</Warning>
+
+## Webhook Events
+
+| Event Type                    | Description                                              |
+|-------------------------------|----------------------------------------------------------|
+| `pay.order.status-updated`    | Triggered when an order state or processing state changes |
+
+## Webhook Verification
+
+To ensure webhook authenticity, verify the signature from the `X-HSPay-Event-Signature` header using your **Webhook Checksum Key** (provided by Holdstation Pay). The signature uses the **Ed25519** cryptographic scheme on the **entire request body**.
+
+<CodeGroup>
+```go Go
+package main
+
+import (
+    "crypto/ed25519"
+    "encoding/base64"
+)
+
+func verifyWebhook(payload []byte, signature string, checksumKey string) (bool, error) {
+    // Decode the checksum key (base64 encoded Ed25519 public key)
+    publicKey, err := base64.StdEncoding.DecodeString(checksumKey)
+    if err != nil {
+        return false, err
+    }
+
+    // Decode the signature
+    signatureBytes, err := base64.StdEncoding.DecodeString(signature)
+    if err != nil {
+        return false, err
+    }
+
+    // Verify the signature against the entire payload body
+    return ed25519.Verify(publicKey, payload, signatureBytes), nil
+}
+```
+
+```java Java
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.spec.X509EncodedKeySpec;
+import java.security.KeyFactory;
+import java.util.Base64;
+
+public class WebhookVerifier {
+
+    public static boolean verifyWebhook(
+        String payloadBody,
+        String signature,
+        String checksumKey
+    ) throws Exception {
+        // Decode the public key (base64 encoded)
+        byte[] publicKeyBytes = Base64.getDecoder().decode(checksumKey);
+
+        // Create Ed25519 public key
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("Ed25519");
+        PublicKey publicKey = keyFactory.generatePublic(keySpec);
+
+        // Decode the signature
+        byte[] signatureBytes = Base64.getDecoder().decode(signature);
+
+        // Verify the signature against the entire payload body
+        Signature s = Signature.getInstance("Ed25519");
+        s.initVerify(publicKey);
+        s.update(payloadBody.getBytes("UTF-8"));
+
+        return s.verify(Base64.getDecoder().decode(signature));
+    }
+}
+```
+</CodeGroup>
+
+## Retry Mechanism
+
+If your webhook endpoint returns a non-200 status code or times out:
+
+- Holdstation will retry up to **5 times**
+- Retry intervals: **1, 2, 4, 8, 12 seconds**
+- After 5 failed attempts, the webhook is marked as failed
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Idempotency">
+    Handle duplicate webhook calls gracefully using the `order_id`. Your system should process each order update only once.
+  </Accordion>
+  <Accordion title="Security">
+    Always verify the Ed25519 checksum signature before processing webhook payloads.
+  </Accordion>
+  <Accordion title="Response Time">
+    Respond quickly (under 30 seconds) to avoid timeouts. Process heavy logic asynchronously.
+  </Accordion>
+  <Accordion title="Error Handling">
+    Return appropriate HTTP status codes. Use `200` for success, even if you queue the event for later processing.
+  </Accordion>
+</AccordionGroup>

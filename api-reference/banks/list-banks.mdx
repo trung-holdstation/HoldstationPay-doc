@@ -1,0 +1,53 @@
+---
+title: "List Banks"
+api: "GET https://pay-api.holdstation.com/api/v1/banks"
+description: "Retrieve the list of banks supported for fiat withdrawals."
+---
+
+## Overview
+
+Partners can retrieve the list of banks supported for fiat withdrawals. This endpoint is publicly accessible and does not require authentication.
+
+<ParamField query="page" type="integer">
+  Page number for pagination.
+</ParamField>
+
+<ParamField query="size" type="integer">
+  Number of results per page.
+</ParamField>
+
+<ParamField query="ids" type="integer[]">
+  Filter by specific bank IDs.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "banks": [
+      {
+        "id": 1,
+        "bank_name": "Vietcombank",
+        "short_name": "VCB",
+        "bin_code": "970436",
+        "image": "https://example.com/vcb.png",
+        "created_at": { "seconds": 1700000000, "nanos": 0 },
+        "updated_at": { "seconds": 1700000000, "nanos": 0 }
+      }
+    ],
+    "page": 1,
+    "page_size": 20,
+    "total_count": 50
+  }
+}
+```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+</ResponseExample>

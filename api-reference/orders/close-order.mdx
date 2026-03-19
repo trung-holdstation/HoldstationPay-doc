@@ -1,0 +1,33 @@
+---
+title: "Close Order"
+api: "POST https://pay-api.holdstation.com/partners/orders/{order_id}/close"
+description: "Close a payment order that is in Processing and Pending state."
+---
+
+## Overview
+
+Partners can close a payment order that is in the **Processing** state and **Pending** processing state by providing the `order_id`. Once closed, the order cannot be paid.
+
+<ParamField path="order_id" type="string" required>
+  The unique identifier of the order to close.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0
+  }
+}
+```
+
+```json 400
+{
+  "error": "order cannot be closed",
+  "error_code": "BAD_REQUEST",
+  "message": "Order is not in a closable state"
+}
+```
+</ResponseExample>

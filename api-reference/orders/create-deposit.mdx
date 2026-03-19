@@ -1,0 +1,95 @@
+---
+title: "Create Deposit Order"
+api: "POST https://pay-api.holdstation.com/partners/orders/deposit"
+description: "Create a new deposit (onramp) order to buy tokens with VND."
+---
+
+## Overview
+
+Partner uses this API to create a new on-chain token transfer order. The response includes processing status, transaction fee, exchange rate, order creation and expiration time, order ID, and payment information including a QR code for the user.
+
+<ParamField body="amount" type="string" required>
+  Amount to deposit in VND.
+</ParamField>
+
+<ParamField body="currency" type="string" required>
+  Currency of the amount: `vnd` or `usd`.
+</ParamField>
+
+<ParamField body="chain_id" type="integer" required>
+  Blockchain network ID.
+</ParamField>
+
+<ParamField body="token_address" type="string" required>
+  Token contract address.
+</ParamField>
+
+<ParamField body="recipient" type="string" required>
+  Recipient wallet address for the tokens.
+</ParamField>
+
+<ParamField body="callback" type="string" required>
+  Callback URL for receiving deposit updates via [webhooks](/guides/webhooks).
+</ParamField>
+
+<ParamField body="reference_no" type="string" required>
+  Reference number for the deposit.
+</ParamField>
+
+<ParamField body="buffer" type="number" required>
+  Optional buffer rate override (fractional). If set, effective buffer = max(override, configured buffer). Example: `0.005` = 0.5%.
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "amount": "1000000",
+  "currency": "vnd",
+  "chain_id": 56,
+  "token_address": "0x55d398326f99059ff775485246999027b3197955",
+  "recipient": "0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E",
+  "callback": "https://yourapp.com/api/webhooks/payment",
+  "reference_no": "ORDER-001",
+  "buffer": 0.005
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "order": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "code": 100001,
+      "order_type": 1,
+      "state": 2,
+      "processing_state": 10,
+      "amount": "1000000",
+      "currency": "vnd",
+      "rate": "25850",
+      "token_address": "0x55d398326f99059ff775485246999027b3197955",
+      "chain_id": 56,
+      "recipient": "0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E",
+      "reference_no": "ORDER-001",
+      "pay_data": {
+        "bank_name": "Vietcombank",
+        "bank_bin_code": "970436",
+        "bank_account_name": "HOLDSTATION",
+        "bank_account_number": "1234567890",
+        "qr_code": "data:image/png;base64,...",
+        "qr_image": "https://...",
+        "payment_link": "https://..."
+      },
+      "fees": {
+        "service_fee": 0.01,
+        "min_fee": 5000
+      },
+      "total_fee_vnd": 10000,
+      "callback": "https://yourapp.com/api/webhooks/payment"
+    }
+  }
+}
+```
+</ResponseExample>

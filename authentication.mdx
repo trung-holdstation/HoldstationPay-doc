@@ -1,0 +1,39 @@
+---
+title: "Authentication"
+description: "Learn how to authenticate your API requests to Holdstation Pay."
+---
+
+## API Key Authentication
+
+To authenticate API requests, include a valid API key in the request headers. You can request an API key by contacting the Holdstation support team.
+
+### Header Format
+
+```bash
+Partner-App-Key: YOUR_API_KEY
+```
+
+### Example Request
+
+```bash
+curl -X GET https://pay-api.holdstation.com/api/v1/tokens \
+  -H "Partner-App-Key: YOUR_API_KEY"
+```
+
+<Warning>
+  Keep your API key secure. Do not expose it in client-side code or public repositories.
+</Warning>
+
+## Security Scheme
+
+The API uses the `apiKey` security scheme with the key passed in the request header:
+
+| Parameter        | Value              |
+|------------------|--------------------|
+| **Type**         | API Key            |
+| **Location**     | Header             |
+| **Header Name**  | `Partner-App-Key`  |
+
+<Note>
+  Some endpoints such as **List Banks** and **List Tokens** are publicly accessible and do not require authentication.
+</Note>

@@ -1,0 +1,2597 @@
+components:
+  schemas:
+    AppliedFee:
+      additionalProperties: false
+      properties:
+        min_fee:
+          format: double
+          type: number
+        service_fee:
+          format: double
+          type: number
+      type: object
+    Bank:
+      additionalProperties: false
+      properties:
+        bank_name:
+          type: string
+        bin_code:
+          type: string
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        id:
+          format: int64
+          type: integer
+        image:
+          type: string
+        short_name:
+          type: string
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+      type: object
+    CloseOrderResponse:
+      additionalProperties: false
+      properties:
+        code:
+          format: int32
+          type: integer
+        error:
+          type: string
+        success:
+          type: boolean
+      type: object
+    Config:
+      additionalProperties: false
+      properties:
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        description:
+          type: string
+        key:
+          type: string
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+        value:
+          $ref: "#/components/schemas/Struct"
+      type: object
+    CreateWholesaleApplicationResponse:
+      additionalProperties: false
+      properties:
+        application:
+          $ref: "#/components/schemas/WholesaleApplication"
+      type: object
+    DepositResponse:
+      additionalProperties: false
+      properties:
+        order:
+          $ref: "#/components/schemas/OrderSimple"
+      type: object
+    ErrorDetail:
+      additionalProperties: false
+      properties:
+        location:
+          description: Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'
+          type: string
+        message:
+          description: Error message text
+          type: string
+        value:
+          description: The value at the given location
+      type: object
+    ErrorModel:
+      additionalProperties: false
+      properties:
+        detail:
+          description: A human-readable explanation specific to this occurrence of the problem.
+          examples:
+            - Property foo is required but is missing.
+          type: string
+        errors:
+          description: Optional list of individual error details
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+          type:
+            - array
+            - "null"
+        instance:
+          description: A URI reference that identifies the specific occurrence of the problem.
+          examples:
+            - https://example.com/error-log/abc123
+          format: uri
+          type: string
+        status:
+          description: HTTP status code
+          examples:
+            - 400
+          format: int64
+          type: integer
+        title:
+          description: A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
+          examples:
+            - Bad Request
+          type: string
+        type:
+          default: about:blank
+          description: A URI reference to human-readable documentation for the error.
+          examples:
+            - https://example.com/errors/example
+          format: uri
+          type: string
+      type: object
+    EstimateOutcomeResponse:
+      additionalProperties: false
+      properties:
+        fee_vnd:
+          format: double
+          type: number
+        fees:
+          $ref: "#/components/schemas/AppliedFee"
+        outcome:
+          type: string
+        rate:
+          format: double
+          type: number
+      type: object
+    GetConfigResponse:
+      additionalProperties: false
+      properties:
+        config:
+          $ref: "#/components/schemas/Config"
+      type: object
+    GetOrderByIdResponse:
+      additionalProperties: false
+      properties:
+        order:
+          $ref: "#/components/schemas/OrderSimple"
+        transaction:
+          $ref: "#/components/schemas/Transaction"
+      type: object
+    GetRateResponse:
+      additionalProperties: false
+      properties:
+        rate:
+          $ref: "#/components/schemas/Rate"
+      type: object
+    ListBanksResponse:
+      additionalProperties: false
+      properties:
+        banks:
+          items:
+            $ref: "#/components/schemas/Bank"
+          type:
+            - array
+            - "null"
+        page:
+          format: int32
+          type: integer
+        page_size:
+          format: int32
+          type: integer
+        total_count:
+          format: int32
+          type: integer
+      type: object
+    ListOrdersResponse:
+      additionalProperties: false
+      properties:
+        orders:
+          items:
+            $ref: "#/components/schemas/Order"
+          type:
+            - array
+            - "null"
+        total_count:
+          format: int32
+          type: integer
+      type: object
+    ListTokensResponse:
+      additionalProperties: false
+      properties:
+        page:
+          format: int32
+          type: integer
+        page_size:
+          format: int32
+          type: integer
+        tokens:
+          items:
+            $ref: "#/components/schemas/Token"
+          type:
+            - array
+            - "null"
+        total_count:
+          format: int32
+          type: integer
+      type: object
+    Order:
+      additionalProperties: false
+      properties:
+        amount:
+          type: string
+        body:
+          $ref: "#/components/schemas/Struct"
+        callback:
+          type: string
+        chain_id:
+          format: int64
+          minimum: 0
+          type: integer
+        client_ip:
+          type: string
+        code:
+          format: int64
+          type: integer
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        currency:
+          type: string
+        error:
+          $ref: "#/components/schemas/OrderError"
+        expired_at:
+          $ref: "#/components/schemas/Timestamp"
+        external_id:
+          type: string
+        fees:
+          $ref: "#/components/schemas/AppliedFee"
+        id:
+          type: string
+        order_type:
+          format: int32
+          type: integer
+        original_rate:
+          type: string
+        outcome:
+          type: string
+        partner_id:
+          type: string
+        pay_data:
+          $ref: "#/components/schemas/PayData"
+        payment_info:
+          $ref: "#/components/schemas/PaymentInfo"
+        processing_state:
+          format: int32
+          type: integer
+        processing_time:
+          format: int64
+          type: integer
+        provider:
+          format: int32
+          type: integer
+        rate:
+          type: string
+        recipient:
+          type: string
+        reference:
+          $ref: "#/components/schemas/OrderReference"
+        reference_no:
+          type: string
+        state:
+          format: int32
+          type: integer
+        token_address:
+          type: string
+        total_fee_vnd:
+          format: double
+          type: number
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+        user_id:
+          type: string
+      type: object
+    OrderError:
+      additionalProperties: false
+      properties:
+        details:
+          type: string
+        error_code:
+          type: string
+        error_message:
+          type: string
+        retryable:
+          type: boolean
+        source:
+          format: int32
+          type: integer
+        timestamp:
+          type: string
+      type: object
+    OrderReference:
+      additionalProperties: false
+      properties:
+        addition_share_rate:
+          format: double
+          type: number
+        buffer_rate:
+          format: double
+          type: number
+        buffered_rate_partner:
+          format: double
+          type: number
+        buffered_rate_usdt:
+          format: double
+          type: number
+        hs_rate:
+          format: double
+          type: number
+        partner_override_revenue:
+          format: double
+          type: number
+        partner_rate:
+          format: double
+          type: number
+        sim_webhook_id:
+          type: string
+        spread:
+          format: double
+          type: number
+        token_rate:
+          format: double
+          type: number
+        usdt_rate:
+          format: double
+          type: number
+      type: object
+    OrderSimple:
+      additionalProperties: false
+      properties:
+        amount:
+          type: string
+        callback:
+          type: string
+        chain_id:
+          format: int64
+          minimum: 0
+          type: integer
+        client_ip:
+          type: string
+        code:
+          format: int64
+          type: integer
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        currency:
+          type: string
+        error:
+          $ref: "#/components/schemas/OrderError"
+        expired_at:
+          $ref: "#/components/schemas/Timestamp"
+        external_id:
+          type: string
+        fees:
+          $ref: "#/components/schemas/AppliedFee"
+        id:
+          type: string
+        order_type:
+          format: int32
+          type: integer
+        original_rate:
+          type: string
+        outcome:
+          type: string
+        partner_id:
+          type: string
+        pay_data:
+          $ref: "#/components/schemas/PayData"
+        payment_info:
+          $ref: "#/components/schemas/PaymentInfo"
+        processing_state:
+          format: int32
+          type: integer
+        processing_time:
+          format: int64
+          type: integer
+        provider:
+          format: int32
+          type: integer
+        rate:
+          type: string
+        recipient:
+          type: string
+        reference_no:
+          type: string
+        state:
+          format: int32
+          type: integer
+        token_address:
+          type: string
+        total_fee_vnd:
+          format: double
+          type: number
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+        user_id:
+          type: string
+      type: object
+    PayData:
+      additionalProperties: false
+      properties:
+        bank_account_name:
+          type: string
+        bank_account_number:
+          type: string
+        bank_bin_code:
+          type: string
+        bank_name:
+          type: string
+        bank_short_code:
+          type: string
+        external_id:
+          type: string
+        payment_link:
+          type: string
+        qr_code:
+          type: string
+        qr_image:
+          type: string
+      type: object
+    PaymentInfo:
+      additionalProperties: false
+      properties:
+        account_number:
+          type: string
+        account_type:
+          format: int32
+          type: integer
+        bank_id:
+          format: int64
+          type: integer
+        full_name:
+          type: string
+      type: object
+    PaymentInfoStruct:
+      additionalProperties: false
+      properties:
+        account_number:
+          description: Bank account number
+          type: string
+        account_type:
+          description: "Type of account number. Available values: 1 = Bank account number, 2 = ATM card number"
+          format: int32
+          type: integer
+        bank_id:
+          description: See Bank list API to get the bank ID
+          format: int64
+          type: integer
+        full_name:
+          description: Full name of the account holder
+          type: string
+      required:
+        - bank_id
+        - full_name
+        - account_type
+        - account_number
+      type: object
+    "Rar Available values: 1 = Bank account number If set effective buffer = max(override5 percent\\\"\" }Body":
+      additionalProperties: false
+      properties:
+        amount:
+          description: Amount to withdraw in USD
+          type: string
+        buffer:
+          description: "Optional buffer rate override (fractional). If set, effective buffer = max(override, configured buffer). Example: 0.005 == 0.5 percent"
+          format: double
+          type: number
+        callback:
+          description: Callback URL for receiving withdrawal updates
+          type: string
+        chain_id:
+          description: Blockchain ID
+          format: int64
+          minimum: 0
+          type: integer
+        currency:
+          description: "Currency of the amount: vnd or usd"
+          type: string
+        payment_info:
+          $ref: "#/components/schemas/PaymentInfoStruct"
+          description: Payment information for the withdrawal
+        reference_no:
+          description: Reference number for the withdrawal
+          type: string
+        token_address:
+          description: Token contract address
+          type: string
+      required:
+        - amount
+        - currency
+        - chain_id
+        - token_address
+        - callback
+        - payment_info
+        - reference_no
+        - buffer
+      type: object
+    "Rar Available values: 1 = Deposit If set effective buffer = max(override5 percent\\\"\" }Body":
+      additionalProperties: false
+      properties:
+        amount:
+          description: Original amount to calculate
+          type: string
+        buffer:
+          description: "Optional buffer rate override (fractional). If set, effective buffer = max(override, configured buffer). Example: 0.005 == 0.5 percent"
+          format: double
+          type: number
+        chain_id:
+          description: Chain ID
+          format: int64
+          minimum: 0
+          type: integer
+        order_type:
+          description: "Type of the order. Available values: 1 = Deposit, 2 = Withdrawal"
+          format: int32
+          type: integer
+        reverse:
+          description: Reverse the amount calculation (from outcome to original)
+          type: boolean
+        token_address:
+          description: Token contract address
+          type: string
+      required:
+        - amount
+        - reverse
+        - chain_id
+        - token_address
+        - order_type
+        - buffer
+      type: object
+    Rar If set effective buffer = max(override5 percent\"" }Body:
+      additionalProperties: false
+      properties:
+        amount:
+          description: Amount to deposit in VND
+          type: string
+        buffer:
+          description: "Optional buffer rate override (fractional). If set, effective buffer = max(override, configured buffer). Example: 0.005 == 0.5 percent"
+          format: double
+          type: number
+        callback:
+          description: Callback URL for receiving deposit updates
+          type: string
+        chain_id:
+          description: Blockchain ID
+          format: int64
+          minimum: 0
+          type: integer
+        currency:
+          description: "Currency of the amount: vnd or usd"
+          type: string
+        recipient:
+          description: Recipient address
+          type: string
+        reference_no:
+          description: Reference number for the deposit
+          type: string
+        token_address:
+          description: Token contract address
+          type: string
+      required:
+        - amount
+        - currency
+        - chain_id
+        - token_address
+        - recipient
+        - callback
+        - reference_no
+        - buffer
+      type: object
+    RarStruct { BinCode string "json:\"bin_code\" doc:\"Bank Identification Number (BIN) code\""; AccountNumber string "json:\"account_number\" doc:\"Bank account number\"" }Body:
+      additionalProperties: false
+      properties:
+        account_number:
+          description: Bank account number
+          type: string
+        bin_code:
+          description: Bank Identification Number (BIN) code
+          type: string
+      required:
+        - bin_code
+        - account_number
+      type: object
+    RarStruct { DefaultRate �01 for 1 percent)\"" }Body:
+      additionalProperties: false
+      properties:
+        default_rate:
+          description: Optional default wholesale rate (e.g., 0.01 for 1 percent)
+          format: double
+          type:
+            - number
+            - "null"
+      required:
+        - default_rate
+      type: object
+    Rate:
+      additionalProperties: false
+      properties:
+        buy:
+          type: string
+        sell:
+          type: string
+      type: object
+    ResponseWithoutErrorCloseOrderResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/CloseOrderResponse"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorCreateWholesaleApplicationResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/CreateWholesaleApplicationResponse"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorDepositResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/DepositResponse"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorEstimateOutcomeResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/EstimateOutcomeResponse"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorGetConfigResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/GetConfigResponse"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorGetOrderByIdResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/GetOrderByIdResponse"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorGetRateResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/GetRateResponse"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorListBanksResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/ListBanksResponse"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorListOrdersResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/ListOrdersResponse"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorListTokensResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/ListTokensResponse"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorStruct { Bank Bank "json:\"bank\" doc:\"Bank information\""; AccountName string "json:\"account_name\" doc:\"Account holder's name\""; AccountNumber string "json:\"account_number\" doc:\"Bank account number\"" }:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/ResponseWithoutErrorStruct { Bank Bank \"json:\\\"bank\\\" doc:\\\"Bank information\\\"\"; AccountName string \"json:\\\"account_name\\\" doc:\\\"Account holder's name\\\"\"; AccountNumber string \"json:\\\"account_number\\\" doc:\\\"Bank account number\\\"\" }DataStruct"
+        message:
+          type: string
+      type: object
+    ResponseWithoutErrorStruct { Bank Bank "json:\"bank\" doc:\"Bank information\""; AccountName string "json:\"account_name\" doc:\"Account holder's name\""; AccountNumber string "json:\"account_number\" doc:\"Bank account number\"" }DataStruct:
+      additionalProperties: false
+      properties:
+        account_name:
+          description: Account holder's name
+          type: string
+        account_number:
+          description: Bank account number
+          type: string
+        bank:
+          $ref: "#/components/schemas/Bank"
+          description: Bank information
+      required:
+        - bank
+        - account_name
+        - account_number
+      type: object
+    ResponseWithoutErrorWithdrawalResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: "#/components/schemas/WithdrawalResponse"
+        message:
+          type: string
+      type: object
+    Struct:
+      additionalProperties: false
+      properties:
+        fields:
+          additionalProperties:
+            $ref: "#/components/schemas/Value"
+          type: object
+      type: object
+    Timestamp:
+      additionalProperties: false
+      properties:
+        nanos:
+          format: int32
+          type: integer
+        seconds:
+          format: int64
+          type: integer
+      type: object
+    Token:
+      additionalProperties: false
+      properties:
+        active:
+          type: boolean
+        address:
+          type: string
+        chain_id:
+          format: int64
+          minimum: 0
+          type: integer
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        decimals:
+          format: int32
+          type: integer
+        id:
+          type: string
+        image:
+          type: string
+        name:
+          type: string
+        name_override:
+          type: string
+        price:
+          type: string
+        price_change_24h:
+          type: string
+        symbol:
+          type: string
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+        withdrawal_contract:
+          type: string
+      type: object
+    Transaction:
+      additionalProperties: false
+      properties:
+        block_number:
+          format: int64
+          type: integer
+        body:
+          $ref: "#/components/schemas/Struct"
+        chain_id:
+          format: int64
+          minimum: 0
+          type: integer
+        created_at:
+          $ref: "#/components/schemas/Timestamp"
+        error_message:
+          type: string
+        metadata:
+          $ref: "#/components/schemas/TxMetadata"
+        nonce_used:
+          format: int64
+          type: integer
+        order_id:
+          type: string
+        status:
+          format: int32
+          type: integer
+        tx_hash:
+          type: string
+      type: object
+    TxMetadata:
+      additionalProperties: false
+      properties:
+        retry_id:
+          type: string
+      type: object
+    Value:
+      additionalProperties: false
+      properties:
+        Kind: {}
+      required:
+        - Kind
+      type: object
+    WholesaleApplication:
+      additionalProperties: false
+      properties:
+        default_rate:
+          format: double
+          type: number
+        id:
+          type: string
+        reviewed_at:
+          $ref: "#/components/schemas/Timestamp"
+        status:
+          format: int32
+          type: integer
+        submitted_at:
+          $ref: "#/components/schemas/Timestamp"
+        updated_at:
+          $ref: "#/components/schemas/Timestamp"
+        user_id:
+          type: string
+      type: object
+    WithdrawalResponse:
+      additionalProperties: false
+      properties:
+        order:
+          $ref: "#/components/schemas/OrderSimple"
+      type: object
+  securitySchemes:
+    partner-app-key:
+      in: header
+      name: Partner-App-Key
+      type: apiKey
+info:
+  description: |-
+    # Holdstation Pay API Integration Guide
+
+    ## 1. Overview
+    **Holdstation Pay** is a digital asset payment intermediary, providing payment solutions for both domestic and international partners.
+
+    This document guides partners through integrating with the **Holdstation Pay API** to perform **buy/sell token transactions using VND**. You will find:
+
+    - Purpose and scope of the integration
+    - API endpoints
+    - Authentication
+    - Order flow
+    - Webhook mechanism
+
+    ---
+
+    ## 2. Base URLs
+
+    | Environment | API Base URL                      |
+    |-------------|-----------------------------------|
+    | Production  | `https://pay-api.holdstation.com` |
+    | Sandbox     | `https://payment.capybera.xyz`    |
+
+    ---
+
+    ## 3. Authentication
+
+    To authenticate API requests, you need to include a valid API key in the request headers. You can request an API key by contacting our support team.
+
+    **Header Format:**
+    ```
+    Partner-App-Key: YOUR_API_KEY
+    ```
+
+    ---
+
+    ## 4. `Order flow`, `States` and `Processing States`
+
+    ### 4.1 Order States and Processing States
+
+    Holdstation Pay uses specific order states and processing states to track the status of each order.
+    When creating an order, you can use `callback` parameter to receive real-time updates about order status changes, see [Webhook Integration](#5-webhook-integration).
+
+    Order states table:
+    | State       | Value | Description                                             |
+    |-------------|-------|---------------------------------------------------------|
+    | New         | 1     | Order has been created (You should never see this state)|
+    | Processing  | 2     | Order is being processed                                |
+    | Completed   | 3     | Order has been completed successfully                   |
+    | Failed      | 4     | Order has failed                                        |
+    | Closed      | 5     | Order has been closed                                   |
+
+    When order state is `Processing`, it will have more detailed `Processing States` as below:
+    | Processing State      | Value | Description                          |
+    |-----------------------|-------|--------------------------------------|
+    | **For Deposit Orders**                                               |
+    | Fiat Pending          | 10    | Waiting for user to deposit fiat     |
+    | Fiat Confirmed        | 11    | Fiat deposit confirmed               |
+    | Fiat Failed           | 12    | Fiat failed to deposit               |
+    | Crypto Pending        | 13    | Waiting for USDT transfer on-chain   |
+    | Crypto Confirmed      | 14    | USDT transfer confirmed              |
+    | Crypto Failed         | 15    | USDT failed to transfer              |
+    | **For Withdrawal Orders**                                            |
+    | Crypto Pending        | 20    | Waiting for user to transfer USDT    |
+    | Crypto Confirmed      | 21    | USDT transfer confirmed              |
+    | Crypto Failed         | 22    | USDT failed to transfer              |
+    | Fiat Pending          | 23    | Waiting for VND transfer             |
+    | Fiat Confirmed        | 24    | VND transfer confirmed               |
+    | Fiat Failed           | 25    | VND failed to transfer               |
+
+    ```mermaid
+    ---
+    title: ORDER STATES
+    ---
+    stateDiagram-v2
+        state "Processing = 2" as P
+        state "Completed = 3" as C
+        state "Failed = 4" as F
+        state "Closed = 5" as CL
+
+        [*] --> P: Create new order
+        P --> C: Complete USDT/VND transfering
+        P --> F: Failed at some step
+        P --> CL: Expired or closed manually
+        C --> [*]
+        F --> [*]
+        CL --> [*]
+    ```
+
+    ### 4.2 Onramp Flow (Buying USDT with VND)
+
+    ```mermaid
+    ---
+    title: ONRAMP FLOW
+    ---
+    sequenceDiagram
+        actor U as User
+        participant P as Partner
+        participant H as Holdstation Pay
+        participant Bank
+        participant B as Blockchain
+
+        U->>P: Request to buy USDT
+        Note over U, P: Input amount in VND
+        P->>+H: POST /partners/orders/deposit
+        Note over P, H: Use callback for order state update
+        H-->>H: Calculate USDT amount to receive
+        H-->>-P: Returns {order + payment info}
+        P-->>U: Show QR code from payment_info
+        U->>P: Scan QR code using banking app
+        U->>Bank: Confirm and transfer
+        Bank-->>+H: Notify transfer result
+        H-->>H: Verify payment
+        H->>-B: Execute transfering USDT
+        B->>U: Transfer USDT
+    ```
+    <p style="text-align:center;"><i>Integration flow for buying USDT using VND via Holdstation Pay.</i></p>
+
+    ```mermaid
+    ---
+    title: ONRAMP PROCESSING STATES FLOW
+    ---
+    stateDiagram-v2
+        state "State -> Completed" as C
+        state "State -> Failed" as F
+        state "State -> Closed" as CL
+        state "Fiat Pending = 10" as FP
+        state "Fiat Confirmed = 11" as FC
+        state "Fiat Failed = 12" as FF
+        state "Crypto Pending = 13" as CP
+        state "Crypto Confirmed = 14" as CC
+        state "Crypto Failed = 15" as CF
+
+        [*] --> FP
+        FP --> FC: Bank notify successful result
+        FP --> CL: Order expired or closed manually
+        FP --> FF: Bank notify failure result
+        FF --> F
+        FC --> CP: Transfer USDT
+        CP --> CC: Transfer successful
+        CC --> C
+        CP --> CF: Failed to transfer
+        CF --> F
+        F --> [*]
+        C --> [*]
+        CL --> [*]
+    ```
+    <p style="text-align:center;"><i>Processing states flow for onramp orders.</i></p>
+
+    ### 4.3 Offramp Flow (Selling USDT for VND)
+
+    ```mermaid
+    ---
+    title: OFFRAMP FLOW
+    ---
+    sequenceDiagram
+        actor U as User
+        participant P as Partner
+        participant H as Holdstation Pay
+        participant B as Blockchain
+        participant Bank
+
+        U->>P: Request to sell USDT
+        Note over U, P: Input amount in USD
+        P->>+H: POST /partners/orders/withdrawal
+        Note over P, H: Use callback for order state update
+        H-->>H: Calculate VND amount to receive
+        H-->>H: Lock recipient wallet for this order
+        H->>B: Subscribe for Transfer event
+        H-->>P: Returns {order + recipient addr}
+        P-->>U: Show recipient addr + USDT amount
+        U->>B: Transfer exact USDT amount to {recipient}
+        B-->>H: Transfer event log
+        H-->>H: Verify transfered amount
+        H->>-Bank: Make a VND transfer request
+        Bank-->>U: Transfer VND
+        Bank-->>+H: Transfer successul result
+        H-->>-H: Release wallet
+    ```
+    <p style="text-align:center;"><i>Integration flow for selling USDT for VND via Holdstation Pay.</i></p>
+
+    Processing states flow for offramp orders:
+    ```mermaid
+    ---
+    title: OFFRAMP PROCESSING STATES FLOW
+    ---
+    stateDiagram-v2
+        state "State -> Completed" as C
+        state "State -> Failed" as F
+        state "State -> Closed" as CL
+        state "Crypto Pending = 20" as CP
+        state "Crypto Confirmed = 21" as CC
+        state "Crypto Failed = 22" as CF
+        state "Fiat Pending = 23" as FP
+        state "Fiat Confirmed = 24" as FC
+        state "Fiat Failed = 25" as FF
+
+        [*] --> CP
+        CP --> CC: Transfer event verified
+        CP --> CF: Transfer failed
+        CP --> CL: Order expired or closed manually
+        CF --> F
+        CC --> FP: Transfer VND
+        FP --> FC: Transfer successful
+        FC --> C
+        FP --> FF: Failed to transfer
+        FF --> F
+        F --> [*]
+        C --> [*]
+        CL --> [*]
+    ```
+    <p style="text-align:center;"><i>Processing states flow for offramp orders.</i></p>
+
+    ---
+
+    ## 5. Webhook Integration
+
+    Webhooks allow you to receive real-time notifications about order status changes. When creating an order, you can provide a webhook URL to receive automatic updates.
+
+    ### 5.1 Setting Webhook URL
+
+    When creating an order, include the `callback` parameter in your request:
+
+    ```json
+    {
+      "..."
+      "callback": "https://yourapp.com/api/webhooks/payment",
+      "..."
+    }
+    ```
+
+    **Requirements:**
+    - The webhook URL **must** be a valid HTTPS URL
+    - Your endpoint should respond with HTTP 200 status code
+    - Timeout: 30 seconds maximum response time
+
+    ### 5.2 Webhook Payload
+
+    When an order status changes, we'll send a **POST** request to your webhook URL with the following payload:
+
+    **HTTP Headers:**
+    ```
+    Content-Type: application/json
+    User-Agent: HSPay-Webhook-Dispatcher/1.0
+    X-HSPay-Event-Topic: pay.order.status-updated
+    X-HSPay-Event-Signature: base64_encoded_ed25519_signature
+    ```
+
+    **Payload Example:**
+    ```json
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "topic": "pay.order.status-updated",
+      "ts": "2024-01-15T10:30:00Z",
+      "payload": {
+        "order_id": "00000000-0000-0000-0000-000000000000",
+        "old_order_state": 2,
+        "new_order_state": 3,
+        "old_order_processing_state": 13,
+        "new_order_processing_state": 14
+      }
+    }
+    ```
+
+    > **⚠️ Deprecation Notice**: The `type` and `timestamp` fields are deprecated and will be removed in a future version. Please use `topic` and `ts` instead.
+
+    **Requirements:**
+    - Your endpoint **must** respond with **HTTP 200** status code to mark the webhook as received
+    - The signature in `X-HSPay-Event-Signature` header is calculated using the **entire request body**
+
+    ### 5.3 Webhook Verification
+
+    To ensure webhook authenticity, verify the signature from the `X-HSPay-Event-Signature` header using your **Webhook Checksum Key** (provided by Holdstation Pay).
+
+    The signature is generated using **Ed25519** cryptographic signature scheme on the **entire request body**.
+
+    #### Go Example
+
+    ```go
+    package main
+
+    import (
+        "crypto/ed25519"
+        "encoding/base64"
+        "net/http"
+    )
+
+    func verifyWebhook(payload []byte, signature string, checksumKey string) (bool, error) {
+        // Decode the checksum key (base64 encoded Ed25519 public key)
+        publicKey, err := base64.StdEncoding.DecodeString(checksumKey)
+        if err != nil {
+            return false, err
+        }
+
+        // Decode the signature
+        signatureBytes, err := base64.StdEncoding.DecodeString(signature)
+        if err != nil {
+            return false, err
+        }
+
+        // Verify the signature against the entire payload body
+        return ed25519.Verify(publicKey, payload, signatureBytes), nil
+    }
+    ```
+
+    #### Java Example
+
+    ```java
+    import java.security.PublicKey;
+    import java.security.Signature;
+    import java.security.spec.X509EncodedKeySpec;
+    import java.security.KeyFactory;
+    import java.util.Base64;
+
+    public class WebhookVerifier {
+
+        public static boolean verifyWebhook(String payloadBody, String signature, String checksumKey) {
+          // Decode the public key (base64 encoded)
+          byte[] publicKeyBytes = Base64.getDecoder().decode(checksumKey);
+
+          // Create Ed25519 public key
+          X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+          KeyFactory keyFactory = KeyFactory.getInstance("Ed25519");
+          PublicKey publicKey = keyFactory.generatePublic(keySpec);
+
+          // Decode the signature
+          byte[] signatureBytes = Base64.getDecoder().decode(signature);
+
+          // Verify the signature against the entire payload body
+          Signature s = Signature.getInstance("Ed25519");
+          s.initVerify(publicKey);
+          s.update(payloadBody.getBytes("UTF-8"));
+
+          return s.verify(Base64.getDecoder().decode(signature));
+        }
+    }
+    ```
+
+    ### 5.4 Webhook Events
+
+    Currently supported webhook events:
+
+    | Event Type | Description |
+    |------------|-------------|
+    | `pay.order.status-updated` | Triggered when an order state or processing state changes |
+
+    ### 5.5 Retry Mechanism
+
+    If your webhook endpoint returns a non-200 status code or times out:
+
+    - We will retry up to **5 times**
+    - Retry intervals: 1, 2, 4, 8, 12 secs
+    - After 5 failed attempts, the webhook will be marked as failed
+
+    ### 5.6 Best Practices
+
+    1. **Idempotency**: Handle duplicate webhook calls gracefully using the `order_id`
+    2. **Security**: Always verify the checksum before processing
+    3. **Response Time**: Respond quickly (< 30 seconds) to avoid timeouts
+    4. **Error Handling**: Return appropriate HTTP status codes
+
+    ---
+
+    # Holdstation Pay Widget Integration Guide
+
+    ## Table of Contents
+
+    1. [Overview](#1-overview)
+    2. [Quick Integration](#2-quick-integration)
+    3. [Configuration Parameters](#3-configuration-parameters)
+    4. [Supported Chains & Tokens](#4-supported-chains--tokens)
+    5. [Events](#5-events)
+    6. [UI Customization](#6-ui-customization)
+    7. [Usage Examples on React](#7-usage-examples-on-react)
+
+    ## 1. Overview
+
+    The Holdstation Pay Widget allows partners to integrate crypto payment functionality directly into their websites or applications quickly, without needing to build a wallet system or handle complex blockchain processes.
+
+    ### 1.1 Workflow:
+
+    1. **Partner Client:** Generate a widget URL with the defined parameters
+    2. **User:** Confirm the transaction on the widget.
+    3. **HoldstationPay Widget:** Process the transaction on the blockchain.
+    4. **Partner Client:** Receive the returned result via window.postMessage to update the UI.
+
+    ### 1.2 Integration methods
+
+    Holdstation supports two integration methods:
+
+    **Iframe Integration**
+
+    * No SDK required
+    * Compatible with all frameworks (React, Vue, plain HTML)
+
+    **Web SDK (Optional – In Development)**
+
+    ### 1.3 Sandbox & Production
+
+    | **Environment** | **API Base URL** |
+    | --- | --- |
+    | Sandbox | <https://pay.capybera.xyz> |
+    | Production | <https://pay.holdstation.com> |
+
+    ## 2. Quick Integration
+
+    The primary integration method is using an iframe. Below is a sample code snippet to embed the widget into your webpage:
+
+    **Insert the widget inside the `<iframe>` tag**
+
+    ```html
+    <iframe
+        src="https://pay.capybera.xyz/?wallet=<WALLET>&theme=dark&lang=en &method=buy&token_address=<TOKEN>&chain_id=<CHAIN_ID>"
+        width="100%"
+        height="650"
+        frameborder="0"
+        style="border-radius: 16px; overflow: hidden;">
+    </iframe>
+    ```
+
+    ## 3. Configuration Parameters
+
+    To initialize the widget, you need to pass the parameters (Query Parameters) into the iframe's src URL.
+
+    **Staging Base URL:** `https://pay.capybera.xyz`
+
+    | **Param** | **Data Type** | **Required** | **Description** |
+    | --- | --- | --- | --- |
+    | theme | string | Optional | **light** or **dark** interface. Default: **dark**. |
+    | lang | string | Optional | Language: **en** or **vi**. Default: **en**. |
+    | wallet | string | Optional | User wallet address to receive assets |
+    | method | string | Optional | **buy** or **sell**. Default: **buy** |
+    | token_address | string | Optional | Token address of the payment token ([see Section 4](#4-supported-chains--tokens)). |
+    | chain_id | number | Optional | Blockchain network ID ([see Section 4](#4-supported-chains--tokens)). |
+    | amount | number | Optional | Amount of the payment token|
+    | bin_code | number | Optional | BIN code (Only applicable when method = sell). |
+    | bank_account_number | number | Optional | Bank account number to receive funds when the user sells crypto (Only applicable when method = sell) |
+    | pk | string | Optional | The Partner app key is provided by Holdstation|
+    | reference_no | string | Optional | Reference order number for partner tracking purposes. |
+    | signature | string | Optional | Ed25519 signature for request validation. |
+
+
+
+    **Example:**
+
+    Buy Flow
+
+    ```
+    https://pay.capybera.xyz/?wallet=0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E&theme=dark&method=buy&token_address=0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d&chain_id=56
+    ```
+
+    Sell Flow
+
+    ```
+    https://pay.capybera.xyz/?wallet=0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E&theme=dark&method=sell&token_address=0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d&chain_id=56&bin_code=970423&bank_account_number=03815492701
+    ```
+
+    ## 4. Supported Chains & Tokens
+
+    Use this endpoint to retrieve the full list of supported Chain IDs and Token Addresses.
+
+    **Endpoint:**
+
+    | Method | URL | Authentication |
+    |--------|-----|----------------|
+    | GET | `https://pay-api.holdstation.com/api/v1/tokens` | Not required (Public) |
+
+    **JSON Response**
+    ```json
+    [
+        {
+            "id": "d696d87f-8f41-4cee-9a90-4e99f7df4851",
+            "chain_id": 1,
+            "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "name": "Tether USD",
+            "symbol": "USDT",
+            "decimals": 6,
+            "price": "1",
+            "price_change_24h": "0",
+            "name_override": "Tether USD (ETH)",
+            "image": "https://static.holdstation.com/tokens/chain/999999/0x55d398326f99059ff775485246999027b3197955.png",
+            "active": true,
+            "withdrawal_contract": "0x0000000000000000000000000000000000000000",
+            "created_at": {
+                "seconds": 1756440094,
+                "nanos": 989617000
+            },
+            "updated_at": {
+                "seconds": 1756440094,
+                "nanos": 989617000
+            }
+        },
+        {
+            "id": "ba8618c3-fadb-4d9d-b75f-f14e6acd6110",
+            "chain_id": 56,
+            "address": "0x55d398326f99059ff775485246999027b3197955",
+            "name": "Tether USD",
+            "symbol": "USDT",
+            "decimals": 18,
+            "price": "1",
+            "price_change_24h": "0",
+            "name_override": "Tether USD (BSC)",
+            "image": "https://static.holdstation.com/tokens/chain/999999/0x55d398326f99059ff775485246999027b3197955.png",
+            "active": true,
+            "withdrawal_contract": "0x0000000000000000000000000000000000000000",
+            "created_at": {
+                "seconds": 1751951680,
+                "nanos": 676721000
+            },
+            "updated_at": {
+                "seconds": 1751951680,
+                "nanos": 676721000
+            }
+        }
+    ]
+    ```
+
+    ## 5. Events
+
+    ### 5.1. Event Listener
+
+    The widget sends events to the parent window using **postMessage**.
+
+    ```javascript
+    window.addEventListener('message', (event) => {
+        if (event.data?.type === 'close_frame') {
+            // close the modal or remove the iframe 
+        }
+    });
+    ```
+
+    <p style="text-align:center;"><img src="https://static.holdstation.com/pay/docs/img/hspay_widget_01.png" alt="Widget"></img></p>
+
+    ## 6. UI Customization
+
+    To ensure the widget displays properly on your website, please follow these recommendations:
+
+    * Dimensions: The widget is optimized for a width of 360px–480px and a minimum height of 600px.
+
+    ## 7. Usage Examples on React
+
+    ```javascript
+    function PayHoldstation() {
+        const [isLoading, setIsLoading] = useState < boolean > (true);
+
+        const urlIframe = useMemo(() => {
+            return `https://pay.capybera.xyz/?wallet=${wallet}&theme=dark&method=buy&token_address=0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d&chain_id=56`;
+        }, [wallet]);
+
+        useEffect(() => {
+            const handleMessage = (event) => {
+                if (event.data?.type === 'close_frame') {
+                    // remove view 
+                }
+            };
+
+            window.addEventListener('message', handleMessage);
+            return () => {
+                window.removeEventListener('message', handleMessage);
+                setIsLoading(true);
+            };
+        }, []);
+
+        return (
+            <>
+                <iframe
+                    src={urlIframe}
+                    className={clsx('w-full h-full p-4 rounded-xl overflow-hidden', {
+                        'opacity-0': isLoading,
+                    })}
+                    onLoad={() => {
+                        setTimeout(() => {
+                            setIsLoading(false);
+                        }, 1000);
+                    }}
+                />
+                {isLoading ? (
+                    <div className="absolute flex flex-col items-center justify-center">
+                        <p className='text-white text-[32px] leading-normal font-semibold text-center'>Holdstation Pay</p>
+                        <p className='text-white mt-1 text-xl leading-normal font-medium text-center'>Connecting to Holdstation Pay...</p>
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            className='animate-spin mt-4'
+                        >
+                            <path
+                                d="M18.5714 10C18.5714 11.1256 18.3497 12.2402 17.919 13.2801C17.4882 14.3201 16.8568 15.265 16.0609 16.0609C15.265 16.8568 14.3201 17.4882 13.2801 17.919C12.2402 18.3497 11.1256 18.5714 10 18.5714C8.87438 18.5714 7.75979 18.3497 6.71985 17.919C5.67992 17.4882 4.73501 16.8568 3.93908 16.0609C3.14315 15.265 2.51179 14.3201 2.08103 13.2801C1.65028 12.2402 1.42857 11.1256 1.42857 10C1.42857 8.87438 1.65028 7.75979 2.08103 6.71985C2.51179 5.67992 3.14316 4.73501 3.93909 3.93908C4.73502 3.14315 5.67993 2.51179 6.71986 2.08103C7.75979 1.65028 8.87439 1.42857 10 1.42857C11.1256 1.42857 12.2402 1.65028 13.2801 2.08103C14.3201 2.51179 15.265 3.14316 16.0609 3.93909C16.8568 4.73502 17.4882 5.67993 17.919 6.71986C18.3497 7.75979 18.5714 8.87439 18.5714 10L18.5714 10Z"
+                                stroke="white"
+                                strokeOpacity="0.3"
+                                strokeWidth="2.85714"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                            <path
+                                d="M10 1.42857C11.1256 1.42857 12.2402 1.65028 13.2801 2.08103C14.3201 2.51179 15.265 3.14315 16.0609 3.93908C16.8568 4.73502 17.4882 5.67992 17.919 6.71986C18.3497 7.75979 18.5714 8.87438 18.5714 10"
+                                stroke="white"
+                                strokeWidth="2.85714"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                    </div>
+                ) : null}
+            </>
+        );
+    } 
+    ```
+    ## 8. Partner Integration (Holdstation Partners)
+    ### 8.1. Overview
+
+    When users interact with the Holdstation Pay Widget embedded on a Partner’s site, the Partner must pass a unique identifier called `Partner Key` into the Widget (provided by Holdstation). 
+
+    This ensures that all transactions are accurately attributed to that Partner, supporting revenue-sharing calculations and tracking the transaction volume generated from their platform.
+
+    ### 8.2. Integration Mechanism
+
+    *Widget Load*: When the Widget has fully loaded and is in a ready state, it will emit an event called `PAY_HOLDSTATION_START`
+
+    *Partner Response*: The Partner’s website needs to listen for this event. As soon as the `PAY_HOLDSTATION_START` signal is received, the Partner must immediately send back a `SET_PARTNER_KEY` message containing the Partner ID.
+
+    ### 8.3. Usage Examples on React
+
+    ```javascript
+    const ref = useRef<HTMLIFrameElement>(null);
+
+      useEffect(() => {
+        const handleMessage = (event) => {
+        
+        //on event pay holdstation start 
+          if (event.data?.type === 'PAY_HOLDSTATION_START') {
+            // set partner key
+            ref.current?.contentWindow?.postMessage(
+              {
+                type: 'SET_PARTNER_KEY',
+                key: '***',
+              },
+              '*'
+            );
+          }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => {
+          window.removeEventListener('message', handleMessage);
+        };
+      }, []);
+
+    return <iframe
+            ref={ref}
+    ....
+    />
+    ```
+
+    ### 8.4. Signature algorithm
+
+    #### 8.4.1. Basic rules
+
+    1. The signature is generated using the Ed25519 cryptographic signature scheme on the formatted string.
+    2. All fields are separated by underscore `_` even if the field is empty.
+    3. All sign message characters are lower case.
+
+    #### 8.4.2. Sign message format
+
+    Onramp (Buy):
+    ```
+    {amount}_{callback}_{chain_id}_{currency}_{recipient}_{reference_no}_{token_address}
+    ```
+
+    Offramp (Sell):
+    ```
+    {amount}_{callback}_{chain_id}_{currency}_{bank_bin_code}_{bank_account_number}_{token_address}
+    ```
+
+    #### 8.4.3. Example
+
+    Go example
+    ```go
+    package main
+
+    import (
+        "crypto/ed25519"
+        "encoding/base64"
+        "strings"
+    )
+
+    var sampleSignKey = "Qd2XliU6/I6YD3OELdeBQ57z6Q9/OHGBTjCNVLB8s/1KpvoU6aiuuBTgQ72IW/yA0aYYnfbCX31zhJKsPnRE5Q=="
+
+    func sign(msg string) string {
+        signKey, _ := base64.StdEncoding.DecodeString(sampleSignKey)
+        signature := ed25519.Sign(ed25519.PrivateKey(signKey), []byte(msg))
+        return base64.StdEncoding.EncodeToString(signature)
+    }
+
+    func main() {
+        params := []string{
+            "1000000", // amount
+            "",        // callback
+            "56",      // chain_id
+            "",        // currency
+            "0x0000000000000000000000000000000000000000", // recipient
+            "rmtbPVEKwLzz27Qs51Jio",                      // reference_no
+            "0x55d398326f99059ff775485246999027b3197955", // token_address
+        }
+        signMessage := strings.Join(params, "_")
+        signMessage = strings.ToLower(signMessage)
+        signature := sign(signMessage)
+        println("Message:", signMessage)
+        println("Signature:", signature)
+    }
+    ```
+
+    Output
+    ```
+    Message: 1000000__56__0x0000000000000000000000000000000000000000_rmtbPVEKwLzz27Qs51Jio_0x55d398326f99059ff775485246999027b3197955
+    Signature: +EEox+pWc3dC854Av3eIzLbGthud0p2/xrosE9tcOHvLEji8uajyJzDwV95IFClhmCnCqPXtjQsZmYS0jrtgBw==
+    ```
+  title: Holdstation Pay
+  version: "1.0"
+openapi: 3.1.0
+paths:
+  /api/v1/banks:
+    get:
+      description: Partners can retrieve the list of banks supported for fiat withdrawals.
+      parameters:
+        - explode: false
+          in: query
+          name: page
+          schema:
+            format: int32
+            type: integer
+        - explode: false
+          in: query
+          name: size
+          schema:
+            format: int32
+            type: integer
+        - explode: false
+          in: query
+          name: ids
+          schema:
+            items:
+              format: int64
+              type: integer
+            type:
+              - array
+              - "null"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorListBanksResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      tags:
+        - Banks
+  /api/v1/configs/transaction_threshold:
+    get:
+      description: |
+        Partners use this API to retrieve the list of transaction thresholds for deposit and withdrawal operations. All values are in VND
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorGetConfigResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      tags:
+        - Configurations
+  /api/v1/exchange/rate:
+    get:
+      description: |
+        Partners use this API to retrieve the buy and sell exchange rates between USD/VND in the system.
+      parameters:
+        - description: Set to true to get the original amount before applying fees
+          explode: false
+          in: query
+          name: original
+          schema:
+            description: Set to true to get the original amount before applying fees
+            type: boolean
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorGetRateResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      security:
+        - partner-app-key: []
+      tags:
+        - Exchange
+  /api/v1/payment-methods/verify:
+    post:
+      description: Partners can verify bank account numbers.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RarStruct { BinCode string \"json:\\\"bin_code\\\" doc:\\\"Bank Identification Number (BIN) code\\\"\"; AccountNumber string \"json:\\\"account_number\\\" doc:\\\"Bank account number\\\"\" }Body"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorStruct { Bank Bank \"json:\\\"bank\\\" doc:\\\"Bank information\\\"\"; AccountName string \"json:\\\"account_name\\\" doc:\\\"Account holder's name\\\"\"; AccountNumber string \"json:\\\"account_number\\\" doc:\\\"Bank account number\\\"\" }"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      security:
+        - partner-app-key: []
+      tags:
+        - Banks
+  /api/v1/payments/estimate-outcome:
+    post:
+      description: Partners can calculate the final amount for a given input amount and order type. Set reverse=true to calculate the required input amount for a desired outcome. For deposit orders, the outcome is the amount of tokens (in USD) the user will receive after fees. For withdrawal orders, the outcome is the amount of fiat (in VND) the user will receive after fees.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Rar Available values: 1 = Deposit If set effective buffer = max(override5 percent\\\"\" }Body"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorEstimateOutcomeResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      security:
+        - partner-app-key: []
+      tags:
+        - Orders
+  /api/v1/tokens:
+    get:
+      description: Partners use this API to retrieve the list of tokens supported for buy/sell operations in the Holdstation Pay system. This API can also be used to obtain the corresponding chainId required for creating an order.
+      parameters:
+        - explode: false
+          in: query
+          name: chain_id
+          schema:
+            format: int32
+            type: integer
+        - explode: false
+          in: query
+          name: active
+          schema:
+            type: boolean
+        - explode: false
+          in: query
+          name: page
+          schema:
+            format: int32
+            type: integer
+        - explode: false
+          in: query
+          name: page_size
+          schema:
+            format: int32
+            type: integer
+        - explode: false
+          in: query
+          name: symbols
+          schema:
+            items:
+              type: string
+            type:
+              - array
+              - "null"
+        - explode: false
+          in: query
+          name: no_limit
+          schema:
+            type: boolean
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorListTokensResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      tags:
+        - Tokens
+  /api/v1/wholesale/applications:
+    post:
+      description: Create a wholesale application for the authenticated user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RarStruct { DefaultRate �01 for 1 percent)\\\"\" }Body"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorCreateWholesaleApplicationResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      security:
+        - partner-app-key: []
+      tags:
+        - Wholesale
+  /partners/orders:
+    get:
+      description: Partners can query a list of their payment orders with optional filtering by state. The results are paginated using page_size and page_token parameters.
+      parameters:
+        - description: "Available values: 1 = Deposit, 2 = Withdrawal"
+          explode: false
+          in: query
+          name: type
+          schema:
+            description: "Available values: 1 = Deposit, 2 = Withdrawal"
+            items:
+              format: int32
+              type: integer
+            type:
+              - array
+              - "null"
+        - description: "Available values: 1 = New, 2 = Processing, 3 = Completed, 4 = Failed, 5 = Closed"
+          explode: false
+          in: query
+          name: state
+          schema:
+            description: "Available values: 1 = New, 2 = Processing, 3 = Completed, 4 = Failed, 5 = Closed"
+            items:
+              format: int32
+              type: integer
+            type:
+              - array
+              - "null"
+        - description: "Available values: 10 = DepositFiatPending, 11 = DepositFiatConfirmed, 12 = DepositFiatFailed, 13 = DepositCryptoPending, 14 = DepositCryptoConfirmed, 15 = DepositCryptoFailed, 16 = DepositFiatWaitingForApproval, 20 = WithdrawCryptoPending, 21 = WithdrawCryptoConfirmed, 22 = WithdrawCryptoFailed, 23 = WithdrawFiatPending, 24 = WithdrawFiatConfirmed, 25 = WithdrawFiatFailed"
+          explode: false
+          in: query
+          name: processing_state
+          schema:
+            description: "Available values: 10 = DepositFiatPending, 11 = DepositFiatConfirmed, 12 = DepositFiatFailed, 13 = DepositCryptoPending, 14 = DepositCryptoConfirmed, 15 = DepositCryptoFailed, 16 = DepositFiatWaitingForApproval, 20 = WithdrawCryptoPending, 21 = WithdrawCryptoConfirmed, 22 = WithdrawCryptoFailed, 23 = WithdrawFiatPending, 24 = WithdrawFiatConfirmed, 25 = WithdrawFiatFailed"
+            items:
+              format: int32
+              type: integer
+            type:
+              - array
+              - "null"
+        - explode: false
+          in: query
+          name: page
+          schema:
+            format: int32
+            type: integer
+        - explode: false
+          in: query
+          name: page_size
+          schema:
+            format: int32
+            type: integer
+        - description: "Available values: created_at, expired_at, amount"
+          explode: false
+          in: query
+          name: sort_by
+          schema:
+            description: "Available values: created_at, expired_at, amount"
+            type: string
+        - explode: false
+          in: query
+          name: sort_desc
+          schema:
+            type: boolean
+        - explode: false
+          in: query
+          name: created_at_from
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: created_at_to
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: expired_at_from
+          schema:
+            format: int64
+            type: integer
+        - explode: false
+          in: query
+          name: expired_at_to
+          schema:
+            format: int64
+            type: integer
+        - description: Token receipient hex address
+          explode: false
+          in: query
+          name: recipient
+          schema:
+            description: Token receipient hex address
+            type: string
+        - description: List of reference numbers
+          explode: false
+          in: query
+          name: reference_nos
+          schema:
+            description: List of reference numbers
+            items:
+              type: string
+            type:
+              - array
+              - "null"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorListOrdersResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      security:
+        - partner-app-key: []
+      tags:
+        - Orders
+  /partners/orders/deposit:
+    post:
+      description: |
+        Partner uses this API to create a new on-chain token transfer order. The partner must provide information including the token amount `amount`, recipient wallet address `recipient`, token address `token_address`, blockchain ID `chain_id`, and an optional callback URL to receive asynchronous status updates.
+
+        The response will return detailed information about the order, including fields such as: processing status `processing_state`, transaction fee `fee`, exchange rate `rate`, order creation and expiration time, order ID `id`, and user information.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Rar If set effective buffer = max(override5 percent\\\"\" }Body"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorDepositResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      security:
+        - partner-app-key: []
+      tags:
+        - Orders
+  /partners/orders/reference-no/{reference_no}:
+    get:
+      description: Partners can query a payment order by its reference number to obtain the latest state of the payment order.
+      parameters:
+        - description: Reference number of the order
+          in: path
+          name: reference_no
+          required: true
+          schema:
+            description: Reference number of the order
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorListOrdersResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      security:
+        - partner-app-key: []
+      tags:
+        - Orders
+  /partners/orders/withdrawal:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Rar Available values: 1 = Bank account number If set effective buffer = max(override5 percent\\\"\" }Body"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorWithdrawalResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      security:
+        - partner-app-key: []
+      tags:
+        - Orders
+  /partners/orders/{order_id}:
+    get:
+      description: Partners query the details of each payment order by providing the {OrderId} to obtain the latest state of the payment order, and then proceed with the next business logic based on the state result.
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorGetOrderByIdResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      security:
+        - partner-app-key: []
+      tags:
+        - Orders
+  /partners/orders/{order_id}/close:
+    post:
+      description: Partners can close a payment order that is in the 'Processing' state and 'Pending' processing state by providing the {OrderId}. Once closed, the order cannot be paid.
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseWithoutErrorCloseOrderResponse"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  detail:
+                    type: string
+                  error:
+                    type: string
+                  error_code:
+                    type: string
+                  message:
+                    type: string
+                type: object
+          description: Internal Server Error
+      security:
+        - partner-app-key: []
+      tags:
+        - Orders
+servers:
+  - description: Pay API
+    url: https://pay-api.holdstation.com

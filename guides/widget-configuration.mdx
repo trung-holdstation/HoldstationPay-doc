@@ -1,0 +1,74 @@
+---
+title: "Widget Configuration"
+description: "Configuration parameters for the Holdstation Pay Widget."
+---
+
+## Configuration Parameters
+
+Pass the following query parameters into the iframe's `src` URL to configure the widget.
+
+**Sandbox Base URL:** `https://pay.capybera.xyz`
+
+| Parameter              | Type   | Required | Description                                                                                      |
+|------------------------|--------|----------|--------------------------------------------------------------------------------------------------|
+| `theme`                | string | Optional | `light` or `dark` interface. Default: `dark`.                                                    |
+| `lang`                 | string | Optional | Language: `en` or `vi`. Default: `en`.                                                           |
+| `wallet`               | string | Optional | User wallet address to receive assets.                                                           |
+| `method`               | string | Optional | `buy` or `sell`. Default: `buy`.                                                                 |
+| `token_address`        | string | Optional | Token address of the payment token. See [Supported Chains & Tokens](#supported-chains--tokens).  |
+| `chain_id`             | number | Optional | Blockchain network ID. See [Supported Chains & Tokens](#supported-chains--tokens).               |
+| `amount`               | number | Optional | Amount of the payment token.                                                                     |
+| `bin_code`             | number | Optional | BIN code (only applicable when `method=sell`).                                                   |
+| `bank_account_number`  | number | Optional | Bank account number to receive funds (only applicable when `method=sell`).                        |
+| `pk`                   | string | Optional | Partner app key provided by Holdstation.                                                         |
+| `reference_no`         | string | Optional | Reference order number for partner tracking.                                                     |
+| `signature`            | string | Optional | Ed25519 signature for request validation.                                                        |
+
+## Examples
+
+### Buy Flow
+
+```
+https://pay.capybera.xyz/?wallet=0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E&theme=dark&method=buy&token_address=0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d&chain_id=56
+```
+
+### Sell Flow
+
+```
+https://pay.capybera.xyz/?wallet=0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E&theme=dark&method=sell&token_address=0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d&chain_id=56&bin_code=970423&bank_account_number=03815492701
+```
+
+## Supported Chains & Tokens
+
+Use the public endpoint to retrieve the full list of supported chain IDs and token addresses:
+
+| Method | URL                                                  | Authentication   |
+|--------|------------------------------------------------------|------------------|
+| GET    | `https://pay-api.holdstation.com/api/v1/tokens`      | Not required     |
+
+**Example Response:**
+
+```json
+[
+  {
+    "id": "d696d87f-8f41-4cee-9a90-4e99f7df4851",
+    "chain_id": 1,
+    "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "name": "Tether USD",
+    "symbol": "USDT",
+    "decimals": 6,
+    "name_override": "Tether USD (ETH)",
+    "active": true
+  },
+  {
+    "id": "ba8618c3-fadb-4d9d-b75f-f14e6acd6110",
+    "chain_id": 56,
+    "address": "0x55d398326f99059ff775485246999027b3197955",
+    "name": "Tether USD",
+    "symbol": "USDT",
+    "decimals": 18,
+    "name_override": "Tether USD (BSC)",
+    "active": true
+  }
+]
+```

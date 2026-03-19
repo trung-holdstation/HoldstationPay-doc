@@ -1,0 +1,62 @@
+---
+title: "List Tokens"
+api: "GET https://pay-api.holdstation.com/api/v1/tokens"
+description: "Retrieve the list of tokens supported for buy/sell operations."
+---
+
+## Overview
+
+Partners use this API to retrieve the list of tokens supported for buy/sell operations in the Holdstation Pay system. This API can also be used to obtain the corresponding `chain_id` required for creating an order.
+
+<ParamField query="chain_id" type="integer">
+  Filter tokens by blockchain network ID.
+</ParamField>
+
+<ParamField query="active" type="boolean">
+  Filter by active status.
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number for pagination.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Number of results per page.
+</ParamField>
+
+<ParamField query="symbols" type="string[]">
+  Filter by token symbols (e.g., `USDT`).
+</ParamField>
+
+<ParamField query="no_limit" type="boolean">
+  Set to `true` to return all results without pagination.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "tokens": [
+      {
+        "id": "d696d87f-8f41-4cee-9a90-4e99f7df4851",
+        "chain_id": 1,
+        "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "decimals": 6,
+        "price": "1",
+        "price_change_24h": "0",
+        "name_override": "Tether USD (ETH)",
+        "image": "https://static.holdstation.com/tokens/chain/999999/0x55d398326f99059ff775485246999027b3197955.png",
+        "active": true,
+        "withdrawal_contract": "0x0000000000000000000000000000000000000000"
+      }
+    ],
+    "page": 1,
+    "page_size": 20,
+    "total_count": 5
+  }
+}
+```
+</ResponseExample>

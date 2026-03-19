@@ -1,0 +1,83 @@
+---
+title: "Offramp Flow"
+description: "How to sell USDT for VND using Holdstation Pay."
+---
+
+## Overview
+
+The offramp flow allows users to **sell USDT and receive VND**. The partner creates a withdrawal order, shows the recipient address to the user, and the user transfers USDT on-chain. Holdstation Pay then sends VND to the user's bank account.
+
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant P as Partner
+    participant H as Holdstation Pay
+    participant B as Blockchain
+    participant Bank
+
+    U->>P: Request to sell USDT
+    Note over U, P: Input amount in USD
+    P->>+H: POST /partners/orders/withdrawal
+    Note over P, H: Use callback for order state update
+    H-->>H: Calculate VND amount to receive
+    H-->>H: Lock recipient wallet for this order
+    H->>B: Subscribe for Transfer event
+    H-->>P: Returns {order + recipient addr}
+    P-->>U: Show recipient addr + USDT amount
+    U->>B: Transfer exact USDT amount to recipient
+    B-->>H: Transfer event log
+    H-->>H: Verify transferred amount
+    H->>-Bank: Make a VND transfer request
+    Bank-->>U: Transfer VND
+```
+
+## Processing States Flow
+
+```mermaid
+stateDiagram-v2
+    state "State -> Completed" as C
+    state "State -> Failed" as F
+    state "State -> Closed" as CL
+    state "Crypto Pending = 20" as CP
+    state "Crypto Confirmed = 21" as CC
+    state "Crypto Failed = 22" as CF
+    state "Fiat Pending = 23" as FP
+    state "Fiat Confirmed = 24" as FC
+    state "Fiat Failed = 25" as FF
+
+    [*] --> CP
+    CP --> CC: Transfer event verified
+    CP --> CF: Transfer failed
+    CP --> CL: Order expired or closed manually
+    CF --> F
+    CC --> FP: Transfer VND
+    FP --> FC: Transfer successful
+    FC --> C
+    FP --> FF: Failed to transfer
+    FF --> F
+    F --> [*]
+    C --> [*]
+    CL --> [*]
+```
+
+## Step-by-Step
+
+<Steps>
+  <Step title="Create a withdrawal order">
+    Call `POST /partners/orders/withdrawal` with the amount, currency, payment info (bank details), token address, chain ID, and callback URL.
+  </Step>
+  <Step title="Present recipient address">
+    Display the `recipient` wallet address and exact USDT amount from the response to the user.
+  </Step>
+  <Step title="User transfers USDT">
+    The user sends the exact USDT amount to the recipient address on the specified blockchain.
+  </Step>
+  <Step title="Holdstation verifies transfer">
+    Holdstation Pay detects and verifies the on-chain transfer event.
+  </Step>
+  <Step title="VND sent to bank">
+    Once verified, Holdstation Pay initiates the VND bank transfer to the user's account. The order moves to **Completed**.
+  </Step>
+</Steps>

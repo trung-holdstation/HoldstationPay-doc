@@ -1,0 +1,66 @@
+---
+title: "Estimate Outcome"
+api: "POST https://pay-api.holdstation.com/api/v1/payments/estimate-outcome"
+description: "Calculate the final amount for a given input amount and order type."
+---
+
+## Overview
+
+Partners can calculate the final amount for a given input amount and order type. Set `reverse=true` to calculate the required input amount for a desired outcome.
+
+- **Deposit orders**: the outcome is the amount of tokens (in USD) the user will receive after fees.
+- **Withdrawal orders**: the outcome is the amount of fiat (in VND) the user will receive after fees.
+
+<ParamField body="amount" type="string" required>
+  Original amount to calculate.
+</ParamField>
+
+<ParamField body="reverse" type="boolean" required>
+  Reverse the amount calculation (from outcome to original).
+</ParamField>
+
+<ParamField body="chain_id" type="integer" required>
+  Blockchain network ID.
+</ParamField>
+
+<ParamField body="token_address" type="string" required>
+  Token contract address.
+</ParamField>
+
+<ParamField body="order_type" type="integer" required>
+  Type of the order. `1` = Deposit, `2` = Withdrawal.
+</ParamField>
+
+<ParamField body="buffer" type="number" required>
+  Optional buffer rate override (fractional). If set, effective buffer = max(override, configured buffer). Example: `0.005` = 0.5%.
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "amount": "1000000",
+  "reverse": false,
+  "chain_id": 56,
+  "token_address": "0x55d398326f99059ff775485246999027b3197955",
+  "order_type": 1,
+  "buffer": 0.005
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "outcome": "38.61",
+    "rate": 25850.00,
+    "fee_vnd": 5000,
+    "fees": {
+      "service_fee": 0.01,
+      "min_fee": 5000
+    }
+  }
+}
+```
+</ResponseExample>

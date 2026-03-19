@@ -1,0 +1,53 @@
+---
+title: "Verify Bank Account"
+api: "POST https://pay-api.holdstation.com/api/v1/payment-methods/verify"
+description: "Verify a bank account number and retrieve account holder information."
+---
+
+## Overview
+
+Partners can verify bank account numbers to confirm the account holder's name before initiating withdrawals.
+
+<ParamField body="bin_code" type="string" required>
+  Bank Identification Number (BIN) code.
+</ParamField>
+
+<ParamField body="account_number" type="string" required>
+  Bank account number to verify.
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "bin_code": "970436",
+  "account_number": "1234567890"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "bank": {
+      "id": 1,
+      "bank_name": "Vietcombank",
+      "short_name": "VCB",
+      "bin_code": "970436",
+      "image": "https://example.com/vcb.png"
+    },
+    "account_name": "NGUYEN VAN A",
+    "account_number": "1234567890"
+  }
+}
+```
+
+```json 400
+{
+  "error": "invalid account",
+  "error_code": "BAD_REQUEST",
+  "message": "Account not found"
+}
+```
+</ResponseExample>

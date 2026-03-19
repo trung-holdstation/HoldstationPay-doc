@@ -1,0 +1,65 @@
+---
+title: "Partner Integration"
+description: "Attribute transactions to your platform using Partner Keys."
+---
+
+## Overview
+
+When users interact with the Holdstation Pay Widget embedded on a partner's site, the partner must pass a unique identifier called **Partner Key** into the widget (provided by Holdstation).
+
+This ensures that all transactions are accurately attributed to that partner, supporting revenue-sharing calculations and tracking transaction volume.
+
+## Integration Mechanism
+
+<Steps>
+  <Step title="Widget Loads">
+    When the widget is fully loaded and ready, it emits a `PAY_HOLDSTATION_START` event.
+  </Step>
+  <Step title="Partner Responds">
+    The partner's website listens for this event and immediately sends back a `SET_PARTNER_KEY` message containing the Partner ID.
+  </Step>
+</Steps>
+
+## React Example
+
+```jsx
+const ref = useRef(null);
+
+useEffect(() => {
+    const handleMessage = (event) => {
+        // Listen for the widget ready event
+        if (event.data?.type === 'PAY_HOLDSTATION_START') {
+            // Send partner key back to the widget
+            ref.current?.contentWindow?.postMessage(
+                {
+                    type: 'SET_PARTNER_KEY',
+                    key: 'YOUR_PARTNER_KEY',
+                },
+                '*'
+            );
+        }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => {
+        window.removeEventListener('message', handleMessage);
+    };
+}, []);
+
+return (
+    <iframe
+        ref={ref}
+        src="https://pay.capybera.xyz/?..."
+        width="100%"
+        height="650"
+        frameBorder="0"
+    />
+);
+```
+
+## Event Reference
+
+| Event                    | Direction          | Description                                     |
+|--------------------------|--------------------|-------------------------------------------------|
+| `PAY_HOLDSTATION_START`  | Widget → Partner   | Widget is loaded and ready to receive config.    |
+| `SET_PARTNER_KEY`        | Partner → Widget   | Partner sends their key to the widget.           |

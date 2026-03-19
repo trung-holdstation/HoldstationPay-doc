@@ -1,0 +1,64 @@
+---
+title: "Widget Overview"
+description: "Integrate crypto payment functionality directly into your website using the Holdstation Pay Widget."
+---
+
+## Overview
+
+The Holdstation Pay Widget allows partners to integrate crypto payment functionality directly into their websites or applications quickly, without needing to build a wallet system or handle complex blockchain processes.
+
+### How It Works
+
+<Steps>
+  <Step title="Generate Widget URL">
+    Partner generates a widget URL with the defined configuration parameters.
+  </Step>
+  <Step title="User Confirms Transaction">
+    User confirms the transaction on the embedded widget.
+  </Step>
+  <Step title="Process on Blockchain">
+    The widget processes the transaction on the blockchain.
+  </Step>
+  <Step title="Receive Result">
+    Partner receives the result via `window.postMessage` to update the UI.
+  </Step>
+</Steps>
+
+## Integration Methods
+
+<CardGroup cols={2}>
+  <Card title="Iframe Integration" icon="window">
+    No SDK required. Compatible with all frameworks — React, Vue, plain HTML.
+  </Card>
+  <Card title="Web SDK (Coming Soon)" icon="code">
+    Optional SDK integration currently in development.
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+Embed the widget using an `<iframe>` tag:
+
+```html
+<iframe
+    src="https://pay.capybera.xyz/?wallet=<WALLET>&theme=dark&lang=en&method=buy&token_address=<TOKEN>&chain_id=<CHAIN_ID>"
+    width="100%"
+    height="650"
+    frameborder="0"
+    style="border-radius: 16px; overflow: hidden;">
+</iframe>
+```
+
+## Widget URLs
+
+| Environment    | Widget Base URL                  |
+|----------------|----------------------------------|
+| **Sandbox**    | `https://pay.capybera.xyz`       |
+| **Production** | `https://pay.holdstation.com`    |
+
+## UI Recommendations
+
+The widget is optimized for the following dimensions:
+
+- **Width:** 360px – 480px
+- **Minimum Height:** 600px

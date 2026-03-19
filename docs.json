@@ -1,0 +1,125 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "venus",
+  "name": "Holdstation Pay",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6366F1",
+    "light": "#818CF8",
+    "dark": "#4F46E5",
+    "anchors": {
+      "from": "#6366F1",
+      "to": "#8B5CF6"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:support@holdstation.com"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Dashboard",
+    "url": "https://pay.holdstation.com"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction",
+        "authentication",
+        "environments"
+      ]
+    },
+    {
+      "group": "Core Concepts",
+      "pages": [
+        "guides/order-flow",
+        "guides/onramp-flow",
+        "guides/offramp-flow",
+        "guides/webhooks"
+      ]
+    },
+    {
+      "group": "Widget Integration",
+      "pages": [
+        "guides/widget-overview",
+        "guides/widget-configuration",
+        "guides/widget-events",
+        "guides/partner-integration",
+        "guides/signature-algorithm"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/introduction"
+      ]
+    },
+    {
+      "group": "Banks",
+      "pages": [
+        "api-reference/banks/list-banks",
+        "api-reference/banks/verify-bank-account"
+      ]
+    },
+    {
+      "group": "Tokens",
+      "pages": [
+        "api-reference/tokens/list-tokens"
+      ]
+    },
+    {
+      "group": "Exchange",
+      "pages": [
+        "api-reference/exchange/get-rate"
+      ]
+    },
+    {
+      "group": "Orders",
+      "pages": [
+        "api-reference/orders/estimate-outcome",
+        "api-reference/orders/create-deposit",
+        "api-reference/orders/create-withdrawal",
+        "api-reference/orders/list-orders",
+        "api-reference/orders/get-order-by-id",
+        "api-reference/orders/get-order-by-reference",
+        "api-reference/orders/close-order"
+      ]
+    },
+    {
+      "group": "Configurations",
+      "pages": [
+        "api-reference/configurations/get-transaction-threshold"
+      ]
+    },
+    {
+      "group": "Wholesale",
+      "pages": [
+        "api-reference/wholesale/create-application"
+      ]
+    }
+  ],
+  "openapi": ["/api-reference/openapi.yaml"],
+  "api": {
+    "baseUrl": "https://pay-api.holdstation.com",
+    "auth": {
+      "method": "key",
+      "name": "Partner-App-Key"
+    }
+  },
+  "footerSocials": {
+    "website": "https://holdstation.com",
+    "github": "https://github.com/holdstation"
+  }
+}

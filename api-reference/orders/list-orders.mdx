@@ -1,0 +1,84 @@
+---
+title: "List Orders"
+api: "GET https://pay-api.holdstation.com/partners/orders"
+description: "Query a list of payment orders with optional filtering and pagination."
+---
+
+## Overview
+
+Partners can query a list of their payment orders with optional filtering by state. The results are paginated using `page_size` and `page` parameters.
+
+<ParamField query="type" type="integer[]">
+  Filter by order type. `1` = Deposit, `2` = Withdrawal.
+</ParamField>
+
+<ParamField query="state" type="integer[]">
+  Filter by order state. `1` = New, `2` = Processing, `3` = Completed, `4` = Failed, `5` = Closed.
+</ParamField>
+
+<ParamField query="processing_state" type="integer[]">
+  Filter by processing state. See [Order Flow](/guides/order-flow) for all values.
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Number of results per page.
+</ParamField>
+
+<ParamField query="sort_by" type="string">
+  Sort field. Available values: `created_at`, `expired_at`, `amount`.
+</ParamField>
+
+<ParamField query="sort_desc" type="boolean">
+  Sort in descending order.
+</ParamField>
+
+<ParamField query="created_at_from" type="integer">
+  Filter orders created after this Unix timestamp.
+</ParamField>
+
+<ParamField query="created_at_to" type="integer">
+  Filter orders created before this Unix timestamp.
+</ParamField>
+
+<ParamField query="expired_at_from" type="integer">
+  Filter orders expiring after this Unix timestamp.
+</ParamField>
+
+<ParamField query="expired_at_to" type="integer">
+  Filter orders expiring before this Unix timestamp.
+</ParamField>
+
+<ParamField query="recipient" type="string">
+  Filter by token recipient hex address.
+</ParamField>
+
+<ParamField query="reference_nos" type="string[]">
+  Filter by a list of reference numbers.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "orders": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "code": 100001,
+        "order_type": 1,
+        "state": 3,
+        "processing_state": 14,
+        "amount": "1000000",
+        "rate": "25850",
+        "reference_no": "ORDER-001"
+      }
+    ],
+    "total_count": 1
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,45 @@
+---
+title: "API Reference"
+description: "Complete reference for the Holdstation Pay API."
+---
+
+## Base URL
+
+```
+https://pay-api.holdstation.com
+```
+
+## Authentication
+
+Most endpoints require authentication via the `Partner-App-Key` header. See [Authentication](/authentication) for details.
+
+## Error Responses
+
+All endpoints return a consistent error format:
+
+```json
+{
+  "error": "string",
+  "error_code": "string",
+  "message": "string",
+  "detail": "string"
+}
+```
+
+| Status Code | Description          |
+|-------------|----------------------|
+| `200`       | Success              |
+| `400`       | Bad Request          |
+| `401`       | Unauthorized         |
+| `500`       | Internal Server Error|
+
+## Response Wrapper
+
+Successful responses are wrapped in a standard envelope:
+
+```json
+{
+  "message": "string",
+  "data": { ... }
+}
+```

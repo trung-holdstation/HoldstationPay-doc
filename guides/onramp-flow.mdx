@@ -1,0 +1,82 @@
+---
+title: "Onramp Flow"
+description: "How to buy USDT with VND using Holdstation Pay."
+---
+
+## Overview
+
+The onramp flow allows users to **buy USDT using VND**. The partner creates a deposit order via the API, presents a QR code to the user, and the user pays through their banking app.
+
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant P as Partner
+    participant H as Holdstation Pay
+    participant Bank
+    participant B as Blockchain
+
+    U->>P: Request to buy USDT
+    Note over U, P: Input amount in VND
+    P->>+H: POST /partners/orders/deposit
+    Note over P, H: Use callback for order state update
+    H-->>H: Calculate USDT amount to receive
+    H-->>-P: Returns {order + payment info}
+    P-->>U: Show QR code from payment_info
+    U->>P: Scan QR code using banking app
+    U->>Bank: Confirm and transfer
+    Bank-->>+H: Notify transfer result
+    H-->>H: Verify payment
+    H->>-B: Execute transfering USDT
+    B->>U: Transfer USDT
+```
+
+## Processing States Flow
+
+```mermaid
+stateDiagram-v2
+    state "State -> Completed" as C
+    state "State -> Failed" as F
+    state "State -> Closed" as CL
+    state "Fiat Pending = 10" as FP
+    state "Fiat Confirmed = 11" as FC
+    state "Fiat Failed = 12" as FF
+    state "Crypto Pending = 13" as CP
+    state "Crypto Confirmed = 14" as CC
+    state "Crypto Failed = 15" as CF
+
+    [*] --> FP
+    FP --> FC: Bank notify successful result
+    FP --> CL: Order expired or closed manually
+    FP --> FF: Bank notify failure result
+    FF --> F
+    FC --> CP: Transfer USDT
+    CP --> CC: Transfer successful
+    CC --> C
+    CP --> CF: Failed to transfer
+    CF --> F
+    F --> [*]
+    C --> [*]
+    CL --> [*]
+```
+
+## Step-by-Step
+
+<Steps>
+  <Step title="Create a deposit order">
+    Call `POST /partners/orders/deposit` with the amount in VND, recipient wallet address, token address, chain ID, and callback URL.
+  </Step>
+  <Step title="Present payment to user">
+    Use the `pay_data` from the response to display a QR code to the user. The QR code contains bank transfer details.
+  </Step>
+  <Step title="User completes payment">
+    The user scans the QR code with their banking app and confirms the VND transfer.
+  </Step>
+  <Step title="Receive webhook updates">
+    Holdstation Pay verifies the fiat payment and initiates the on-chain USDT transfer. Your callback URL receives status updates throughout the process.
+  </Step>
+  <Step title="USDT delivered">
+    Once the blockchain transfer is confirmed, the order state moves to **Completed** and the user receives USDT in their wallet.
+  </Step>
+</Steps>

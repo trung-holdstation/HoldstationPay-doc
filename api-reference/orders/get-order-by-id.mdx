@@ -1,0 +1,48 @@
+---
+title: "Get Order by ID"
+api: "GET https://pay-api.holdstation.com/partners/orders/{order_id}"
+description: "Query the details of a payment order by its ID."
+---
+
+## Overview
+
+Partners query the details of each payment order by providing the `order_id` to obtain the latest state of the payment order, and then proceed with the next business logic based on the state result.
+
+<ParamField path="order_id" type="string" required>
+  The unique identifier of the order.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "order": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "code": 100001,
+      "order_type": 1,
+      "state": 3,
+      "processing_state": 14,
+      "amount": "1000000",
+      "currency": "vnd",
+      "rate": "25850",
+      "token_address": "0x55d398326f99059ff775485246999027b3197955",
+      "chain_id": 56,
+      "recipient": "0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E",
+      "reference_no": "ORDER-001",
+      "fees": {
+        "service_fee": 0.01,
+        "min_fee": 5000
+      },
+      "total_fee_vnd": 10000
+    },
+    "transaction": {
+      "tx_hash": "0xabc123...",
+      "chain_id": 56,
+      "status": 1,
+      "block_number": 12345678
+    }
+  }
+}
+```
+</ResponseExample>

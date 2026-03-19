@@ -1,0 +1,26 @@
+---
+title: "Get Transaction Threshold"
+api: "GET https://pay-api.holdstation.com/api/v1/configs/transaction_threshold"
+description: "Retrieve the list of transaction thresholds for deposit and withdrawal operations."
+---
+
+## Overview
+
+Partners use this API to retrieve the list of transaction thresholds for deposit and withdrawal operations. All values are in VND.
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "config": {
+      "key": "transaction_threshold",
+      "description": "Transaction thresholds for deposit and withdrawal",
+      "value": {
+        "fields": {}
+      }
+    }
+  }
+}
+```
+</ResponseExample>
