@@ -112,7 +112,7 @@
       }
     ]
   },
-  "openapi": ["/api-reference/openapi.yaml"],
+  "openapi": ["https://pay-api.holdstation.com/openapi.yaml"],
   "api": {
     "baseUrl": "https://pay-api.holdstation.com",
     "auth": {
