@@ -1,0 +1,183 @@
+---
+title: Partner Merchant Virtual Account
+description: Create and manage virtual accounts at payment service providers using your Merchant ID (MID).
+---
+
+## Overview
+
+Partner Merchant Virtual Account allows partners to create and manage their virtual accounts at payment service providers. Each partner can have one MID with associated credentials, enabling direct balance queries, transaction inquiry, and payment callback notifications.
+
+> **Contact Holdstation to enable this feature and receive your MID.**
+
+---
+
+## Authentication — Signed API
+
+Partner MID endpoints use Ed25519 signature-based authentication instead of JWT. Each request must include:
+
+| Header | Description |
+|---|---|
+| `Partner-App-Key` | The partner's app key (same as used for other integrations) |
+| `X-HSPay-Signature` | Base64-encoded Ed25519 signature of the raw JSON request body |
+
+The signature is computed over the **raw JSON body** (byte-for-byte) using the partner's Ed25519 private key. The server verifies using the partner's `verify_key` (Ed25519 public key in base64).
+
+---
+
+## Key Generation
+
+Partners generate an Ed25519 key pair. The **private key** is used by the partner to sign requests. The **public key** (base64-encoded) is uploaded as `verify_key` via the CMS API or the signed API endpoint.
+
+#### Go Example
+
+```go
+package main
+
+import (
+    "crypto/ed25519"
+    "encoding/base64"
+    "fmt"
+)
+
+func main() {
+    // Generate Ed25519 key pair
+    publicKey, privateKey, _ := ed25519.GenerateKey(nil)
+
+    // Base64 encode for storage/transmission
+    privateKeyB64 := base64.StdEncoding.EncodeToString(privateKey)
+    publicKeyB64 := base64.StdEncoding.EncodeToString(publicKey)
+
+    fmt.Println("Private Key (keep secret):", privateKeyB64)
+    fmt.Println("Public Key (verify_key):", publicKeyB64)
+}
+```
+
+#### Shell Script Example
+
+```shell
+openssl genpkey -algorithm ed25519 -out priv.pem
+PRIVATE_KEY=$(cat priv.pem | openssl pkey -outform DER | tail -c 64 | base64)
+VERIFY_KEY=$(openssl pkey -in priv.pem -pubout -outform DER | tail -c 32 | base64)
+echo "Private Key (keep secret): $PRIVATE_KEY"
+echo "Public Key (verify_key): $VERIFY_KEY"
+```
+
+---
+
+## Signing Requests
+
+#### Go Example
+
+```go
+package main
+
+import (
+    "crypto/ed25519"
+    "encoding/base64"
+    "fmt"
+)
+
+func signRequest(privateKeyB64 string, body []byte) string {
+    privateKey, _ := base64.StdEncoding.DecodeString(privateKeyB64)
+    signature := ed25519.Sign(ed25519.PrivateKey(privateKey), body)
+    return base64.StdEncoding.EncodeToString(signature)
+}
+
+func verifySignature(publicKeyB64 string, body []byte, signatureB64 string) bool {
+    publicKey, _ := base64.StdEncoding.DecodeString(publicKeyB64)
+    signature, _ := base64.StdEncoding.DecodeString(signatureB64)
+    return ed25519.Verify(ed25519.PublicKey(publicKey), body, signature)
+}
+```
+
+---
+
+## Signed API Endpoints
+
+All endpoints are under `/api/signed/` and require both `Partner-App-Key` and `X-HSPay-Signature` headers.
+
+### POST /api/signed/partners/mid/balance
+
+Get the MID's account balance.
+
+**Request Body:**
+```json
+{
+    "request_id": "unique-request-id"
+}
+```
+
+**Response:**
+```json
+{
+    "merchant_id": "MID123",
+    "merchant_email": "partner@example.com",
+    "balance": "1,000,000"
+}
+```
+
+---
+
+### GET /api/signed/partners/mid/va-callback
+
+Get the current VA callback URL.
+
+**Response:**
+```json
+{
+    "va_callback": "https://partner.example.com/va/callback"
+}
+```
+
+---
+
+### POST /api/signed/partners/mid/va-callback
+
+Update the VA callback URL.
+
+**Request Body:**
+```json
+{
+    "va_callback": "https://partner.example.com/va/callback"
+}
+```
+
+---
+
+### POST /api/signed/partners/verify-key
+
+Update the partner's verify key (Ed25519 public key).
+
+**Request Body:**
+```json
+{
+    "verify_key": "base64EncodedEd25519PublicKey"
+}
+```
+
+---
+
+## Virtual Account Payment Callback
+
+**Callback Payload:**
+```json
+{
+    "va_account": "1234567890",
+    "va_account_name": "PARTNER VA",
+    "va_account_addr": "",
+    "va_bank_name": "Vietcombank",
+    "transfer_content": "base64Content",
+    "amount": "1000000",
+    "time_paid": "1679900000",
+    "transaction_id": "TXN123"
+}
+```
+
+**Callback Headers:**
+```
+Content-Type: application/json
+User-Agent: HSPay-Callback-Dispatcher/1.0
+X-HSPay-Response-Signature: <base64 Ed25519 signature>
+```
+
+Partners verify the callback using their `checksum_key` (derived public key from the partner's `sign_key`), the same way as webhook verification (see [Webhook Verification](/guides/webhooks#webhook-verification) section).
