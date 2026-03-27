@@ -53,6 +53,12 @@
               "guides/partner-integration",
               "guides/signature-algorithm"
             ]
+          },
+          {
+            "group": "Partner Merchant Virtual Account",
+            "pages": [
+              "guides/partner-merchant-virtual-account"
+            ]
           }
         ]
       },
