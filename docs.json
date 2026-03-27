@@ -57,7 +57,8 @@
           {
             "group": "Partner Merchant Virtual Account",
             "pages": [
-              "guides/partner-merchant-virtual-account"
+              "guides/partner-merchant-virtual-account/overview-and-authentication",
+              "guides/partner-merchant-virtual-account/signed-endpoints-and-callback"
             ]
           }
         ]
