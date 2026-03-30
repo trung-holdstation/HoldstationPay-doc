@@ -1,15 +1,30 @@
 ---
 title: Get Rate
-openapi: GET /api/v1/exchange/rate
+api: GET https://pay-api.holdstation.com/api/v1/exchange/rate
+description: Retrieve the current buy and sell exchange rates between USD and VND.
 ---
 
-<ResponseField name="data" type="object">
-  <Expandable title="data">
-    <ResponseField name="rate" type="object">
-      <Expandable title="Rate">
-        <ResponseField name="buy" type="string">Exchange rate for buying tokens with VND (onramp)</ResponseField>
-        <ResponseField name="sell" type="string">Exchange rate for selling tokens to VND (offramp)</ResponseField>
-      </Expandable>
-    </ResponseField>
-  </Expandable>
-</ResponseField>
+## Query Parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `original` | boolean | Set to `true` to get the rate before fees are applied |
+
+## Response Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `rate.buy` | string | Exchange rate for buying tokens with VND (onramp) |
+| `rate.sell` | string | Exchange rate for selling tokens to VND (offramp) |
+
+```json 200
+{
+  "message": "success",
+  "data": {
+    "rate": {
+      "buy": "25750",
+      "sell": "25000"
+    }
+  }
+}
+```

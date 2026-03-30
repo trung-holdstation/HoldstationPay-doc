@@ -1,30 +1,68 @@
 ---
 title: List Tokens
-openapi: GET /api/v1/tokens
+api: GET https://pay-api.holdstation.com/api/v1/tokens
+description: Retrieve the list of tokens supported for buy/sell operations. Use this to get valid chain IDs and token addresses for creating orders.
 ---
 
-<ResponseField name="data" type="object">
-  <Expandable title="data">
-    <ResponseField name="tokens" type="Token[]">
-      <Expandable title="Token">
-        <ResponseField name="id" type="string">Unique token UUID</ResponseField>
-        <ResponseField name="name" type="string">Token full name (e.g. `Tether USD`)</ResponseField>
-        <ResponseField name="symbol" type="string">Token symbol (e.g. `USDT`)</ResponseField>
-        <ResponseField name="name_override" type="string">Display name including chain (e.g. `Tether USD (BSC)`)</ResponseField>
-        <ResponseField name="address" type="string">Token contract address on-chain</ResponseField>
-        <ResponseField name="chain_id" type="integer">Blockchain network ID</ResponseField>
-        <ResponseField name="decimals" type="integer">Number of decimal places for the token</ResponseField>
-        <ResponseField name="price" type="string">Current token price in USD</ResponseField>
-        <ResponseField name="price_change_24h" type="string">24-hour price change percentage</ResponseField>
-        <ResponseField name="image" type="string">URL to the token logo image</ResponseField>
-        <ResponseField name="active" type="boolean">Whether the token is currently active for trading</ResponseField>
-        <ResponseField name="withdrawal_contract" type="string">Withdrawal contract address (zero address if not applicable)</ResponseField>
-        <ResponseField name="created_at" type="Timestamp">Record creation time — `{ seconds, nanos }`</ResponseField>
-        <ResponseField name="updated_at" type="Timestamp">Record last updated time — `{ seconds, nanos }`</ResponseField>
-      </Expandable>
-    </ResponseField>
-    <ResponseField name="page" type="integer">Current page number</ResponseField>
-    <ResponseField name="page_size" type="integer">Number of items per page</ResponseField>
-    <ResponseField name="total_count" type="integer">Total number of tokens available</ResponseField>
-  </Expandable>
-</ResponseField>
+## Query Parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `chain_id` | integer | Filter by blockchain network ID |
+| `active` | boolean | Filter by active status |
+| `page` | integer | Page number for pagination |
+| `page_size` | integer | Number of results per page |
+| `symbols` | string[] | Filter by token symbols (e.g. `USDT`) |
+| `no_limit` | boolean | If `true`, returns all tokens without pagination |
+
+## Response Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `tokens` | array | List of token objects |
+| `tokens[].id` | string | Unique token UUID |
+| `tokens[].name` | string | Token full name (e.g. `Tether USD`) |
+| `tokens[].symbol` | string | Token symbol (e.g. `USDT`) |
+| `tokens[].name_override` | string | Display name including chain (e.g. `Tether USD (BSC)`) |
+| `tokens[].address` | string | Token contract address on-chain |
+| `tokens[].chain_id` | integer | Blockchain network ID |
+| `tokens[].decimals` | integer | Number of decimal places for the token |
+| `tokens[].price` | string | Current token price in USD |
+| `tokens[].price_change_24h` | string | 24-hour price change percentage |
+| `tokens[].image` | string | URL to the token logo image |
+| `tokens[].active` | boolean | Whether the token is currently active for trading |
+| `tokens[].withdrawal_contract` | string | Withdrawal contract address (zero address if not applicable) |
+| `tokens[].created_at` | object | Record creation time — `{ seconds, nanos }` |
+| `tokens[].updated_at` | object | Record last updated time — `{ seconds, nanos }` |
+| `page` | integer | Current page number |
+| `page_size` | integer | Number of items per page |
+| `total_count` | integer | Total number of tokens available |
+
+```json 200
+{
+  "message": "success",
+  "data": {
+    "tokens": [
+      {
+        "id": "ba8618c3-fadb-4d9d-b75f-f14e6acd6110",
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "name_override": "Tether USD (BSC)",
+        "address": "0x55d398326f99059ff775485246999027b3197955",
+        "chain_id": 56,
+        "decimals": 18,
+        "price": "1",
+        "price_change_24h": "0",
+        "image": "https://static.holdstation.com/tokens/usdt.png",
+        "active": true,
+        "withdrawal_contract": "0x0000000000000000000000000000000000000000",
+        "created_at": { "seconds": 1751951680, "nanos": 676721000 },
+        "updated_at": { "seconds": 1751951680, "nanos": 676721000 }
+      }
+    ],
+    "page": 1,
+    "page_size": 20,
+    "total_count": 10
+  }
+}
+```

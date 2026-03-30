@@ -1,13 +1,30 @@
 ---
 title: Close Order
-openapi: POST /partners/orders/{order_id}/close
-description: Closes a payment order that is in Processing state with a Pending processing state. Once closed, the order cannot be paid.
+api: POST https://pay-api.holdstation.com/partners/orders/{order_id}/close
+description: Close a payment order that is in Processing state. Once closed, the order cannot be paid.
 ---
 
-<ResponseField name="data" type="object">
-  <Expandable title="data">
-    <ResponseField name="success" type="boolean">Whether the order was successfully closed</ResponseField>
-    <ResponseField name="code" type="integer">Response code — `0` indicates success</ResponseField>
-    <ResponseField name="error" type="string">Error message if the close operation failed</ResponseField>
-  </Expandable>
-</ResponseField>
+## Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `order_id` | string | ✅ | The unique UUID of the order to close |
+
+## Response Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `success` | boolean | Whether the order was successfully closed |
+| `code` | integer | Response code — `0` indicates success |
+| `error` | string | Error message if the close operation failed |
+
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": ""
+  }
+}
+```

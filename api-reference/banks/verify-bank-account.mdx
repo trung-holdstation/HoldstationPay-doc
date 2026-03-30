@@ -1,22 +1,46 @@
 ---
 title: Verify Bank Account
-openapi: POST /api/v1/payment-methods/verify
+api: POST https://pay-api.holdstation.com/api/v1/payment-methods/verify
+description: Verify a bank account number and retrieve account holder details.
 ---
 
-<ResponseField name="data" type="object">
-  <Expandable title="data">
-    <ResponseField name="bank" type="object">
-      <Expandable title="Bank">
-        <ResponseField name="id" type="integer">Unique bank ID</ResponseField>
-        <ResponseField name="bank_name" type="string">Full bank name</ResponseField>
-        <ResponseField name="short_name" type="string">Bank short name / abbreviation</ResponseField>
-        <ResponseField name="bin_code" type="string">Bank Identification Number (BIN) code</ResponseField>
-        <ResponseField name="image" type="string">URL to the bank logo image</ResponseField>
-        <ResponseField name="created_at" type="Timestamp">Record creation time — `{ seconds, nanos }`</ResponseField>
-        <ResponseField name="updated_at" type="Timestamp">Record last updated time — `{ seconds, nanos }`</ResponseField>
-      </Expandable>
-    </ResponseField>
-    <ResponseField name="account_name" type="string">Account holder's full name</ResponseField>
-    <ResponseField name="account_number" type="string">Verified bank account number</ResponseField>
-  </Expandable>
-</ResponseField>
+## Request Body
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `bin_code` | string | ✅ | Bank Identification Number (BIN) code — see [List Banks](/api-reference/banks/list-banks) |
+| `account_number` | string | ✅ | Bank account number to verify |
+
+## Response Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `bank` | object | Bank information |
+| `bank.id` | integer | Unique bank ID |
+| `bank.bank_name` | string | Full bank name |
+| `bank.short_name` | string | Bank short name / abbreviation |
+| `bank.bin_code` | string | Bank Identification Number (BIN) code |
+| `bank.image` | string | URL to the bank logo image |
+| `bank.created_at` | object | Record creation time — `{ seconds, nanos }` |
+| `bank.updated_at` | object | Record last updated time — `{ seconds, nanos }` |
+| `account_name` | string | Account holder's full name |
+| `account_number` | string | Verified bank account number |
+
+```json 200
+{
+  "message": "success",
+  "data": {
+    "bank": {
+      "id": 42,
+      "bank_name": "Tien Phong Commercial Joint Stock Bank",
+      "short_name": "TPBank",
+      "bin_code": "970423",
+      "image": "https://static.holdstation.com/banks/tpbank.png",
+      "created_at": { "seconds": 1700000000, "nanos": 0 },
+      "updated_at": { "seconds": 1700000000, "nanos": 0 }
+    },
+    "account_name": "NGUYEN VAN A",
+    "account_number": "0123456789"
+  }
+}
+```
