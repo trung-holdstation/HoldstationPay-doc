@@ -3,53 +3,21 @@ title: List Banks
 openapi: GET /api/v1/banks
 ---
 
-## Query Parameters
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `page` | integer | No | Page number for pagination |
-| `size` | integer | No | Number of results per page |
-| `ids` | integer[] | No | Filter by specific bank IDs |
-
-## Response
-
-```json
-{
-  "message": "success",
-  "data": {
-    "banks": [
-      {
-        "id": 42,
-        "bank_name": "Tien Phong Commercial Joint Stock Bank",
-        "short_name": "TPBank",
-        "bin_code": "970423",
-        "image": "https://static.holdstation.com/banks/tpbank.png",
-        "created_at": { "seconds": 1700000000, "nanos": 0 },
-        "updated_at": { "seconds": 1700000000, "nanos": 0 }
-      }
-    ],
-    "page": 1,
-    "page_size": 20,
-    "total_count": 50
-  }
-}
-```
-
-| Field | Type | Description |
-|---|---|---|
-| `banks` | array | List of bank objects |
-| `page` | integer | Current page number |
-| `page_size` | integer | Number of items per page |
-| `total_count` | integer | Total number of banks available |
-
-### Bank Object
-
-| Field | Type | Description |
-|---|---|---|
-| `id` | integer | Unique bank ID |
-| `bank_name` | string | Full bank name |
-| `short_name` | string | Bank short name / abbreviation |
-| `bin_code` | string | Bank Identification Number (BIN) code |
-| `image` | string | URL to the bank logo image |
-| `created_at` | object | Record creation timestamp — `{ seconds, nanos }` |
-| `updated_at` | object | Record last updated timestamp — `{ seconds, nanos }` |
+<ResponseField name="data" type="object">
+  <Expandable title="data">
+    <ResponseField name="banks" type="Bank[]">
+      <Expandable title="Bank">
+        <ResponseField name="id" type="integer">Unique bank ID</ResponseField>
+        <ResponseField name="bank_name" type="string">Full bank name</ResponseField>
+        <ResponseField name="short_name" type="string">Bank short name / abbreviation</ResponseField>
+        <ResponseField name="bin_code" type="string">Bank Identification Number (BIN) code</ResponseField>
+        <ResponseField name="image" type="string">URL to the bank logo image</ResponseField>
+        <ResponseField name="created_at" type="Timestamp">Record creation time — `{ seconds, nanos }`</ResponseField>
+        <ResponseField name="updated_at" type="Timestamp">Record last updated time — `{ seconds, nanos }`</ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="page" type="integer">Current page number</ResponseField>
+    <ResponseField name="page_size" type="integer">Number of items per page</ResponseField>
+    <ResponseField name="total_count" type="integer">Total number of banks available</ResponseField>
+  </Expandable>
+</ResponseField>

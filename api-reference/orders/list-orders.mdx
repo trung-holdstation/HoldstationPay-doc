@@ -3,25 +3,7 @@ title: List Orders
 openapi: GET /partners/orders
 ---
 
-## Query Parameters
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `type` | integer[] | No | Filter by order type: `1`=Deposit, `2`=Withdrawal |
-| `state` | integer[] | No | Filter by order state: `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
-| `processing_state` | integer[] | No | Filter by processing state — see values below |
-| `page` | integer | No | Page number for pagination |
-| `page_size` | integer | No | Number of results per page |
-| `sort_by` | string | No | Sort field: `created_at`, `expired_at`, or `amount` |
-| `sort_desc` | boolean | No | If `true`, sort in descending order |
-| `created_at_from` | integer | No | Filter orders created after this Unix timestamp (seconds) |
-| `created_at_to` | integer | No | Filter orders created before this Unix timestamp (seconds) |
-| `expired_at_from` | integer | No | Filter orders expiring after this Unix timestamp (seconds) |
-| `expired_at_to` | integer | No | Filter orders expiring before this Unix timestamp (seconds) |
-| `recipient` | string | No | Filter by token recipient wallet address |
-| `reference_nos` | string[] | No | Filter by a list of partner reference numbers |
-
-### Processing State Values
+## Processing State Values
 
 | Value | Name | Description |
 |---|---|---|
@@ -39,113 +21,43 @@ openapi: GET /partners/orders
 | `24` | WithdrawFiatConfirmed | VND bank transfer confirmed |
 | `25` | WithdrawFiatFailed | VND bank transfer failed |
 
-## Response
-
-```json
-{
-  "message": "success",
-  "data": {
-    "orders": [
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
-        "code": 100001,
-        "order_type": 1,
-        "state": 3,
-        "processing_state": 14,
-        "amount": "2575000",
-        "outcome": "100",
-        "currency": "vnd",
-        "rate": "25750",
-        "original_rate": "25500",
-        "token_address": "0x55d398326f99059ff775485246999027b3197955",
-        "chain_id": 56,
-        "recipient": "0xUSER_WALLET_ADDRESS",
-        "reference_no": "DEPOSIT-001",
-        "external_id": "ext-001",
-        "partner_id": "partner-xyz",
-        "user_id": "user-abc",
-        "provider": 1,
-        "processing_time": 12400,
-        "client_ip": "127.0.0.1",
-        "callback": "https://yourapp.com/api/webhooks/payment",
-        "fees": { "service_fee": 5000, "min_fee": 2000 },
-        "total_fee_vnd": 5000,
-        "pay_data": {
-          "bank_account_name": "CONG TY HOLDSTATION",
-          "bank_account_number": "9876543210",
-          "bank_bin_code": "970423",
-          "bank_name": "Tien Phong Bank",
-          "bank_short_code": "TPBank",
-          "payment_link": "https://dl.vietqr.io/pay?...",
-          "qr_code": "00020101021238...",
-          "qr_image": "data:image/png;base64,...",
-          "external_id": "hpay-ext-001"
-        },
-        "payment_info": null,
-        "reference": {
-          "hs_rate": 25000,
-          "usdt_rate": 25500,
-          "token_rate": 1.0,
-          "partner_rate": 25750,
-          "spread": 0.02,
-          "buffer_rate": 0.005,
-          "buffered_rate_usdt": 25628,
-          "buffered_rate_partner": 25750,
-          "addition_share_rate": 0,
-          "partner_override_revenue": 0,
-          "sim_webhook_id": ""
-        },
-        "body": {},
-        "error": null,
-        "created_at": { "seconds": 1700000000, "nanos": 0 },
-        "updated_at": { "seconds": 1700012400, "nanos": 0 },
-        "expired_at": { "seconds": 1700003600, "nanos": 0 }
-      }
-    ],
-    "total_count": 1
-  }
-}
-```
-
-| Field | Type | Description |
-|---|---|---|
-| `orders` | array | List of order objects |
-| `total_count` | integer | Total number of matching orders |
-
-### Order Object
-
-The `Order` object returned in list includes all fields from the deposit/withdrawal responses, plus two additional fields:
-
-| Field | Type | Description |
-|---|---|---|
-| `id` | string | Unique order UUID |
-| `state` | integer | `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
-| `processing_state` | integer | Detailed processing state — see values above |
-| `order_type` | integer | `1`=Deposit, `2`=Withdrawal |
-| `amount` | string | Input amount |
-| `outcome` | string | Amount the user receives after fees |
-| `rate` | string | Exchange rate applied |
-| `original_rate` | string | Exchange rate before buffer adjustment |
-| `currency` | string | `vnd` or `usd` |
-| `total_fee_vnd` | number | Total fee in VND |
-| `fees` | object | `{ service_fee, min_fee }` — fee breakdown in VND |
-| `token_address` | string | Token contract address |
-| `chain_id` | integer | Blockchain network ID |
-| `recipient` | string | Token recipient wallet address |
-| `reference_no` | string | Partner's reference number |
-| `external_id` | string | External order ID from payment provider |
-| `partner_id` | string | Partner identifier |
-| `user_id` | string | User identifier |
-| `code` | integer | Internal status code from payment provider |
-| `provider` | integer | Payment provider identifier |
-| `processing_time` | integer | Time taken to process in milliseconds |
-| `client_ip` | string | IP address of the client that created the order |
-| `callback` | string | Webhook callback URL |
-| `pay_data` | object | Bank payment details (deposit orders only) — `{ bank_account_name, bank_account_number, bank_bin_code, bank_name, bank_short_code, payment_link, qr_code, qr_image, external_id }` |
-| `payment_info` | object | Bank account for VND payout (withdrawal orders only) — `{ bank_id, full_name, account_type, account_number }` |
-| `reference` | object | Internal rate reference data — `{ hs_rate, usdt_rate, token_rate, partner_rate, spread, buffer_rate, buffered_rate_usdt, buffered_rate_partner, addition_share_rate, partner_override_revenue, sim_webhook_id }` |
-| `body` | object | Raw provider response body |
-| `error` | object | Error details if failed — `{ error_code, error_message, details, retryable, source, timestamp }` |
-| `created_at` | object | Order creation timestamp — `{ seconds, nanos }` |
-| `updated_at` | object | Last update timestamp — `{ seconds, nanos }` |
-| `expired_at` | object | Order expiry timestamp — `{ seconds, nanos }` |
+<ResponseField name="data" type="object">
+  <Expandable title="data">
+    <ResponseField name="orders" type="Order[]">
+      <Expandable title="Order">
+        <ResponseField name="id" type="string">Unique order UUID</ResponseField>
+        <ResponseField name="code" type="integer">Internal status code from payment provider</ResponseField>
+        <ResponseField name="order_type" type="integer">`1`=Deposit, `2`=Withdrawal</ResponseField>
+        <ResponseField name="state" type="integer">`1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed</ResponseField>
+        <ResponseField name="processing_state" type="integer">Detailed processing state — see table above</ResponseField>
+        <ResponseField name="amount" type="string">Input amount</ResponseField>
+        <ResponseField name="outcome" type="string">Amount the user receives after fees</ResponseField>
+        <ResponseField name="currency" type="string">`vnd` or `usd`</ResponseField>
+        <ResponseField name="rate" type="string">Exchange rate applied</ResponseField>
+        <ResponseField name="original_rate" type="string">Exchange rate before buffer adjustment</ResponseField>
+        <ResponseField name="token_address" type="string">Token contract address</ResponseField>
+        <ResponseField name="chain_id" type="integer">Blockchain network ID</ResponseField>
+        <ResponseField name="recipient" type="string">Token recipient wallet address</ResponseField>
+        <ResponseField name="reference_no" type="string">Partner's reference number</ResponseField>
+        <ResponseField name="external_id" type="string">External order ID from payment provider</ResponseField>
+        <ResponseField name="partner_id" type="string">Partner identifier</ResponseField>
+        <ResponseField name="user_id" type="string">User identifier</ResponseField>
+        <ResponseField name="provider" type="integer">Payment provider identifier</ResponseField>
+        <ResponseField name="processing_time" type="integer">Time taken to process in milliseconds</ResponseField>
+        <ResponseField name="client_ip" type="string">IP address of the client that created the order</ResponseField>
+        <ResponseField name="callback" type="string">Webhook callback URL</ResponseField>
+        <ResponseField name="total_fee_vnd" type="number">Total fee in VND</ResponseField>
+        <ResponseField name="fees" type="object">`{ service_fee, min_fee }` — fee breakdown in VND</ResponseField>
+        <ResponseField name="pay_data" type="object">Bank payment details (deposit orders only) — `{ bank_account_name, bank_account_number, bank_bin_code, bank_name, bank_short_code, payment_link, qr_code, qr_image, external_id }`</ResponseField>
+        <ResponseField name="payment_info" type="object">Bank account for VND payout (withdrawal orders only) — `{ bank_id, full_name, account_type, account_number }`</ResponseField>
+        <ResponseField name="reference" type="object">Internal rate reference data — `{ hs_rate, usdt_rate, token_rate, partner_rate, spread, buffer_rate, buffered_rate_usdt, buffered_rate_partner, addition_share_rate, partner_override_revenue, sim_webhook_id }`</ResponseField>
+        <ResponseField name="body" type="object">Raw provider response body</ResponseField>
+        <ResponseField name="error" type="object">Error details if failed — `{ error_code, error_message, details, retryable, source, timestamp }`</ResponseField>
+        <ResponseField name="created_at" type="Timestamp">Order creation time — `{ seconds, nanos }`</ResponseField>
+        <ResponseField name="updated_at" type="Timestamp">Last update time — `{ seconds, nanos }`</ResponseField>
+        <ResponseField name="expired_at" type="Timestamp">Order expiry time — `{ seconds, nanos }`</ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="total_count" type="integer">Total number of matching orders</ResponseField>
+  </Expandable>
+</ResponseField>

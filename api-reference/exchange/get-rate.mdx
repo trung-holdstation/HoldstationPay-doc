@@ -3,29 +3,13 @@ title: Get Rate
 openapi: GET /api/v1/exchange/rate
 ---
 
-## Query Parameters
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `original` | boolean | No | Set to `true` to get the original rate before fees are applied |
-
-## Response
-
-```json
-{
-  "message": "success",
-  "data": {
-    "rate": {
-      "buy": "25750",
-      "sell": "25000"
-    }
-  }
-}
-```
-
-### Rate Object
-
-| Field | Type | Description |
-|---|---|---|
-| `buy` | string | Exchange rate for buying tokens with VND (onramp) |
-| `sell` | string | Exchange rate for selling tokens to VND (offramp) |
+<ResponseField name="data" type="object">
+  <Expandable title="data">
+    <ResponseField name="rate" type="object">
+      <Expandable title="Rate">
+        <ResponseField name="buy" type="string">Exchange rate for buying tokens with VND (onramp)</ResponseField>
+        <ResponseField name="sell" type="string">Exchange rate for selling tokens to VND (offramp)</ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>

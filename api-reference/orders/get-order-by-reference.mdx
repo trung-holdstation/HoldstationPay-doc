@@ -3,96 +3,41 @@ title: Get Order by Reference
 openapi: GET /partners/orders/reference-no/{reference_no}
 ---
 
-## Path Parameters
-
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `reference_no` | string | ✅ | The partner's reference number assigned when creating the order |
-
-## Response
-
-```json
-{
-  "message": "success",
-  "data": {
-    "orders": [
-      {
-        "id": "660e8400-e29b-41d4-a716-446655440001",
-        "code": 100002,
-        "order_type": 2,
-        "state": 3,
-        "processing_state": 24,
-        "amount": "100",
-        "outcome": "2575000",
-        "currency": "usd",
-        "rate": "25750",
-        "original_rate": "25500",
-        "token_address": "0x55d398326f99059ff775485246999027b3197955",
-        "chain_id": 56,
-        "recipient": "0xABCD...1234",
-        "reference_no": "WITHDRAW-001",
-        "external_id": "ext-001",
-        "partner_id": "partner-xyz",
-        "user_id": "user-abc",
-        "provider": 1,
-        "processing_time": 18200,
-        "client_ip": "127.0.0.1",
-        "callback": "https://yourapp.com/api/webhooks/payment",
-        "fees": { "service_fee": 0.01, "min_fee": 5000 },
-        "total_fee_vnd": 25750,
-        "pay_data": null,
-        "payment_info": {
-          "bank_id": 42,
-          "full_name": "NGUYEN VAN A",
-          "account_type": 1,
-          "account_number": "0123456789"
-        },
-        "error": null,
-        "created_at": { "seconds": 1700000000, "nanos": 0 },
-        "updated_at": { "seconds": 1700018200, "nanos": 0 },
-        "expired_at": { "seconds": 1700003600, "nanos": 0 }
-      }
-    ],
-    "total_count": 1
-  }
-}
-```
-
-| Field | Type | Description |
-|---|---|---|
-| `orders` | array | List of matching order objects (typically one) |
-| `total_count` | integer | Total number of matching orders |
-
-### Order Object
-
-| Field | Type | Description |
-|---|---|---|
-| `id` | string | Unique order UUID |
-| `state` | integer | `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
-| `processing_state` | integer | `10`–`16` for deposit, `20`–`25` for withdrawal — see [List Orders](/api-reference/orders/list-orders) for full table |
-| `order_type` | integer | `1`=Deposit, `2`=Withdrawal |
-| `amount` | string | Input amount |
-| `outcome` | string | Amount the user receives after fees |
-| `rate` | string | Exchange rate applied |
-| `original_rate` | string | Exchange rate before buffer adjustment |
-| `currency` | string | `vnd` or `usd` |
-| `total_fee_vnd` | number | Total fee in VND |
-| `fees` | object | `{ service_fee, min_fee }` — fee breakdown in VND |
-| `token_address` | string | Token contract address |
-| `chain_id` | integer | Blockchain network ID |
-| `recipient` | string | Token recipient wallet address (deposit) or HPay wallet to send tokens to (withdrawal) |
-| `reference_no` | string | Partner's reference number |
-| `external_id` | string | External order ID from payment provider |
-| `partner_id` | string | Partner identifier |
-| `user_id` | string | User identifier |
-| `code` | integer | Internal status code from payment provider |
-| `provider` | integer | Payment provider identifier |
-| `processing_time` | integer | Time taken to process in milliseconds |
-| `client_ip` | string | IP address of the client that created the order |
-| `callback` | string | Webhook callback URL |
-| `pay_data` | object | Bank payment details (deposit only) — `{ bank_account_name, bank_account_number, bank_bin_code, bank_name, bank_short_code, payment_link, qr_code, qr_image, external_id }` |
-| `payment_info` | object | Bank account for VND payout (withdrawal only) — `{ bank_id, full_name, account_type, account_number }` |
-| `error` | object | Error details if failed — `{ error_code, error_message, details, retryable, source, timestamp }` |
-| `created_at` | object | Order creation timestamp — `{ seconds, nanos }` |
-| `updated_at` | object | Last update timestamp — `{ seconds, nanos }` |
-| `expired_at` | object | Order expiry timestamp — `{ seconds, nanos }` |
+<ResponseField name="data" type="object">
+  <Expandable title="data">
+    <ResponseField name="orders" type="Order[]">
+      <Expandable title="Order">
+        <ResponseField name="id" type="string">Unique order UUID</ResponseField>
+        <ResponseField name="code" type="integer">Internal status code from payment provider</ResponseField>
+        <ResponseField name="order_type" type="integer">`1`=Deposit, `2`=Withdrawal</ResponseField>
+        <ResponseField name="state" type="integer">`1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed</ResponseField>
+        <ResponseField name="processing_state" type="integer">`10`–`16` for deposit, `20`–`25` for withdrawal — see [List Orders](/api-reference/orders/list-orders)</ResponseField>
+        <ResponseField name="amount" type="string">Input amount</ResponseField>
+        <ResponseField name="outcome" type="string">Amount the user receives after fees</ResponseField>
+        <ResponseField name="currency" type="string">`vnd` or `usd`</ResponseField>
+        <ResponseField name="rate" type="string">Exchange rate applied</ResponseField>
+        <ResponseField name="original_rate" type="string">Exchange rate before buffer adjustment</ResponseField>
+        <ResponseField name="token_address" type="string">Token contract address</ResponseField>
+        <ResponseField name="chain_id" type="integer">Blockchain network ID</ResponseField>
+        <ResponseField name="recipient" type="string">Recipient wallet address (deposit) or HPay wallet to send tokens to (withdrawal)</ResponseField>
+        <ResponseField name="reference_no" type="string">Partner's reference number</ResponseField>
+        <ResponseField name="external_id" type="string">External order ID from payment provider</ResponseField>
+        <ResponseField name="partner_id" type="string">Partner identifier</ResponseField>
+        <ResponseField name="user_id" type="string">User identifier</ResponseField>
+        <ResponseField name="provider" type="integer">Payment provider identifier</ResponseField>
+        <ResponseField name="processing_time" type="integer">Time taken to process in milliseconds</ResponseField>
+        <ResponseField name="client_ip" type="string">IP address of the client that created the order</ResponseField>
+        <ResponseField name="callback" type="string">Webhook callback URL</ResponseField>
+        <ResponseField name="total_fee_vnd" type="number">Total fee in VND</ResponseField>
+        <ResponseField name="fees" type="object">`{ service_fee, min_fee }` — fee breakdown in VND</ResponseField>
+        <ResponseField name="pay_data" type="object">Bank payment details (deposit only)</ResponseField>
+        <ResponseField name="payment_info" type="object">Bank account for VND payout (withdrawal only)</ResponseField>
+        <ResponseField name="error" type="object">Error details if failed</ResponseField>
+        <ResponseField name="created_at" type="Timestamp">Order creation time — `{ seconds, nanos }`</ResponseField>
+        <ResponseField name="updated_at" type="Timestamp">Last update time — `{ seconds, nanos }`</ResponseField>
+        <ResponseField name="expired_at" type="Timestamp">Order expiry time — `{ seconds, nanos }`</ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="total_count" type="integer">Total number of matching orders</ResponseField>
+  </Expandable>
+</ResponseField>

@@ -1,142 +1,66 @@
 ---
 title: Create Withdrawal
 openapi: POST /partners/orders/withdrawal
+description: Creates a new offramp order for a user to sell tokens and receive VND via bank transfer. See [Offramp Flow](/guides/offramp-flow) for the full integration guide.
 ---
 
-Creates a new offramp order for a user to sell tokens and receive VND via bank transfer. See [Offramp Flow](/guides/offramp-flow) for the full integration guide.
-
-## Request Body
-
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `amount` | string | ✅ | Amount to withdraw (in USD or VND depending on `currency`) |
-| `currency` | string | ✅ | Currency of the amount: `vnd` or `usd` |
-| `chain_id` | integer | ✅ | Blockchain network ID — see [List Tokens](/api-reference/tokens/list-tokens) |
-| `token_address` | string | ✅ | Token contract address — see [List Tokens](/api-reference/tokens/list-tokens) |
-| `payment_info` | object | ✅ | User's bank account to receive VND — see [PaymentInfo](#paymentinfo) |
-| `callback` | string | ✅ | HTTPS URL to receive order status webhook notifications |
-| `reference_no` | string | ✅ | Partner's own reference number for tracking |
-| `buffer` | number | ✅ | Rate buffer override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5% |
-
-### PaymentInfo
-
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `bank_id` | integer | ✅ | Bank ID — see [List Banks](/api-reference/banks/list-banks) |
-| `full_name` | string | ✅ | Full name of the account holder |
-| `account_type` | integer | ✅ | `1` = Bank account number, `2` = ATM card number |
-| `account_number` | string | ✅ | Bank account number |
-
-## Response
-
-```json
-{
-  "message": "success",
-  "data": {
-    "order": {
-      "id": "660e8400-e29b-41d4-a716-446655440001",
-      "code": 100002,
-      "order_type": 2,
-      "state": 2,
-      "processing_state": 20,
-      "amount": "100",
-      "outcome": "2575000",
-      "currency": "usd",
-      "rate": "25750",
-      "original_rate": "25500",
-      "token_address": "0x55d398326f99059ff775485246999027b3197955",
-      "chain_id": 56,
-      "recipient": "0xABCD...1234",
-      "reference_no": "WITHDRAW-001",
-      "external_id": "ext-001",
-      "partner_id": "partner-xyz",
-      "user_id": "user-abc",
-      "provider": 1,
-      "processing_time": 0,
-      "client_ip": "127.0.0.1",
-      "callback": "https://yourapp.com/api/webhooks/payment",
-      "fees": {
-        "service_fee": 0.01,
-        "min_fee": 5000
-      },
-      "total_fee_vnd": 25750,
-      "pay_data": null,
-      "payment_info": {
-        "bank_id": 42,
-        "full_name": "NGUYEN VAN A",
-        "account_type": 1,
-        "account_number": "0123456789"
-      },
-      "error": null,
-      "created_at": { "seconds": 1700000000, "nanos": 0 },
-      "updated_at": { "seconds": 1700000000, "nanos": 0 },
-      "expired_at": { "seconds": 1700003600, "nanos": 0 }
-    }
-  }
-}
-```
-
-### Order Object
-
-| Field | Type | Description |
-|---|---|---|
-| `id` | string | Unique order UUID |
-| `state` | integer | `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
-| `processing_state` | integer | `20`=CryptoPending, `21`=CryptoConfirmed, `22`=CryptoFailed, `23`=FiatPending, `24`=FiatConfirmed, `25`=FiatFailed |
-| `order_type` | integer | `2` = Withdrawal |
-| `amount` | string | Input amount in USD |
-| `outcome` | string | VND amount the user will receive after fees |
-| `rate` | string | Exchange rate applied to this order |
-| `original_rate` | string | Exchange rate before buffer adjustment |
-| `currency` | string | Currency of the amount (`vnd` or `usd`) |
-| `total_fee_vnd` | number | Total fee in VND |
-| `fees` | object | Fee breakdown — see [Fees](#fees) |
-| `token_address` | string | Token contract address |
-| `chain_id` | integer | Blockchain network ID |
-| `recipient` | string | Holdstation Pay's wallet address the user must send tokens to |
-| `reference_no` | string | Partner's reference number |
-| `external_id` | string | External order ID from payment provider |
-| `partner_id` | string | Partner identifier |
-| `user_id` | string | User identifier |
-| `code` | integer | Internal status code from payment provider |
-| `provider` | integer | Payment provider identifier |
-| `processing_time` | integer | Time taken to process in milliseconds |
-| `client_ip` | string | IP address of the client that created the order |
-| `callback` | string | Webhook callback URL |
-| `pay_data` | object | `null` for withdrawal orders |
-| `payment_info` | object | Bank account details the VND will be sent to — see [PaymentInfo (Response)](#paymentinfo-response) |
-| `error` | object | Error details if failed — see [OrderError](#ordererror) |
-| `created_at` | object | Order creation timestamp — `{ seconds, nanos }` |
-| `updated_at` | object | Last update timestamp — `{ seconds, nanos }` |
-| `expired_at` | object | Order expiry timestamp — `{ seconds, nanos }` |
-
-### PaymentInfo (Response)
-
-The bank account the VND payout will be sent to:
-
-| Field | Type | Description |
-|---|---|---|
-| `bank_id` | integer | Bank ID |
-| `full_name` | string | Account holder name |
-| `account_type` | integer | `1` = Bank account number, `2` = ATM card number |
-| `account_number` | string | Bank account number |
-
-### Fees
-
-| Field | Type | Description |
-|---|---|---|
-| `service_fee` | number | Service fee in VND |
-| `min_fee` | number | Minimum fee applied in VND |
-
-### OrderError
-
-Populated when `state = 4` (Failed):
-
-| Field | Type | Description |
-|---|---|---|
-| `error_code` | string | Machine-readable error code |
-| `error_message` | string | Human-readable error description |
-| `details` | string | Additional error details |
-| `retryable` | boolean | Whether the operation can be retried |
-| `source` | integer | Internal error source identifier |
-| `timestamp` | string | When the error occurred |
+<ResponseField name="data" type="object">
+  <Expandable title="data">
+    <ResponseField name="order" type="object">
+      <Expandable title="Order">
+        <ResponseField name="id" type="string">Unique order UUID</ResponseField>
+        <ResponseField name="code" type="integer">Internal status code from payment provider</ResponseField>
+        <ResponseField name="order_type" type="integer">`2` = Withdrawal</ResponseField>
+        <ResponseField name="state" type="integer">`1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed</ResponseField>
+        <ResponseField name="processing_state" type="integer">`20`=CryptoPending, `21`=CryptoConfirmed, `22`=CryptoFailed, `23`=FiatPending, `24`=FiatConfirmed, `25`=FiatFailed</ResponseField>
+        <ResponseField name="amount" type="string">Input amount in USD</ResponseField>
+        <ResponseField name="outcome" type="string">VND amount the user will receive after fees</ResponseField>
+        <ResponseField name="currency" type="string">Currency of the amount (`vnd` or `usd`)</ResponseField>
+        <ResponseField name="rate" type="string">Exchange rate applied to this order</ResponseField>
+        <ResponseField name="original_rate" type="string">Exchange rate before buffer adjustment</ResponseField>
+        <ResponseField name="token_address" type="string">Token contract address</ResponseField>
+        <ResponseField name="chain_id" type="integer">Blockchain network ID</ResponseField>
+        <ResponseField name="recipient" type="string">Holdstation Pay's wallet address the user must send tokens to</ResponseField>
+        <ResponseField name="reference_no" type="string">Partner's reference number</ResponseField>
+        <ResponseField name="external_id" type="string">External order ID from payment provider</ResponseField>
+        <ResponseField name="partner_id" type="string">Partner identifier</ResponseField>
+        <ResponseField name="user_id" type="string">User identifier</ResponseField>
+        <ResponseField name="provider" type="integer">Payment provider identifier</ResponseField>
+        <ResponseField name="processing_time" type="integer">Time taken to process in milliseconds</ResponseField>
+        <ResponseField name="client_ip" type="string">IP address of the client that created the order</ResponseField>
+        <ResponseField name="callback" type="string">Webhook callback URL</ResponseField>
+        <ResponseField name="total_fee_vnd" type="number">Total fee in VND</ResponseField>
+        <ResponseField name="fees" type="object">
+          <Expandable title="AppliedFee">
+            <ResponseField name="service_fee" type="number">Service fee in VND</ResponseField>
+            <ResponseField name="min_fee" type="number">Minimum fee applied in VND</ResponseField>
+          </Expandable>
+        </ResponseField>
+        <ResponseField name="pay_data" type="null">`null` for withdrawal orders</ResponseField>
+        <ResponseField name="payment_info" type="object">
+          Bank account the VND payout will be sent to
+          <Expandable title="PaymentInfo">
+            <ResponseField name="bank_id" type="integer">Bank ID</ResponseField>
+            <ResponseField name="full_name" type="string">Account holder name</ResponseField>
+            <ResponseField name="account_type" type="integer">`1` = Bank account number, `2` = ATM card number</ResponseField>
+            <ResponseField name="account_number" type="string">Bank account number</ResponseField>
+          </Expandable>
+        </ResponseField>
+        <ResponseField name="error" type="object">
+          Populated when `state = 4` (Failed)
+          <Expandable title="OrderError">
+            <ResponseField name="error_code" type="string">Machine-readable error code</ResponseField>
+            <ResponseField name="error_message" type="string">Human-readable error description</ResponseField>
+            <ResponseField name="details" type="string">Additional error details</ResponseField>
+            <ResponseField name="retryable" type="boolean">Whether the operation can be retried</ResponseField>
+            <ResponseField name="source" type="integer">Internal error source identifier</ResponseField>
+            <ResponseField name="timestamp" type="string">When the error occurred</ResponseField>
+          </Expandable>
+        </ResponseField>
+        <ResponseField name="created_at" type="Timestamp">Order creation time — `{ seconds, nanos }`</ResponseField>
+        <ResponseField name="updated_at" type="Timestamp">Last update time — `{ seconds, nanos }`</ResponseField>
+        <ResponseField name="expired_at" type="Timestamp">Order expiry time — `{ seconds, nanos }`</ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
