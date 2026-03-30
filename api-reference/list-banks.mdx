@@ -1,0 +1,45 @@
+---
+title: List Banks
+openapi: GET /api/v1/banks
+---
+
+## Query Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `page` | integer | No | Page number for pagination |
+| `size` | integer | No | Number of results per page |
+| `ids` | integer[] | No | Filter by specific bank IDs |
+
+## Response
+
+```json
+{
+  "data": {
+    "banks": [...],
+    "page": 1,
+    "page_size": 20,
+    "total_count": 50
+  },
+  "message": "success"
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `banks` | array | List of bank objects |
+| `page` | integer | Current page number |
+| `page_size` | integer | Number of items per page |
+| `total_count` | integer | Total number of banks available |
+
+### Bank Object
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Unique bank ID |
+| `bank_name` | string | Full bank name |
+| `short_name` | string | Bank short name / abbreviation |
+| `bin_code` | string | Bank Identification Number (BIN) code |
+| `image` | string | URL to the bank logo image |
+| `created_at` | object | Record creation timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Record last updated timestamp — `{ seconds, nanos }` |

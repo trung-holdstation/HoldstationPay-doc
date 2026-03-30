@@ -1,0 +1,55 @@
+---
+title: List Tokens
+openapi: GET /api/v1/tokens
+---
+
+## Query Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `chain_id` | integer | No | Filter by blockchain network ID |
+| `active` | boolean | No | Filter by active status |
+| `page` | integer | No | Page number for pagination |
+| `page_size` | integer | No | Number of results per page |
+| `symbols` | string[] | No | Filter by token symbols (e.g. `USDT`) |
+| `no_limit` | boolean | No | If `true`, returns all tokens without pagination |
+
+## Response
+
+```json
+{
+  "data": {
+    "tokens": [...],
+    "page": 1,
+    "page_size": 20,
+    "total_count": 10
+  },
+  "message": "success"
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `tokens` | array | List of token objects |
+| `page` | integer | Current page number |
+| `page_size` | integer | Number of items per page |
+| `total_count` | integer | Total number of tokens available |
+
+### Token Object
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Unique token UUID |
+| `name` | string | Token full name (e.g. `Tether USD`) |
+| `symbol` | string | Token symbol (e.g. `USDT`) |
+| `name_override` | string | Display name including chain (e.g. `Tether USD (BSC)`) |
+| `address` | string | Token contract address on-chain |
+| `chain_id` | integer | Blockchain network ID |
+| `decimals` | integer | Number of decimal places for the token |
+| `price` | string | Current token price in USD |
+| `price_change_24h` | string | 24-hour price change percentage |
+| `image` | string | URL to the token logo image |
+| `active` | boolean | Whether the token is currently active for trading |
+| `withdrawal_contract` | string | Withdrawal contract address (zero address if not applicable) |
+| `created_at` | object | Record creation timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Record last updated timestamp — `{ seconds, nanos }` |

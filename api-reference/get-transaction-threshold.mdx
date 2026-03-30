@@ -1,0 +1,33 @@
+---
+title: Get Transaction Threshold
+openapi: GET /api/v1/configs/transaction_threshold
+---
+
+Retrieves the minimum and maximum transaction limits for deposit and withdrawal operations. All values are in VND.
+
+## Response
+
+```json
+{
+  "data": {
+    "config": {
+      "key": "transaction_threshold",
+      "description": "Transaction threshold configuration",
+      "value": { ... },
+      "created_at": { "seconds": 1700000000, "nanos": 0 },
+      "updated_at": { "seconds": 1700000000, "nanos": 0 }
+    }
+  },
+  "message": "success"
+}
+```
+
+### Config Object
+
+| Field | Type | Description |
+|---|---|---|
+| `key` | string | Configuration key identifier |
+| `description` | string | Human-readable description of the configuration |
+| `value` | object | Configuration values — contains the threshold data (min/max amounts per order type) |
+| `created_at` | object | Record creation timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Record last updated timestamp — `{ seconds, nanos }` |

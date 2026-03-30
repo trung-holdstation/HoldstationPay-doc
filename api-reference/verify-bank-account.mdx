@@ -1,0 +1,42 @@
+---
+title: Verify Bank Account
+openapi: POST /api/v1/payment-methods/verify
+---
+
+## Request Body
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `bin_code` | string | ✅ | Bank Identification Number (BIN) code — see [List Banks](/api-reference/banks/list-banks) |
+| `account_number` | string | ✅ | Bank account number to verify |
+
+## Response
+
+```json
+{
+  "data": {
+    "bank": { ... },
+    "account_name": "NGUYEN VAN A",
+    "account_number": "0123456789"
+  },
+  "message": "success"
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `bank` | object | Bank information — see Bank Object below |
+| `account_name` | string | Account holder's full name |
+| `account_number` | string | Verified bank account number |
+
+### Bank Object
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Unique bank ID |
+| `bank_name` | string | Full bank name |
+| `short_name` | string | Bank short name / abbreviation |
+| `bin_code` | string | Bank Identification Number (BIN) code |
+| `image` | string | URL to the bank logo image |
+| `created_at` | object | Record creation timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Record last updated timestamp — `{ seconds, nanos }` |

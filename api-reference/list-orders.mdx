@@ -1,0 +1,95 @@
+---
+title: List Orders
+openapi: GET /partners/orders
+---
+
+## Query Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `type` | integer[] | No | Filter by order type: `1`=Deposit, `2`=Withdrawal |
+| `state` | integer[] | No | Filter by order state: `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
+| `processing_state` | integer[] | No | Filter by processing state — see values below |
+| `page` | integer | No | Page number for pagination |
+| `page_size` | integer | No | Number of results per page |
+| `sort_by` | string | No | Sort field: `created_at`, `expired_at`, or `amount` |
+| `sort_desc` | boolean | No | If `true`, sort in descending order |
+| `created_at_from` | integer | No | Filter orders created after this Unix timestamp (seconds) |
+| `created_at_to` | integer | No | Filter orders created before this Unix timestamp (seconds) |
+| `expired_at_from` | integer | No | Filter orders expiring after this Unix timestamp (seconds) |
+| `expired_at_to` | integer | No | Filter orders expiring before this Unix timestamp (seconds) |
+| `recipient` | string | No | Filter by token recipient wallet address |
+| `reference_nos` | string[] | No | Filter by a list of partner reference numbers |
+
+### Processing State Values
+
+| Value | Name | Description |
+|---|---|---|
+| `10` | DepositFiatPending | Waiting for user to deposit fiat |
+| `11` | DepositFiatConfirmed | Fiat deposit confirmed |
+| `12` | DepositFiatFailed | Fiat deposit failed |
+| `13` | DepositCryptoPending | Waiting for USDT transfer on-chain |
+| `14` | DepositCryptoConfirmed | USDT transfer confirmed |
+| `15` | DepositCryptoFailed | USDT transfer failed |
+| `16` | DepositFiatWaitingForApproval | Fiat payment pending manual approval |
+| `20` | WithdrawCryptoPending | Waiting for user to transfer USDT |
+| `21` | WithdrawCryptoConfirmed | USDT transfer confirmed on-chain |
+| `22` | WithdrawCryptoFailed | USDT transfer failed |
+| `23` | WithdrawFiatPending | Waiting for VND bank transfer |
+| `24` | WithdrawFiatConfirmed | VND bank transfer confirmed |
+| `25` | WithdrawFiatFailed | VND bank transfer failed |
+
+## Response
+
+```json
+{
+  "data": {
+    "orders": [...],
+    "total_count": 100
+  },
+  "message": "success"
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `orders` | array | List of order objects |
+| `total_count` | integer | Total number of matching orders |
+
+### Order Object
+
+The `Order` object returned in list includes all fields from the deposit/withdrawal responses, plus two additional fields:
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Unique order UUID |
+| `state` | integer | `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
+| `processing_state` | integer | Detailed processing state — see values above |
+| `order_type` | integer | `1`=Deposit, `2`=Withdrawal |
+| `amount` | string | Input amount |
+| `outcome` | string | Amount the user receives after fees |
+| `rate` | string | Exchange rate applied |
+| `original_rate` | string | Exchange rate before buffer adjustment |
+| `currency` | string | `vnd` or `usd` |
+| `total_fee_vnd` | number | Total fee in VND |
+| `fees` | object | `{ service_fee, min_fee }` — fee breakdown in VND |
+| `token_address` | string | Token contract address |
+| `chain_id` | integer | Blockchain network ID |
+| `recipient` | string | Token recipient wallet address |
+| `reference_no` | string | Partner's reference number |
+| `external_id` | string | External order ID from payment provider |
+| `partner_id` | string | Partner identifier |
+| `user_id` | string | User identifier |
+| `code` | integer | Internal status code from payment provider |
+| `provider` | integer | Payment provider identifier |
+| `processing_time` | integer | Time taken to process in milliseconds |
+| `client_ip` | string | IP address of the client that created the order |
+| `callback` | string | Webhook callback URL |
+| `pay_data` | object | Bank payment details (deposit orders only) — `{ bank_account_name, bank_account_number, bank_bin_code, bank_name, bank_short_code, payment_link, qr_code, qr_image, external_id }` |
+| `payment_info` | object | Bank account for VND payout (withdrawal orders only) — `{ bank_id, full_name, account_type, account_number }` |
+| `reference` | object | Internal rate reference data — `{ hs_rate, usdt_rate, token_rate, partner_rate, spread, buffer_rate, buffered_rate_usdt, buffered_rate_partner, addition_share_rate, partner_override_revenue, sim_webhook_id }` |
+| `body` | object | Raw provider response body |
+| `error` | object | Error details if failed — `{ error_code, error_message, details, retryable, source, timestamp }` |
+| `created_at` | object | Order creation timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Last update timestamp — `{ seconds, nanos }` |
+| `expired_at` | object | Order expiry timestamp — `{ seconds, nanos }` |

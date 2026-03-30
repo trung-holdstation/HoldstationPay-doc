@@ -1,0 +1,46 @@
+---
+title: Estimate Outcome
+openapi: POST /api/v1/payments/estimate-outcome
+---
+
+## Request Body
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `amount` | string | ✅ | Input amount to calculate (in VND for deposit, USD for withdrawal) |
+| `order_type` | integer | ✅ | `1` = Deposit (onramp), `2` = Withdrawal (offramp) |
+| `chain_id` | integer | ✅ | Blockchain network ID — see [List Tokens](/api-reference/tokens/list-tokens) |
+| `token_address` | string | ✅ | Token contract address — see [List Tokens](/api-reference/tokens/list-tokens) |
+| `reverse` | boolean | ✅ | If `true`, calculates the required input amount for a desired outcome instead |
+| `buffer` | number | ✅ | Rate buffer override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5% |
+
+## Response
+
+```json
+{
+  "data": {
+    "outcome": "38.5",
+    "rate": 25500.5,
+    "fee_vnd": 5000,
+    "fees": {
+      "service_fee": 5000,
+      "min_fee": 2000
+    }
+  },
+  "message": "success"
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `outcome` | string | Estimated amount the user will receive after fees |
+| `rate` | number | Exchange rate used for this estimate |
+| `fee_vnd` | number | Total estimated fee in VND |
+| `fees` | object | Fee breakdown |
+
+### Fees Object
+
+| Field | Type | Description |
+|---|---|---|
+| `service_fee` | number | Service fee in VND |
+| `min_fee` | number | Minimum fee applied in VND |

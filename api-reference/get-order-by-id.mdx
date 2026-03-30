@@ -1,0 +1,73 @@
+---
+title: Get Order by ID
+openapi: GET /partners/orders/{order_id}
+---
+
+## Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `order_id` | string | ✅ | The unique UUID of the order |
+
+## Response
+
+```json
+{
+  "data": {
+    "order": { ... },
+    "transaction": { ... }
+  },
+  "message": "success"
+}
+```
+
+### Order Object
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Unique order UUID |
+| `state` | integer | `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
+| `processing_state` | integer | `10`–`16` for deposit, `20`–`25` for withdrawal — see [List Orders](/api-reference/orders/list-orders) for full table |
+| `order_type` | integer | `1`=Deposit, `2`=Withdrawal |
+| `amount` | string | Input amount |
+| `outcome` | string | Amount the user receives after fees |
+| `rate` | string | Exchange rate applied |
+| `original_rate` | string | Exchange rate before buffer adjustment |
+| `currency` | string | `vnd` or `usd` |
+| `total_fee_vnd` | number | Total fee in VND |
+| `fees` | object | `{ service_fee, min_fee }` — fee breakdown in VND |
+| `token_address` | string | Token contract address |
+| `chain_id` | integer | Blockchain network ID |
+| `recipient` | string | Token recipient wallet address (deposit) or HPay wallet to send tokens to (withdrawal) |
+| `reference_no` | string | Partner's reference number |
+| `external_id` | string | External order ID from payment provider |
+| `partner_id` | string | Partner identifier |
+| `user_id` | string | User identifier |
+| `code` | integer | Internal status code from payment provider |
+| `provider` | integer | Payment provider identifier |
+| `processing_time` | integer | Time taken to process in milliseconds |
+| `client_ip` | string | IP address of the client that created the order |
+| `callback` | string | Webhook callback URL |
+| `pay_data` | object | Bank payment details (deposit only) — `{ bank_account_name, bank_account_number, bank_bin_code, bank_name, bank_short_code, payment_link, qr_code, qr_image, external_id }` |
+| `payment_info` | object | Bank account for VND payout (withdrawal only) — `{ bank_id, full_name, account_type, account_number }` |
+| `error` | object | Error details if failed — `{ error_code, error_message, details, retryable, source, timestamp }` |
+| `created_at` | object | Order creation timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Last update timestamp — `{ seconds, nanos }` |
+| `expired_at` | object | Order expiry timestamp — `{ seconds, nanos }` |
+
+### Transaction Object
+
+The on-chain transaction associated with the order (populated for completed orders):
+
+| Field | Type | Description |
+|---|---|---|
+| `tx_hash` | string | On-chain transaction hash |
+| `status` | integer | Transaction status |
+| `chain_id` | integer | Blockchain network ID |
+| `block_number` | integer | Block number where the transaction was included |
+| `nonce_used` | integer | Nonce used for the transaction |
+| `order_id` | string | Associated order UUID |
+| `error_message` | string | Error message if the transaction failed |
+| `metadata` | object | Additional metadata — `{ retry_id }` |
+| `body` | object | Raw on-chain transaction data |
+| `created_at` | object | Transaction creation timestamp — `{ seconds, nanos }` |

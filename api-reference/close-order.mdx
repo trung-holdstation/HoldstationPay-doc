@@ -1,0 +1,31 @@
+---
+title: Close Order
+openapi: POST /partners/orders/{order_id}/close
+---
+
+Closes a payment order that is in `Processing` state with a `Pending` processing state. Once closed, the order cannot be paid.
+
+## Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `order_id` | string | ✅ | The unique UUID of the order to close |
+
+## Response
+
+```json
+{
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": ""
+  },
+  "message": "success"
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `success` | boolean | Whether the order was successfully closed |
+| `code` | integer | Response code — `0` indicates success |
+| `error` | string | Error message if the close operation failed |
