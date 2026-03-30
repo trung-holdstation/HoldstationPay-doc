@@ -1,24 +1,18 @@
 ---
-title: Get Order by Reference
-api: GET https://pay-api.holdstation.com/partners/orders/reference-no/{reference_no}
-description: Query a payment order by its partner reference number.
+title: "Get Order by Reference"
+api: "GET https://pay-api.holdstation.com/partners/orders/reference-no/{reference_no}"
+description: "Query a payment order by its partner reference number."
 ---
 
-## Path Parameters
+## Overview
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `reference_no` | string | ✅ | The partner's reference number assigned when creating the order |
+Partners can query a payment order by its reference number to obtain the latest state of the payment order.
 
-## Response Fields
+<ParamField path="reference_no" type="string" required>
+  The partner's reference number assigned when creating the order.
+</ParamField>
 
-Same order fields as [Create Deposit](/api-reference/orders/create-deposit) / [Create Withdrawal](/api-reference/orders/create-withdrawal), wrapped in a list:
-
-| Field | Type | Description |
-|---|---|---|
-| `orders` | array | List of matching order objects (typically one) |
-| `total_count` | integer | Total number of matching orders |
-
+<ResponseExample>
 ```json 200
 {
   "message": "success",
@@ -37,7 +31,7 @@ Same order fields as [Create Deposit](/api-reference/orders/create-deposit) / [C
         "original_rate": "25500",
         "token_address": "0x55d398326f99059ff775485246999027b3197955",
         "chain_id": 56,
-        "recipient": "0xABCD...1234",
+        "recipient": "0xHPAY_WALLET_ADDRESS",
         "reference_no": "WITHDRAW-001",
         "external_id": "ext-001",
         "partner_id": "partner-xyz",
@@ -65,3 +59,20 @@ Same order fields as [Create Deposit](/api-reference/orders/create-deposit) / [C
   }
 }
 ```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing API key"
+}
+```
+</ResponseExample>

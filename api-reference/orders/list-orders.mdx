@@ -1,26 +1,64 @@
 ---
-title: List Orders
-api: GET https://pay-api.holdstation.com/partners/orders
-description: Query a paginated list of payment orders with optional filtering.
+title: "List Orders"
+api: "GET https://pay-api.holdstation.com/partners/orders"
+description: "Query a paginated list of payment orders with optional filtering."
 ---
 
-## Query Parameters
+## Overview
 
-| Parameter | Type | Description |
-|---|---|---|
-| `type` | integer[] | Filter by order type: `1`=Deposit, `2`=Withdrawal |
-| `state` | integer[] | Filter by state: `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
-| `processing_state` | integer[] | Filter by processing state — see table below |
-| `page` | integer | Page number for pagination |
-| `page_size` | integer | Number of results per page |
-| `sort_by` | string | Sort field: `created_at`, `expired_at`, or `amount` |
-| `sort_desc` | boolean | If `true`, sort in descending order |
-| `created_at_from` | integer | Filter orders created after this Unix timestamp (seconds) |
-| `created_at_to` | integer | Filter orders created before this Unix timestamp (seconds) |
-| `expired_at_from` | integer | Filter orders expiring after this Unix timestamp (seconds) |
-| `expired_at_to` | integer | Filter orders expiring before this Unix timestamp (seconds) |
-| `recipient` | string | Filter by token recipient wallet address |
-| `reference_nos` | string[] | Filter by a list of partner reference numbers |
+Partners can query a list of their payment orders with optional filtering by state, type, and date range.
+
+<ParamField query="type" type="integer[]">
+  Filter by order type. `1` = Deposit, `2` = Withdrawal.
+</ParamField>
+
+<ParamField query="state" type="integer[]">
+  Filter by order state. `1` = New, `2` = Processing, `3` = Completed, `4` = Failed, `5` = Closed.
+</ParamField>
+
+<ParamField query="processing_state" type="integer[]">
+  Filter by processing state. Deposit: `10`–`16`. Withdrawal: `20`–`25`. See table below.
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number for pagination.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Number of results per page.
+</ParamField>
+
+<ParamField query="sort_by" type="string">
+  Sort field. Available values: `created_at`, `expired_at`, `amount`.
+</ParamField>
+
+<ParamField query="sort_desc" type="boolean">
+  If `true`, sort in descending order.
+</ParamField>
+
+<ParamField query="created_at_from" type="integer">
+  Filter orders created after this Unix timestamp (seconds).
+</ParamField>
+
+<ParamField query="created_at_to" type="integer">
+  Filter orders created before this Unix timestamp (seconds).
+</ParamField>
+
+<ParamField query="expired_at_from" type="integer">
+  Filter orders expiring after this Unix timestamp (seconds).
+</ParamField>
+
+<ParamField query="expired_at_to" type="integer">
+  Filter orders expiring before this Unix timestamp (seconds).
+</ParamField>
+
+<ParamField query="recipient" type="string">
+  Filter by token recipient wallet address.
+</ParamField>
+
+<ParamField query="reference_nos" type="string[]">
+  Filter by a list of partner reference numbers.
+</ParamField>
 
 ## Processing State Values
 
@@ -40,17 +78,7 @@ description: Query a paginated list of payment orders with optional filtering.
 | `24` | WithdrawFiatConfirmed | VND bank transfer confirmed |
 | `25` | WithdrawFiatFailed | VND bank transfer failed |
 
-## Response Fields
-
-All order fields are the same as [Create Deposit](/api-reference/orders/create-deposit) and [Create Withdrawal](/api-reference/orders/create-withdrawal), plus:
-
-| Field | Type | Description |
-|---|---|---|
-| `orders` | array | List of order objects |
-| `total_count` | integer | Total number of matching orders |
-| `order.reference` | object | Internal rate reference data — `{ hs_rate, usdt_rate, token_rate, partner_rate, spread, buffer_rate, buffered_rate_usdt, buffered_rate_partner, addition_share_rate, partner_override_revenue, sim_webhook_id }` |
-| `order.body` | object | Raw provider response body |
-
+<ResponseExample>
 ```json 200
 {
   "message": "success",
@@ -116,3 +144,20 @@ All order fields are the same as [Create Deposit](/api-reference/orders/create-d
   }
 }
 ```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing API key"
+}
+```
+</ResponseExample>

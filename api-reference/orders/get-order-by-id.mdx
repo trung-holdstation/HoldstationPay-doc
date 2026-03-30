@@ -1,32 +1,18 @@
 ---
-title: Get Order by ID
-api: GET https://pay-api.holdstation.com/partners/orders/{order_id}
-description: Get the full details of a payment order including its on-chain transaction.
+title: "Get Order by ID"
+api: "GET https://pay-api.holdstation.com/partners/orders/{order_id}"
+description: "Get the full details of a payment order including its on-chain transaction."
 ---
 
-## Path Parameters
+## Overview
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `order_id` | string | ✅ | The unique UUID of the order |
+Partners query the details of each payment order by providing the `order_id` to obtain the latest state and proceed with the next business logic.
 
-## Response Fields
+<ParamField path="order_id" type="string" required>
+  The unique UUID of the order.
+</ParamField>
 
-Same order fields as [Create Deposit](/api-reference/orders/create-deposit) / [Create Withdrawal](/api-reference/orders/create-withdrawal), plus the `transaction` object:
-
-| Field | Type | Description |
-|---|---|---|
-| `transaction.tx_hash` | string | On-chain transaction hash |
-| `transaction.status` | integer | Transaction status |
-| `transaction.chain_id` | integer | Blockchain network ID |
-| `transaction.block_number` | integer | Block number where the transaction was included |
-| `transaction.nonce_used` | integer | Nonce used for the transaction |
-| `transaction.order_id` | string | Associated order UUID |
-| `transaction.error_message` | string | Error message if the transaction failed |
-| `transaction.metadata.retry_id` | string | Retry identifier |
-| `transaction.body` | object | Raw on-chain transaction data |
-| `transaction.created_at` | object | Transaction creation time — `{ seconds, nanos }` |
-
+<ResponseExample>
 ```json 200
 {
   "message": "success",
@@ -87,3 +73,20 @@ Same order fields as [Create Deposit](/api-reference/orders/create-deposit) / [C
   }
 }
 ```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing API key"
+}
+```
+</ResponseExample>

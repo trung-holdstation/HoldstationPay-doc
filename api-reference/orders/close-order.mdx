@@ -1,23 +1,18 @@
 ---
-title: Close Order
-api: POST https://pay-api.holdstation.com/partners/orders/{order_id}/close
-description: Close a payment order that is in Processing state. Once closed, the order cannot be paid.
+title: "Close Order"
+api: "POST https://pay-api.holdstation.com/partners/orders/{order_id}/close"
+description: "Close a payment order that is in Processing state with a Pending processing state."
 ---
 
-## Path Parameters
+## Overview
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `order_id` | string | ✅ | The unique UUID of the order to close |
+Partners can close a payment order that is in the `Processing` state and `Pending` processing state by providing the `order_id`. Once closed, the order cannot be paid.
 
-## Response Fields
+<ParamField path="order_id" type="string" required>
+  The unique UUID of the order to close.
+</ParamField>
 
-| Field | Type | Description |
-|---|---|---|
-| `success` | boolean | Whether the order was successfully closed |
-| `code` | integer | Response code — `0` indicates success |
-| `error` | string | Error message if the close operation failed |
-
+<ResponseExample>
 ```json 200
 {
   "message": "success",
@@ -28,3 +23,20 @@ description: Close a payment order that is in Processing state. Once closed, the
   }
 }
 ```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Order cannot be closed in its current state"
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing API key"
+}
+```
+</ResponseExample>

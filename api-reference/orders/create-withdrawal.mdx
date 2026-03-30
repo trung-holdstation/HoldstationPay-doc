@@ -1,65 +1,81 @@
 ---
-title: Create Withdrawal
-api: POST https://pay-api.holdstation.com/partners/orders/withdrawal
-description: Create a new offramp order for a user to sell tokens and receive VND via bank transfer.
+title: "Create Withdrawal"
+api: "POST https://pay-api.holdstation.com/partners/orders/withdrawal"
+description: "Create a new offramp order for a user to sell tokens and receive VND via bank transfer."
 ---
 
-See [Offramp Flow](/guides/offramp-flow) for the full integration guide.
+## Overview
 
-## Request Body
+Partner uses this API to create a new withdrawal order. See [Offramp Flow](/guides/offramp-flow) for the full integration guide.
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `amount` | string | ✅ | Amount to withdraw in USD (or VND if `currency=vnd`) |
-| `currency` | string | ✅ | Currency of the amount: `vnd` or `usd` |
-| `chain_id` | integer | ✅ | Blockchain network ID — see [List Tokens](/api-reference/tokens/list-tokens) |
-| `token_address` | string | ✅ | Token contract address — see [List Tokens](/api-reference/tokens/list-tokens) |
-| `payment_info.bank_id` | integer | ✅ | Bank ID — see [List Banks](/api-reference/banks/list-banks) |
-| `payment_info.full_name` | string | ✅ | Full name of the account holder |
-| `payment_info.account_type` | integer | ✅ | `1` = Bank account number, `2` = ATM card number |
-| `payment_info.account_number` | string | ✅ | Bank account number |
-| `callback` | string | ✅ | HTTPS URL to receive order status webhook notifications |
-| `reference_no` | string | ✅ | Partner's own reference number for tracking |
-| `buffer` | number | ✅ | Rate buffer override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5% |
+<ParamField body="amount" type="string" required>
+  Amount to withdraw in USD (or VND if `currency=vnd`).
+</ParamField>
 
-## Response Fields
+<ParamField body="currency" type="string" required>
+  Currency of the amount: `vnd` or `usd`.
+</ParamField>
 
-| Field | Type | Description |
-|---|---|---|
-| `order.id` | string | Unique order UUID |
-| `order.code` | integer | Internal status code from payment provider |
-| `order.order_type` | integer | `2` = Withdrawal |
-| `order.state` | integer | `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
-| `order.processing_state` | integer | `20`=CryptoPending, `21`=CryptoConfirmed, `22`=CryptoFailed, `23`=FiatPending, `24`=FiatConfirmed, `25`=FiatFailed |
-| `order.amount` | string | Input amount in USD |
-| `order.outcome` | string | VND amount user will receive after fees |
-| `order.currency` | string | `vnd` or `usd` |
-| `order.rate` | string | Exchange rate applied |
-| `order.original_rate` | string | Exchange rate before buffer adjustment |
-| `order.token_address` | string | Token contract address |
-| `order.chain_id` | integer | Blockchain network ID |
-| `order.recipient` | string | Holdstation Pay's wallet address the user must send tokens to |
-| `order.reference_no` | string | Partner's reference number |
-| `order.external_id` | string | External order ID from payment provider |
-| `order.partner_id` | string | Partner identifier |
-| `order.user_id` | string | User identifier |
-| `order.provider` | integer | Payment provider identifier |
-| `order.processing_time` | integer | Time taken to process in milliseconds |
-| `order.client_ip` | string | IP address of the client that created the order |
-| `order.callback` | string | Webhook callback URL |
-| `order.total_fee_vnd` | number | Total fee in VND |
-| `order.fees.service_fee` | number | Service fee in VND |
-| `order.fees.min_fee` | number | Minimum fee in VND |
-| `order.pay_data` | null | `null` for withdrawal orders |
-| `order.payment_info.bank_id` | integer | Bank ID |
-| `order.payment_info.full_name` | string | Account holder name |
-| `order.payment_info.account_type` | integer | `1` = Bank account number, `2` = ATM card number |
-| `order.payment_info.account_number` | string | Bank account number |
-| `order.error` | object | Error details if failed — `{ error_code, error_message, details, retryable, source, timestamp }` |
-| `order.created_at` | object | Order creation time — `{ seconds, nanos }` |
-| `order.updated_at` | object | Last update time — `{ seconds, nanos }` |
-| `order.expired_at` | object | Order expiry time — `{ seconds, nanos }` |
+<ParamField body="chain_id" type="integer" required>
+  Blockchain network ID. See [List Tokens](/api-reference/tokens/list-tokens).
+</ParamField>
 
+<ParamField body="token_address" type="string" required>
+  Token contract address. See [List Tokens](/api-reference/tokens/list-tokens).
+</ParamField>
+
+<ParamField body="payment_info" type="object" required>
+  User's bank account details to receive VND.
+
+  <Expandable title="payment_info">
+    <ParamField body="bank_id" type="integer" required>
+      Bank ID. See [List Banks](/api-reference/banks/list-banks).
+    </ParamField>
+    <ParamField body="full_name" type="string" required>
+      Full name of the account holder.
+    </ParamField>
+    <ParamField body="account_type" type="integer" required>
+      `1` = Bank account number, `2` = ATM card number.
+    </ParamField>
+    <ParamField body="account_number" type="string" required>
+      Bank account number.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="callback" type="string" required>
+  HTTPS URL to receive order status webhook notifications.
+</ParamField>
+
+<ParamField body="reference_no" type="string" required>
+  Partner's own reference number for tracking.
+</ParamField>
+
+<ParamField body="buffer" type="number" required>
+  Optional buffer rate override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5%.
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "amount": "100",
+  "currency": "usd",
+  "chain_id": 56,
+  "token_address": "0x55d398326f99059ff775485246999027b3197955",
+  "payment_info": {
+    "bank_id": 42,
+    "full_name": "NGUYEN VAN A",
+    "account_type": 1,
+    "account_number": "0123456789"
+  },
+  "callback": "https://yourapp.com/api/webhooks/payment",
+  "reference_no": "WITHDRAW-001",
+  "buffer": 0.005
+}
+```
+</RequestExample>
+
+<ResponseExample>
 ```json 200
 {
   "message": "success",
@@ -77,7 +93,7 @@ See [Offramp Flow](/guides/offramp-flow) for the full integration guide.
       "original_rate": "25500",
       "token_address": "0x55d398326f99059ff775485246999027b3197955",
       "chain_id": 56,
-      "recipient": "0xABCD...1234",
+      "recipient": "0xHPAY_WALLET_ADDRESS",
       "reference_no": "WITHDRAW-001",
       "external_id": "ext-001",
       "partner_id": "partner-xyz",
@@ -103,3 +119,20 @@ See [Offramp Flow](/guides/offramp-flow) for the full integration guide.
   }
 }
 ```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing API key"
+}
+```
+</ResponseExample>

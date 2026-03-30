@@ -1,43 +1,38 @@
 ---
-title: List Tokens
-api: GET https://pay-api.holdstation.com/api/v1/tokens
-description: Retrieve the list of tokens supported for buy/sell operations. Use this to get valid chain IDs and token addresses for creating orders.
+title: "List Tokens"
+api: "GET https://pay-api.holdstation.com/api/v1/tokens"
+description: "Retrieve the list of tokens supported for buy/sell operations."
 ---
 
-## Query Parameters
+## Overview
 
-| Parameter | Type | Description |
-|---|---|---|
-| `chain_id` | integer | Filter by blockchain network ID |
-| `active` | boolean | Filter by active status |
-| `page` | integer | Page number for pagination |
-| `page_size` | integer | Number of results per page |
-| `symbols` | string[] | Filter by token symbols (e.g. `USDT`) |
-| `no_limit` | boolean | If `true`, returns all tokens without pagination |
+Partners use this API to retrieve the list of tokens supported for buy/sell operations in the Holdstation Pay system. Use this to obtain valid `chain_id` and `token_address` values for creating orders.
 
-## Response Fields
+<ParamField query="chain_id" type="integer">
+  Filter by blockchain network ID.
+</ParamField>
 
-| Field | Type | Description |
-|---|---|---|
-| `tokens` | array | List of token objects |
-| `tokens[].id` | string | Unique token UUID |
-| `tokens[].name` | string | Token full name (e.g. `Tether USD`) |
-| `tokens[].symbol` | string | Token symbol (e.g. `USDT`) |
-| `tokens[].name_override` | string | Display name including chain (e.g. `Tether USD (BSC)`) |
-| `tokens[].address` | string | Token contract address on-chain |
-| `tokens[].chain_id` | integer | Blockchain network ID |
-| `tokens[].decimals` | integer | Number of decimal places for the token |
-| `tokens[].price` | string | Current token price in USD |
-| `tokens[].price_change_24h` | string | 24-hour price change percentage |
-| `tokens[].image` | string | URL to the token logo image |
-| `tokens[].active` | boolean | Whether the token is currently active for trading |
-| `tokens[].withdrawal_contract` | string | Withdrawal contract address (zero address if not applicable) |
-| `tokens[].created_at` | object | Record creation time — `{ seconds, nanos }` |
-| `tokens[].updated_at` | object | Record last updated time — `{ seconds, nanos }` |
-| `page` | integer | Current page number |
-| `page_size` | integer | Number of items per page |
-| `total_count` | integer | Total number of tokens available |
+<ParamField query="active" type="boolean">
+  Filter by active status.
+</ParamField>
 
+<ParamField query="page" type="integer">
+  Page number for pagination.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Number of results per page.
+</ParamField>
+
+<ParamField query="symbols" type="string[]">
+  Filter by token symbols (e.g. `USDT`).
+</ParamField>
+
+<ParamField query="no_limit" type="boolean">
+  If `true`, returns all tokens without pagination.
+</ParamField>
+
+<ResponseExample>
 ```json 200
 {
   "message": "success",
@@ -66,3 +61,12 @@ description: Retrieve the list of tokens supported for buy/sell operations. Use 
   }
 }
 ```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+</ResponseExample>

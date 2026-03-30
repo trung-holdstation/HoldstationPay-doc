@@ -1,46 +1,55 @@
 ---
-title: Verify Bank Account
-api: POST https://pay-api.holdstation.com/api/v1/payment-methods/verify
-description: Verify a bank account number and retrieve account holder details.
+title: "Verify Bank Account"
+api: "POST https://pay-api.holdstation.com/api/v1/payment-methods/verify"
+description: "Verify a bank account number and retrieve account holder information."
 ---
 
-## Request Body
+## Overview
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `bin_code` | string | ✅ | Bank Identification Number (BIN) code — see [List Banks](/api-reference/banks/list-banks) |
-| `account_number` | string | ✅ | Bank account number to verify |
+Partners can verify bank account numbers to confirm the account holder's name before initiating withdrawals.
 
-## Response Fields
+<ParamField body="bin_code" type="string" required>
+  Bank Identification Number (BIN) code.
+</ParamField>
 
-| Field | Type | Description |
-|---|---|---|
-| `bank` | object | Bank information |
-| `bank.id` | integer | Unique bank ID |
-| `bank.bank_name` | string | Full bank name |
-| `bank.short_name` | string | Bank short name / abbreviation |
-| `bank.bin_code` | string | Bank Identification Number (BIN) code |
-| `bank.image` | string | URL to the bank logo image |
-| `bank.created_at` | object | Record creation time — `{ seconds, nanos }` |
-| `bank.updated_at` | object | Record last updated time — `{ seconds, nanos }` |
-| `account_name` | string | Account holder's full name |
-| `account_number` | string | Verified bank account number |
+<ParamField body="account_number" type="string" required>
+  Bank account number to verify.
+</ParamField>
 
+<RequestExample>
+```json
+{
+  "bin_code": "970436",
+  "account_number": "1234567890"
+}
+```
+</RequestExample>
+
+<ResponseExample>
 ```json 200
 {
   "message": "success",
   "data": {
     "bank": {
-      "id": 42,
-      "bank_name": "Tien Phong Commercial Joint Stock Bank",
-      "short_name": "TPBank",
-      "bin_code": "970423",
-      "image": "https://static.holdstation.com/banks/tpbank.png",
+      "id": 1,
+      "bank_name": "Vietcombank",
+      "short_name": "VCB",
+      "bin_code": "970436",
+      "image": "https://example.com/vcb.png",
       "created_at": { "seconds": 1700000000, "nanos": 0 },
       "updated_at": { "seconds": 1700000000, "nanos": 0 }
     },
     "account_name": "NGUYEN VAN A",
-    "account_number": "0123456789"
+    "account_number": "1234567890"
   }
 }
 ```
+
+```json 400
+{
+  "error": "invalid account",
+  "error_code": "BAD_REQUEST",
+  "message": "Account not found"
+}
+```
+</ResponseExample>

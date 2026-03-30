@@ -1,67 +1,61 @@
 ---
-title: Create Deposit
-api: POST https://pay-api.holdstation.com/partners/orders/deposit
-description: Create a new onramp order for a user to buy tokens by depositing VND via bank transfer.
+title: "Create Deposit"
+api: "POST https://pay-api.holdstation.com/partners/orders/deposit"
+description: "Create a new onramp order for a user to buy tokens by depositing VND via bank transfer."
 ---
 
-See [Onramp Flow](/guides/onramp-flow) for the full integration guide.
+## Overview
 
-## Request Body
+Partner uses this API to create a new on-chain token transfer order. See [Onramp Flow](/guides/onramp-flow) for the full integration guide.
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `amount` | string | ✅ | Amount to deposit in VND (or USD if `currency=usd`) |
-| `currency` | string | ✅ | Currency of the amount: `vnd` or `usd` |
-| `chain_id` | integer | ✅ | Blockchain network ID — see [List Tokens](/api-reference/tokens/list-tokens) |
-| `token_address` | string | ✅ | Token contract address — see [List Tokens](/api-reference/tokens/list-tokens) |
-| `recipient` | string | ✅ | User's wallet address to receive the tokens |
-| `callback` | string | ✅ | HTTPS URL to receive order status webhook notifications |
-| `reference_no` | string | ✅ | Partner's own reference number for tracking |
-| `buffer` | number | ✅ | Rate buffer override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5% |
+<ParamField body="amount" type="string" required>
+  Amount to deposit in VND (or USD if `currency=usd`).
+</ParamField>
 
-## Response Fields
+<ParamField body="currency" type="string" required>
+  Currency of the amount: `vnd` or `usd`.
+</ParamField>
 
-| Field | Type | Description |
-|---|---|---|
-| `order.id` | string | Unique order UUID |
-| `order.code` | integer | Internal status code from payment provider |
-| `order.order_type` | integer | `1` = Deposit |
-| `order.state` | integer | `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
-| `order.processing_state` | integer | `10`=FiatPending, `11`=FiatConfirmed, `12`=FiatFailed, `13`=CryptoPending, `14`=CryptoConfirmed, `15`=CryptoFailed, `16`=FiatWaitingForApproval |
-| `order.amount` | string | Input amount in VND |
-| `order.outcome` | string | Token amount user will receive after fees |
-| `order.currency` | string | `vnd` or `usd` |
-| `order.rate` | string | Exchange rate applied |
-| `order.original_rate` | string | Exchange rate before buffer adjustment |
-| `order.token_address` | string | Token contract address |
-| `order.chain_id` | integer | Blockchain network ID |
-| `order.recipient` | string | User's wallet address to receive the tokens |
-| `order.reference_no` | string | Partner's reference number |
-| `order.external_id` | string | External order ID from payment provider |
-| `order.partner_id` | string | Partner identifier |
-| `order.user_id` | string | User identifier |
-| `order.provider` | integer | Payment provider identifier |
-| `order.processing_time` | integer | Time taken to process in milliseconds |
-| `order.client_ip` | string | IP address of the client that created the order |
-| `order.callback` | string | Webhook callback URL |
-| `order.total_fee_vnd` | number | Total fee in VND |
-| `order.fees.service_fee` | number | Service fee in VND |
-| `order.fees.min_fee` | number | Minimum fee in VND |
-| `order.pay_data.bank_account_name` | string | Beneficiary name on the bank account |
-| `order.pay_data.bank_account_number` | string | Bank account number to transfer to |
-| `order.pay_data.bank_bin_code` | string | Bank BIN/routing code |
-| `order.pay_data.bank_name` | string | Full bank name |
-| `order.pay_data.bank_short_code` | string | Bank short code |
-| `order.pay_data.payment_link` | string | Deep-link URL to open the user's banking app |
-| `order.pay_data.qr_code` | string | VietQR code string |
-| `order.pay_data.qr_image` | string | Base64-encoded QR code image |
-| `order.pay_data.external_id` | string | Payment provider's internal reference ID |
-| `order.payment_info` | null | `null` for deposit orders |
-| `order.error` | object | Error details if failed — `{ error_code, error_message, details, retryable, source, timestamp }` |
-| `order.created_at` | object | Order creation time — `{ seconds, nanos }` |
-| `order.updated_at` | object | Last update time — `{ seconds, nanos }` |
-| `order.expired_at` | object | Order expiry time — `{ seconds, nanos }` |
+<ParamField body="chain_id" type="integer" required>
+  Blockchain network ID. See [List Tokens](/api-reference/tokens/list-tokens).
+</ParamField>
 
+<ParamField body="token_address" type="string" required>
+  Token contract address. See [List Tokens](/api-reference/tokens/list-tokens).
+</ParamField>
+
+<ParamField body="recipient" type="string" required>
+  User's wallet address to receive the tokens.
+</ParamField>
+
+<ParamField body="callback" type="string" required>
+  HTTPS URL to receive order status webhook notifications.
+</ParamField>
+
+<ParamField body="reference_no" type="string" required>
+  Partner's own reference number for tracking.
+</ParamField>
+
+<ParamField body="buffer" type="number" required>
+  Optional buffer rate override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5%.
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "amount": "2575000",
+  "currency": "vnd",
+  "chain_id": 56,
+  "token_address": "0x55d398326f99059ff775485246999027b3197955",
+  "recipient": "0xUSER_WALLET_ADDRESS",
+  "callback": "https://yourapp.com/api/webhooks/payment",
+  "reference_no": "DEPOSIT-001",
+  "buffer": 0.005
+}
+```
+</RequestExample>
+
+<ResponseExample>
 ```json 200
 {
   "message": "success",
@@ -110,3 +104,20 @@ See [Onramp Flow](/guides/onramp-flow) for the full integration guide.
   }
 }
 ```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing API key"
+}
+```
+</ResponseExample>
