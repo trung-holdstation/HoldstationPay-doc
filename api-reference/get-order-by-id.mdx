@@ -13,11 +13,62 @@ openapi: GET /partners/orders/{order_id}
 
 ```json
 {
+  "message": "success",
   "data": {
-    "order": { ... },
-    "transaction": { ... }
-  },
-  "message": "success"
+    "order": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "code": 100001,
+      "order_type": 1,
+      "state": 3,
+      "processing_state": 14,
+      "amount": "2575000",
+      "outcome": "100",
+      "currency": "vnd",
+      "rate": "25750",
+      "original_rate": "25500",
+      "token_address": "0x55d398326f99059ff775485246999027b3197955",
+      "chain_id": 56,
+      "recipient": "0xUSER_WALLET_ADDRESS",
+      "reference_no": "DEPOSIT-001",
+      "external_id": "ext-001",
+      "partner_id": "partner-xyz",
+      "user_id": "user-abc",
+      "provider": 1,
+      "processing_time": 12400,
+      "client_ip": "127.0.0.1",
+      "callback": "https://yourapp.com/api/webhooks/payment",
+      "fees": { "service_fee": 5000, "min_fee": 2000 },
+      "total_fee_vnd": 5000,
+      "pay_data": {
+        "bank_account_name": "CONG TY HOLDSTATION",
+        "bank_account_number": "9876543210",
+        "bank_bin_code": "970423",
+        "bank_name": "Tien Phong Bank",
+        "bank_short_code": "TPBank",
+        "payment_link": "https://dl.vietqr.io/pay?...",
+        "qr_code": "00020101021238...",
+        "qr_image": "data:image/png;base64,...",
+        "external_id": "hpay-ext-001"
+      },
+      "payment_info": null,
+      "error": null,
+      "created_at": { "seconds": 1700000000, "nanos": 0 },
+      "updated_at": { "seconds": 1700012400, "nanos": 0 },
+      "expired_at": { "seconds": 1700003600, "nanos": 0 }
+    },
+    "transaction": {
+      "tx_hash": "0xabc123...",
+      "status": 1,
+      "chain_id": 56,
+      "block_number": 34500000,
+      "nonce_used": 42,
+      "order_id": "550e8400-e29b-41d4-a716-446655440000",
+      "error_message": "",
+      "metadata": { "retry_id": "" },
+      "body": {},
+      "created_at": { "seconds": 1700012400, "nanos": 0 }
+    }
+  }
 }
 ```
 

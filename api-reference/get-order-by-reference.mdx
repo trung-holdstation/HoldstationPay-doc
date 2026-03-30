@@ -13,11 +13,48 @@ openapi: GET /partners/orders/reference-no/{reference_no}
 
 ```json
 {
+  "message": "success",
   "data": {
-    "orders": [...],
+    "orders": [
+      {
+        "id": "660e8400-e29b-41d4-a716-446655440001",
+        "code": 100002,
+        "order_type": 2,
+        "state": 3,
+        "processing_state": 24,
+        "amount": "100",
+        "outcome": "2575000",
+        "currency": "usd",
+        "rate": "25750",
+        "original_rate": "25500",
+        "token_address": "0x55d398326f99059ff775485246999027b3197955",
+        "chain_id": 56,
+        "recipient": "0xABCD...1234",
+        "reference_no": "WITHDRAW-001",
+        "external_id": "ext-001",
+        "partner_id": "partner-xyz",
+        "user_id": "user-abc",
+        "provider": 1,
+        "processing_time": 18200,
+        "client_ip": "127.0.0.1",
+        "callback": "https://yourapp.com/api/webhooks/payment",
+        "fees": { "service_fee": 0.01, "min_fee": 5000 },
+        "total_fee_vnd": 25750,
+        "pay_data": null,
+        "payment_info": {
+          "bank_id": 42,
+          "full_name": "NGUYEN VAN A",
+          "account_type": 1,
+          "account_number": "0123456789"
+        },
+        "error": null,
+        "created_at": { "seconds": 1700000000, "nanos": 0 },
+        "updated_at": { "seconds": 1700018200, "nanos": 0 },
+        "expired_at": { "seconds": 1700003600, "nanos": 0 }
+      }
+    ],
     "total_count": 1
-  },
-  "message": "success"
+  }
 }
 ```
 

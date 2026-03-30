@@ -15,13 +15,23 @@ openapi: GET /api/v1/banks
 
 ```json
 {
+  "message": "success",
   "data": {
-    "banks": [...],
+    "banks": [
+      {
+        "id": 42,
+        "bank_name": "Tien Phong Commercial Joint Stock Bank",
+        "short_name": "TPBank",
+        "bin_code": "970423",
+        "image": "https://static.holdstation.com/banks/tpbank.png",
+        "created_at": { "seconds": 1700000000, "nanos": 0 },
+        "updated_at": { "seconds": 1700000000, "nanos": 0 }
+      }
+    ],
     "page": 1,
     "page_size": 20,
     "total_count": 50
-  },
-  "message": "success"
+  }
 }
 ```
 

@@ -1,0 +1,43 @@
+---
+title: Create Wholesale Application
+openapi: POST /api/v1/wholesale/applications
+---
+
+Submits a wholesale application for the authenticated partner. Wholesale partners receive custom exchange rates.
+
+## Request Body
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `default_rate` | number | ✅ | Requested default wholesale rate (e.g. `0.01` = 1%) |
+
+## Response
+
+```json
+{
+  "message": "success",
+  "data": {
+    "application": {
+      "id": "app-uuid-001",
+      "user_id": "partner-xyz",
+      "status": 0,
+      "default_rate": 0.01,
+      "submitted_at": { "seconds": 1700000000, "nanos": 0 },
+      "reviewed_at": { "seconds": 0, "nanos": 0 },
+      "updated_at": { "seconds": 1700000000, "nanos": 0 }
+    }
+  }
+}
+```
+
+### Application Object
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Unique application UUID |
+| `user_id` | string | User/partner identifier who submitted the application |
+| `status` | integer | Application status — `0`=Pending, `1`=Approved, `2`=Rejected |
+| `default_rate` | number | Requested default wholesale rate |
+| `submitted_at` | object | Submission timestamp — `{ seconds, nanos }` |
+| `reviewed_at` | object | Review timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Last update timestamp — `{ seconds, nanos }` |

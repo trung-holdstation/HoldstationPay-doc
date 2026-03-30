@@ -14,12 +14,20 @@ openapi: POST /api/v1/payment-methods/verify
 
 ```json
 {
+  "message": "success",
   "data": {
-    "bank": { ... },
+    "bank": {
+      "id": 42,
+      "bank_name": "Tien Phong Commercial Joint Stock Bank",
+      "short_name": "TPBank",
+      "bin_code": "970423",
+      "image": "https://static.holdstation.com/banks/tpbank.png",
+      "created_at": { "seconds": 1700000000, "nanos": 0 },
+      "updated_at": { "seconds": 1700000000, "nanos": 0 }
+    },
     "account_name": "NGUYEN VAN A",
     "account_number": "0123456789"
-  },
-  "message": "success"
+  }
 }
 ```
 
