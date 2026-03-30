@@ -1,62 +1,72 @@
 ---
-title: "List Tokens"
-api: "GET https://pay-api.holdstation.com/api/v1/tokens"
-description: "Retrieve the list of tokens supported for buy/sell operations."
+title: List Tokens
+openapi: GET /api/v1/tokens
 ---
 
-## Overview
+## Query Parameters
 
-Partners use this API to retrieve the list of tokens supported for buy/sell operations in the Holdstation Pay system. This API can also be used to obtain the corresponding `chain_id` required for creating an order.
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `chain_id` | integer | No | Filter by blockchain network ID |
+| `active` | boolean | No | Filter by active status |
+| `page` | integer | No | Page number for pagination |
+| `page_size` | integer | No | Number of results per page |
+| `symbols` | string[] | No | Filter by token symbols (e.g. `USDT`) |
+| `no_limit` | boolean | No | If `true`, returns all tokens without pagination |
 
-<ParamField query="chain_id" type="integer">
-  Filter tokens by blockchain network ID.
-</ParamField>
+## Response
 
-<ParamField query="active" type="boolean">
-  Filter by active status.
-</ParamField>
-
-<ParamField query="page" type="integer">
-  Page number for pagination.
-</ParamField>
-
-<ParamField query="page_size" type="integer">
-  Number of results per page.
-</ParamField>
-
-<ParamField query="symbols" type="string[]">
-  Filter by token symbols (e.g., `USDT`).
-</ParamField>
-
-<ParamField query="no_limit" type="boolean">
-  Set to `true` to return all results without pagination.
-</ParamField>
-
-<ResponseExample>
-```json 200
+```json
 {
   "message": "success",
   "data": {
     "tokens": [
       {
-        "id": "d696d87f-8f41-4cee-9a90-4e99f7df4851",
-        "chain_id": 1,
-        "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+        "id": "ba8618c3-fadb-4d9d-b75f-f14e6acd6110",
         "name": "Tether USD",
         "symbol": "USDT",
-        "decimals": 6,
+        "name_override": "Tether USD (BSC)",
+        "address": "0x55d398326f99059ff775485246999027b3197955",
+        "chain_id": 56,
+        "decimals": 18,
         "price": "1",
         "price_change_24h": "0",
-        "name_override": "Tether USD (ETH)",
-        "image": "https://static.holdstation.com/tokens/chain/999999/0x55d398326f99059ff775485246999027b3197955.png",
+        "image": "https://static.holdstation.com/tokens/usdt.png",
         "active": true,
-        "withdrawal_contract": "0x0000000000000000000000000000000000000000"
+        "withdrawal_contract": "0x0000000000000000000000000000000000000000",
+        "created_at": { "seconds": 1751951680, "nanos": 676721000 },
+        "updated_at": { "seconds": 1751951680, "nanos": 676721000 }
       }
     ],
     "page": 1,
     "page_size": 20,
-    "total_count": 5
+    "total_count": 10
   }
 }
 ```
-</ResponseExample>
+
+| Field | Type | Description |
+|---|---|---|
+| `tokens` | array | List of token objects |
+| `page` | integer | Current page number |
+| `page_size` | integer | Number of items per page |
+| `total_count` | integer | Total number of tokens available |
+
+### Token Object
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Unique token UUID |
+| `name` | string | Token full name (e.g. `Tether USD`) |
+| `symbol` | string | Token symbol (e.g. `USDT`) |
+| `name_override` | string | Display name including chain (e.g. `Tether USD (BSC)`) |
+| `address` | string | Token contract address on-chain |
+| `chain_id` | integer | Blockchain network ID |
+| `decimals` | integer | Number of decimal places for the token |
+| `price` | string | Current token price in USD |
+| `price_change_24h` | string | 24-hour price change percentage |
+| `image` | string | URL to the token logo image |
+| `active` | boolean | Whether the token is currently active for trading |
+| `withdrawal_contract` | string | Withdrawal contract address (zero address if not applicable) |
+| `created_at` | object | Record creation timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Record last updated timestamp — `{ seconds, nanos }` |

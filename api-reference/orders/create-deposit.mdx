@@ -1,62 +1,26 @@
 ---
-title: "Create Deposit Order"
-api: "POST https://pay-api.holdstation.com/partners/orders/deposit"
-description: "Create a new deposit (onramp) order to buy tokens with VND."
+title: Create Deposit
+openapi: POST /partners/orders/deposit
 ---
 
-## Overview
+Creates a new onramp order for a user to buy tokens by depositing VND via bank transfer. See [Onramp Flow](/guides/onramp-flow) for the full integration guide.
 
-Partner uses this API to create a new on-chain token transfer order. The response includes processing status, transaction fee, exchange rate, order creation and expiration time, order ID, and payment information including a QR code for the user.
+## Request Body
 
-<ParamField body="amount" type="string" required>
-  Amount to deposit in VND.
-</ParamField>
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `amount` | string | ✅ | Amount to deposit (in VND or USD depending on `currency`) |
+| `currency` | string | ✅ | Currency of the amount: `vnd` or `usd` |
+| `chain_id` | integer | ✅ | Blockchain network ID — see [List Tokens](/api-reference/tokens/list-tokens) |
+| `token_address` | string | ✅ | Token contract address — see [List Tokens](/api-reference/tokens/list-tokens) |
+| `recipient` | string | ✅ | User's wallet address to receive the tokens |
+| `callback` | string | ✅ | HTTPS URL to receive order status webhook notifications |
+| `reference_no` | string | ✅ | Partner's own reference number for tracking |
+| `buffer` | number | ✅ | Rate buffer override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5% |
 
-<ParamField body="currency" type="string" required>
-  Currency of the amount: `vnd` or `usd`.
-</ParamField>
+## Response
 
-<ParamField body="chain_id" type="integer" required>
-  Blockchain network ID.
-</ParamField>
-
-<ParamField body="token_address" type="string" required>
-  Token contract address.
-</ParamField>
-
-<ParamField body="recipient" type="string" required>
-  Recipient wallet address for the tokens.
-</ParamField>
-
-<ParamField body="callback" type="string" required>
-  Callback URL for receiving deposit updates via [webhooks](/guides/webhooks).
-</ParamField>
-
-<ParamField body="reference_no" type="string" required>
-  Reference number for the deposit.
-</ParamField>
-
-<ParamField body="buffer" type="number" required>
-  Optional buffer rate override (fractional). If set, effective buffer = max(override, configured buffer). Example: `0.005` = 0.5%.
-</ParamField>
-
-<RequestExample>
 ```json
-{
-  "amount": "1000000",
-  "currency": "vnd",
-  "chain_id": 56,
-  "token_address": "0x55d398326f99059ff775485246999027b3197955",
-  "recipient": "0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E",
-  "callback": "https://yourapp.com/api/webhooks/payment",
-  "reference_no": "ORDER-001",
-  "buffer": 0.005
-}
-```
-</RequestExample>
-
-<ResponseExample>
-```json 200
 {
   "message": "success",
   "data": {
@@ -66,30 +30,114 @@ Partner uses this API to create a new on-chain token transfer order. The respons
       "order_type": 1,
       "state": 2,
       "processing_state": 10,
-      "amount": "1000000",
+      "amount": "2575000",
+      "outcome": "100",
       "currency": "vnd",
-      "rate": "25850",
+      "rate": "25750",
+      "original_rate": "25500",
       "token_address": "0x55d398326f99059ff775485246999027b3197955",
       "chain_id": 56,
-      "recipient": "0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E",
-      "reference_no": "ORDER-001",
-      "pay_data": {
-        "bank_name": "Vietcombank",
-        "bank_bin_code": "970436",
-        "bank_account_name": "HOLDSTATION",
-        "bank_account_number": "1234567890",
-        "qr_code": "data:image/png;base64,...",
-        "qr_image": "https://...",
-        "payment_link": "https://..."
-      },
+      "recipient": "0xUSER_WALLET_ADDRESS",
+      "reference_no": "DEPOSIT-001",
+      "external_id": "ext-001",
+      "partner_id": "partner-xyz",
+      "user_id": "user-abc",
+      "provider": 1,
+      "processing_time": 0,
+      "client_ip": "127.0.0.1",
+      "callback": "https://yourapp.com/api/webhooks/payment",
       "fees": {
-        "service_fee": 0.01,
-        "min_fee": 5000
+        "service_fee": 5000,
+        "min_fee": 2000
       },
-      "total_fee_vnd": 10000,
-      "callback": "https://yourapp.com/api/webhooks/payment"
+      "total_fee_vnd": 5000,
+      "pay_data": {
+        "bank_account_name": "CONG TY HOLDSTATION",
+        "bank_account_number": "9876543210",
+        "bank_bin_code": "970423",
+        "bank_name": "Tien Phong Bank",
+        "bank_short_code": "TPBank",
+        "payment_link": "https://dl.vietqr.io/pay?...",
+        "qr_code": "00020101021238...",
+        "qr_image": "data:image/png;base64,...",
+        "external_id": "hpay-ext-001"
+      },
+      "payment_info": null,
+      "error": null,
+      "created_at": { "seconds": 1700000000, "nanos": 0 },
+      "updated_at": { "seconds": 1700000000, "nanos": 0 },
+      "expired_at": { "seconds": 1700003600, "nanos": 0 }
     }
   }
 }
 ```
-</ResponseExample>
+
+### Order Object
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Unique order UUID |
+| `state` | integer | `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
+| `processing_state` | integer | `10`=FiatPending, `11`=FiatConfirmed, `12`=FiatFailed, `13`=CryptoPending, `14`=CryptoConfirmed, `15`=CryptoFailed, `16`=FiatWaitingForApproval |
+| `order_type` | integer | `1` = Deposit |
+| `amount` | string | Input amount in VND |
+| `outcome` | string | Token amount the user will receive after fees |
+| `rate` | string | Exchange rate applied to this order |
+| `original_rate` | string | Exchange rate before buffer adjustment |
+| `currency` | string | Currency of the amount (`vnd` or `usd`) |
+| `total_fee_vnd` | number | Total fee in VND |
+| `fees` | object | Fee breakdown — see [Fees](#fees) |
+| `token_address` | string | Token contract address |
+| `chain_id` | integer | Blockchain network ID |
+| `recipient` | string | User's wallet address to receive the tokens |
+| `reference_no` | string | Partner's reference number |
+| `external_id` | string | External order ID from payment provider |
+| `partner_id` | string | Partner identifier |
+| `user_id` | string | User identifier |
+| `code` | integer | Internal status code from payment provider |
+| `provider` | integer | Payment provider identifier |
+| `processing_time` | integer | Time taken to process in milliseconds |
+| `client_ip` | string | IP address of the client that created the order |
+| `callback` | string | Webhook callback URL |
+| `pay_data` | object | Bank payment details to display to the user — see [PayData](#paydata) |
+| `payment_info` | object | `null` for deposit orders |
+| `error` | object | Error details if failed — see [OrderError](#ordererror) |
+| `created_at` | object | Order creation timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Last update timestamp — `{ seconds, nanos }` |
+| `expired_at` | object | Order expiry timestamp — `{ seconds, nanos }` |
+
+### PayData
+
+Bank payment details the partner should display to the user:
+
+| Field | Type | Description |
+|---|---|---|
+| `bank_account_name` | string | Beneficiary name on the bank account |
+| `bank_account_number` | string | Bank account number to transfer to |
+| `bank_bin_code` | string | Bank BIN/routing code |
+| `bank_name` | string | Full bank name |
+| `bank_short_code` | string | Bank short code |
+| `payment_link` | string | Deep-link URL to open the user's banking app |
+| `qr_code` | string | VietQR code string |
+| `qr_image` | string | Base64-encoded QR code image |
+| `external_id` | string | Payment provider's internal reference ID |
+
+### Fees
+
+| Field | Type | Description |
+|---|---|---|
+| `service_fee` | number | Service fee in VND |
+| `min_fee` | number | Minimum fee applied in VND |
+
+### OrderError
+
+Populated when `state = 4` (Failed):
+
+| Field | Type | Description |
+|---|---|---|
+| `error_code` | string | Machine-readable error code |
+| `error_message` | string | Human-readable error description |
+| `details` | string | Additional error details |
+| `retryable` | boolean | Whether the operation can be retried |
+| `source` | integer | Internal error source identifier |
+| `timestamp` | string | When the error occurred |

@@ -1,37 +1,29 @@
 ---
-title: "List Banks"
-api: "GET https://pay-api.holdstation.com/api/v1/banks"
-description: "Retrieve the list of banks supported for fiat withdrawals."
+title: List Banks
+openapi: GET /api/v1/banks
 ---
 
-## Overview
+## Query Parameters
 
-Partners can retrieve the list of banks supported for fiat withdrawals. This endpoint is publicly accessible and does not require authentication.
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `page` | integer | No | Page number for pagination |
+| `size` | integer | No | Number of results per page |
+| `ids` | integer[] | No | Filter by specific bank IDs |
 
-<ParamField query="page" type="integer">
-  Page number for pagination.
-</ParamField>
+## Response
 
-<ParamField query="size" type="integer">
-  Number of results per page.
-</ParamField>
-
-<ParamField query="ids" type="integer[]">
-  Filter by specific bank IDs.
-</ParamField>
-
-<ResponseExample>
-```json 200
+```json
 {
   "message": "success",
   "data": {
     "banks": [
       {
-        "id": 1,
-        "bank_name": "Vietcombank",
-        "short_name": "VCB",
-        "bin_code": "970436",
-        "image": "https://example.com/vcb.png",
+        "id": 42,
+        "bank_name": "Tien Phong Commercial Joint Stock Bank",
+        "short_name": "TPBank",
+        "bin_code": "970423",
+        "image": "https://static.holdstation.com/banks/tpbank.png",
         "created_at": { "seconds": 1700000000, "nanos": 0 },
         "updated_at": { "seconds": 1700000000, "nanos": 0 }
       }
@@ -43,11 +35,21 @@ Partners can retrieve the list of banks supported for fiat withdrawals. This end
 }
 ```
 
-```json 400
-{
-  "error": "invalid request",
-  "error_code": "BAD_REQUEST",
-  "message": "Invalid parameters"
-}
-```
-</ResponseExample>
+| Field | Type | Description |
+|---|---|---|
+| `banks` | array | List of bank objects |
+| `page` | integer | Current page number |
+| `page_size` | integer | Number of items per page |
+| `total_count` | integer | Total number of banks available |
+
+### Bank Object
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | integer | Unique bank ID |
+| `bank_name` | string | Full bank name |
+| `short_name` | string | Bank short name / abbreviation |
+| `bin_code` | string | Bank Identification Number (BIN) code |
+| `image` | string | URL to the bank logo image |
+| `created_at` | object | Record creation timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Record last updated timestamp — `{ seconds, nanos }` |

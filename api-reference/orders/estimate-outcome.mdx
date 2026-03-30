@@ -1,66 +1,46 @@
 ---
-title: "Estimate Outcome"
-api: "POST https://pay-api.holdstation.com/api/v1/payments/estimate-outcome"
-description: "Calculate the final amount for a given input amount and order type."
+title: Estimate Outcome
+openapi: POST /api/v1/payments/estimate-outcome
 ---
 
-## Overview
+## Request Body
 
-Partners can calculate the final amount for a given input amount and order type. Set `reverse=true` to calculate the required input amount for a desired outcome.
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `amount` | string | ✅ | Input amount to calculate (in VND for deposit, USD for withdrawal) |
+| `order_type` | integer | ✅ | `1` = Deposit (onramp), `2` = Withdrawal (offramp) |
+| `chain_id` | integer | ✅ | Blockchain network ID — see [List Tokens](/api-reference/tokens/list-tokens) |
+| `token_address` | string | ✅ | Token contract address — see [List Tokens](/api-reference/tokens/list-tokens) |
+| `reverse` | boolean | ✅ | If `true`, calculates the required input amount for a desired outcome instead |
+| `buffer` | number | ✅ | Rate buffer override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5% |
 
-- **Deposit orders**: the outcome is the amount of tokens (in USD) the user will receive after fees.
-- **Withdrawal orders**: the outcome is the amount of fiat (in VND) the user will receive after fees.
+## Response
 
-<ParamField body="amount" type="string" required>
-  Original amount to calculate.
-</ParamField>
-
-<ParamField body="reverse" type="boolean" required>
-  Reverse the amount calculation (from outcome to original).
-</ParamField>
-
-<ParamField body="chain_id" type="integer" required>
-  Blockchain network ID.
-</ParamField>
-
-<ParamField body="token_address" type="string" required>
-  Token contract address.
-</ParamField>
-
-<ParamField body="order_type" type="integer" required>
-  Type of the order. `1` = Deposit, `2` = Withdrawal.
-</ParamField>
-
-<ParamField body="buffer" type="number" required>
-  Optional buffer rate override (fractional). If set, effective buffer = max(override, configured buffer). Example: `0.005` = 0.5%.
-</ParamField>
-
-<RequestExample>
 ```json
-{
-  "amount": "1000000",
-  "reverse": false,
-  "chain_id": 56,
-  "token_address": "0x55d398326f99059ff775485246999027b3197955",
-  "order_type": 1,
-  "buffer": 0.005
-}
-```
-</RequestExample>
-
-<ResponseExample>
-```json 200
 {
   "message": "success",
   "data": {
-    "outcome": "38.61",
-    "rate": 25850.00,
+    "outcome": "100",
+    "rate": 25750,
     "fee_vnd": 5000,
     "fees": {
-      "service_fee": 0.01,
-      "min_fee": 5000
+      "service_fee": 5000,
+      "min_fee": 2000
     }
   }
 }
 ```
-</ResponseExample>
+
+| Field | Type | Description |
+|---|---|---|
+| `outcome` | string | Estimated amount the user will receive after fees |
+| `rate` | number | Exchange rate used for this estimate |
+| `fee_vnd` | number | Total estimated fee in VND |
+| `fees` | object | Fee breakdown |
+
+### Fees Object
+
+| Field | Type | Description |
+|---|---|---|
+| `service_fee` | number | Service fee in VND |
+| `min_fee` | number | Minimum fee applied in VND |

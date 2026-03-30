@@ -1,82 +1,35 @@
 ---
-title: "Create Withdrawal Order"
-api: "POST https://pay-api.holdstation.com/partners/orders/withdrawal"
-description: "Create a new withdrawal (offramp) order to sell tokens for VND."
+title: Create Withdrawal
+openapi: POST /partners/orders/withdrawal
 ---
 
-## Overview
+Creates a new offramp order for a user to sell tokens and receive VND via bank transfer. See [Offramp Flow](/guides/offramp-flow) for the full integration guide.
 
-Create a new withdrawal order to sell tokens for VND. The user will transfer tokens to the provided recipient address, and Holdstation Pay will send VND to the user's bank account.
+## Request Body
 
-<ParamField body="amount" type="string" required>
-  Amount to withdraw in USD.
-</ParamField>
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `amount` | string | ✅ | Amount to withdraw (in USD or VND depending on `currency`) |
+| `currency` | string | ✅ | Currency of the amount: `vnd` or `usd` |
+| `chain_id` | integer | ✅ | Blockchain network ID — see [List Tokens](/api-reference/tokens/list-tokens) |
+| `token_address` | string | ✅ | Token contract address — see [List Tokens](/api-reference/tokens/list-tokens) |
+| `payment_info` | object | ✅ | User's bank account to receive VND — see [PaymentInfo](#paymentinfo) |
+| `callback` | string | ✅ | HTTPS URL to receive order status webhook notifications |
+| `reference_no` | string | ✅ | Partner's own reference number for tracking |
+| `buffer` | number | ✅ | Rate buffer override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5% |
 
-<ParamField body="currency" type="string" required>
-  Currency of the amount: `vnd` or `usd`.
-</ParamField>
+### PaymentInfo
 
-<ParamField body="chain_id" type="integer" required>
-  Blockchain network ID.
-</ParamField>
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `bank_id` | integer | ✅ | Bank ID — see [List Banks](/api-reference/banks/list-banks) |
+| `full_name` | string | ✅ | Full name of the account holder |
+| `account_type` | integer | ✅ | `1` = Bank account number, `2` = ATM card number |
+| `account_number` | string | ✅ | Bank account number |
 
-<ParamField body="token_address" type="string" required>
-  Token contract address.
-</ParamField>
+## Response
 
-<ParamField body="callback" type="string" required>
-  Callback URL for receiving withdrawal updates via [webhooks](/guides/webhooks).
-</ParamField>
-
-<ParamField body="reference_no" type="string" required>
-  Reference number for the withdrawal.
-</ParamField>
-
-<ParamField body="buffer" type="number" required>
-  Optional buffer rate override (fractional). If set, effective buffer = max(override, configured buffer). Example: `0.005` = 0.5%.
-</ParamField>
-
-<ParamField body="payment_info" type="object" required>
-  Payment information for the withdrawal.
-
-  <Expandable title="payment_info properties">
-    <ParamField body="bank_id" type="integer" required>
-      Bank ID from the [List Banks](/api-reference/banks/list-banks) endpoint.
-    </ParamField>
-    <ParamField body="full_name" type="string" required>
-      Full name of the account holder.
-    </ParamField>
-    <ParamField body="account_type" type="integer" required>
-      Type of account number. `1` = Bank account number, `2` = ATM card number.
-    </ParamField>
-    <ParamField body="account_number" type="string" required>
-      Bank account number.
-    </ParamField>
-  </Expandable>
-</ParamField>
-
-<RequestExample>
 ```json
-{
-  "amount": "100",
-  "currency": "usd",
-  "chain_id": 56,
-  "token_address": "0x55d398326f99059ff775485246999027b3197955",
-  "callback": "https://yourapp.com/api/webhooks/payment",
-  "reference_no": "WITHDRAW-001",
-  "buffer": 0.005,
-  "payment_info": {
-    "bank_id": 1,
-    "full_name": "NGUYEN VAN A",
-    "account_type": 1,
-    "account_number": "1234567890"
-  }
-}
-```
-</RequestExample>
-
-<ResponseExample>
-```json 200
 {
   "message": "success",
   "data": {
@@ -87,20 +40,103 @@ Create a new withdrawal order to sell tokens for VND. The user will transfer tok
       "state": 2,
       "processing_state": 20,
       "amount": "100",
+      "outcome": "2575000",
       "currency": "usd",
       "rate": "25750",
+      "original_rate": "25500",
       "token_address": "0x55d398326f99059ff775485246999027b3197955",
       "chain_id": 56,
       "recipient": "0xABCD...1234",
       "reference_no": "WITHDRAW-001",
+      "external_id": "ext-001",
+      "partner_id": "partner-xyz",
+      "user_id": "user-abc",
+      "provider": 1,
+      "processing_time": 0,
+      "client_ip": "127.0.0.1",
+      "callback": "https://yourapp.com/api/webhooks/payment",
       "fees": {
         "service_fee": 0.01,
         "min_fee": 5000
       },
       "total_fee_vnd": 25750,
-      "callback": "https://yourapp.com/api/webhooks/payment"
+      "pay_data": null,
+      "payment_info": {
+        "bank_id": 42,
+        "full_name": "NGUYEN VAN A",
+        "account_type": 1,
+        "account_number": "0123456789"
+      },
+      "error": null,
+      "created_at": { "seconds": 1700000000, "nanos": 0 },
+      "updated_at": { "seconds": 1700000000, "nanos": 0 },
+      "expired_at": { "seconds": 1700003600, "nanos": 0 }
     }
   }
 }
 ```
-</ResponseExample>
+
+### Order Object
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Unique order UUID |
+| `state` | integer | `1`=New, `2`=Processing, `3`=Completed, `4`=Failed, `5`=Closed |
+| `processing_state` | integer | `20`=CryptoPending, `21`=CryptoConfirmed, `22`=CryptoFailed, `23`=FiatPending, `24`=FiatConfirmed, `25`=FiatFailed |
+| `order_type` | integer | `2` = Withdrawal |
+| `amount` | string | Input amount in USD |
+| `outcome` | string | VND amount the user will receive after fees |
+| `rate` | string | Exchange rate applied to this order |
+| `original_rate` | string | Exchange rate before buffer adjustment |
+| `currency` | string | Currency of the amount (`vnd` or `usd`) |
+| `total_fee_vnd` | number | Total fee in VND |
+| `fees` | object | Fee breakdown — see [Fees](#fees) |
+| `token_address` | string | Token contract address |
+| `chain_id` | integer | Blockchain network ID |
+| `recipient` | string | Holdstation Pay's wallet address the user must send tokens to |
+| `reference_no` | string | Partner's reference number |
+| `external_id` | string | External order ID from payment provider |
+| `partner_id` | string | Partner identifier |
+| `user_id` | string | User identifier |
+| `code` | integer | Internal status code from payment provider |
+| `provider` | integer | Payment provider identifier |
+| `processing_time` | integer | Time taken to process in milliseconds |
+| `client_ip` | string | IP address of the client that created the order |
+| `callback` | string | Webhook callback URL |
+| `pay_data` | object | `null` for withdrawal orders |
+| `payment_info` | object | Bank account details the VND will be sent to — see [PaymentInfo (Response)](#paymentinfo-response) |
+| `error` | object | Error details if failed — see [OrderError](#ordererror) |
+| `created_at` | object | Order creation timestamp — `{ seconds, nanos }` |
+| `updated_at` | object | Last update timestamp — `{ seconds, nanos }` |
+| `expired_at` | object | Order expiry timestamp — `{ seconds, nanos }` |
+
+### PaymentInfo (Response)
+
+The bank account the VND payout will be sent to:
+
+| Field | Type | Description |
+|---|---|---|
+| `bank_id` | integer | Bank ID |
+| `full_name` | string | Account holder name |
+| `account_type` | integer | `1` = Bank account number, `2` = ATM card number |
+| `account_number` | string | Bank account number |
+
+### Fees
+
+| Field | Type | Description |
+|---|---|---|
+| `service_fee` | number | Service fee in VND |
+| `min_fee` | number | Minimum fee applied in VND |
+
+### OrderError
+
+Populated when `state = 4` (Failed):
+
+| Field | Type | Description |
+|---|---|---|
+| `error_code` | string | Machine-readable error code |
+| `error_message` | string | Human-readable error description |
+| `details` | string | Additional error details |
+| `retryable` | boolean | Whether the operation can be retried |
+| `source` | integer | Internal error source identifier |
+| `timestamp` | string | When the error occurred |
