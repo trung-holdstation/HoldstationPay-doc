@@ -2,12 +2,12 @@
 title: "Overview"
 ---
 
-For signed APIs, partners need to use Ed25519 signature-based authentication instead of JWT. Each request body must be cryptographically signed using an Ed25519 private key held by the partner.
+For signed APIs, partners need to use Ed25519 signature-based authentication instead of JWT. Each request must be cryptographically signed using an Ed25519 private key held by the partner.
 
 Holdstation Pay verifies the signature on the server side using the partner's registered public key. This ensures both the authenticity and integrity of every request, preventing tampering or replay attacks.
 
 <Note>
-  Signed API authentication is required in addition to the `Partner-App-Key` header — both must be present on every signed request.
+  Signed API authentication is required in addition to the `Partner-App-Key` header — all three signed-request headers must be present on every signed request.
 </Note>
 
 ---
@@ -19,6 +19,13 @@ Each signed request must include:
 | Header | Description |
 |---|---|
 | `Partner-App-Key` | The partner's app key (same as used for other integrations) |
-| `X-HSPay-Signature` | Base64-encoded Ed25519 signature of the raw JSON request body |
+| `X-HSPay-Signature` | Base64-encoded Ed25519 signature of the sign data |
+| `X-HSPay-Timestamp` | Unix timestamp in seconds. Must be within **60 seconds** of the server time |
 
-The signature is computed over the **raw JSON body** (byte-for-byte) using the partner's Ed25519 private key. The server verifies using the partner's `verify_key` (Ed25519 public key in base64).
+The signature is computed over the **sign data**, which is built by joining the sorted query string, the raw request body, and the timestamp with `\n`:
+
+```
+sign_data = sorted_query_string + "\n" + body + "\n" + timestamp
+```
+
+See [Signing Requests](/guides/partner-authentication-signed-api/signing-requests) for the full signing algorithm and code examples.
