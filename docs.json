@@ -41,7 +41,7 @@
               "guides/order-flow",
               "guides/onramp-flow",
               "guides/offramp-flow",
-              "guides/partner-funds",
+              "guides/partner-prefunding",
               "guides/webhooks"
             ]
           },
@@ -122,7 +122,7 @@
             ]
           },
           {
-            "group": "Funds",
+            "group": "Prefunding",
             "pages": [
               "api-reference/funds/list-funds",
               "api-reference/funds/get-balance",
