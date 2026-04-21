@@ -1,0 +1,45 @@
+---
+title: "Update VA Callback URL"
+api: "POST https://pay-api.holdstation.com/api/partners/mid/va-callback"
+description: "Set the URL that Holdstation Pay calls when a Virtual Account payment is received."
+---
+
+Update the callback URL that Holdstation Pay uses to notify the partner of payments received on their virtual accounts.
+
+See [Virtual Account Payment Callback](/guides/partner-merchant-virtual-account/virtual-account-payment-callback) for the callback payload and verification.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="va_callback" type="string" required>
+  HTTPS URL to receive Virtual Account payment callbacks.
+</ParamField>
+
+<RequestExample>
+```json Request
+{
+  "va_callback": "https://partner.example.com/va/callback"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "va_callback": "https://partner.example.com/va/callback"
+}
+```
+</ResponseExample>

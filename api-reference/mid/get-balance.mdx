@@ -1,0 +1,45 @@
+---
+title: "Get MID Balance"
+api: "POST https://pay-api.holdstation.com/api/partners/mid/balance"
+description: "Get the balance of the partner's Merchant ID (MID) account."
+---
+
+Get the current balance of the partner's MID at the payment service provider.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="request_id" type="string" required>
+  Unique request identifier. Use this to correlate the response with your request.
+</ParamField>
+
+<RequestExample>
+```json Request
+{
+  "request_id": "unique-request-id"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "merchant_id": "MID123",
+  "merchant_email": "partner@example.com",
+  "balance": "1,000,000"
+}
+```
+</ResponseExample>

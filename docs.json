@@ -130,6 +130,14 @@
               "api-reference/funds/list-logs",
               "api-reference/funds/withdraw"
             ]
+          },
+          {
+            "group": "Merchant Virtual Account",
+            "pages": [
+              "api-reference/mid/get-balance",
+              "api-reference/mid/get-va-callback",
+              "api-reference/mid/update-va-callback"
+            ]
           }
         ]
       }

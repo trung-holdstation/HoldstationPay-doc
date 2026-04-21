@@ -1,0 +1,29 @@
+---
+title: "Get VA Callback URL"
+api: "GET https://pay-api.holdstation.com/api/partners/mid/va-callback"
+description: "Get the currently configured Virtual Account payment callback URL."
+---
+
+Retrieve the URL that Holdstation Pay currently calls when a payment is received on one of the partner's virtual accounts.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "va_callback": "https://partner.example.com/va/callback"
+}
+```
+</ResponseExample>
