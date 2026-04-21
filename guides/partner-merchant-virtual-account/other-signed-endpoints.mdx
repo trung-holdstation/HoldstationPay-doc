@@ -1,0 +1,27 @@
+---
+title: "Other Signed Endpoints"
+---
+
+### GET /api/signed/partners/mid/va-callback
+
+Get the current VA callback URL.
+
+**Response:**
+```json
+{
+    "va_callback": "https://partner.example.com/va/callback"
+}
+```
+
+---
+
+### POST /api/signed/partners/mid/va-callback
+
+Update the VA callback URL.
+
+**Request Body:**
+```json
+{
+    "va_callback": "https://partner.example.com/va/callback"
+}
+```

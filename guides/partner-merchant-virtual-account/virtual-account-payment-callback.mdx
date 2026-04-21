@@ -1,0 +1,32 @@
+---
+title: "Virtual Account Payment Callback"
+---
+
+When a payment is received on a partner's virtual account, Holdstation Pay sends a callback notification to the partner's configured `va_callback` URL via **POST**.
+
+### Callback Payload
+
+```json
+{
+    "va_account": "1234567890",
+    "va_account_name": "PARTNER VA",
+    "va_account_addr": "",
+    "va_bank_name": "Vietcombank",
+    "transfer_content": "base64Content",
+    "amount": "1000000",
+    "time_paid": "1679900000",
+    "transaction_id": "TXN123"
+}
+```
+
+### Callback Headers
+
+```
+Content-Type: application/json
+User-Agent: HSPay-Callback-Dispatcher/1.0
+X-HSPay-Response-Signature: <base64 Ed25519 signature>
+```
+
+### Verification
+
+Partners verify the callback using their `checksum_key` (derived public key from the partner's `sign_key`), the same way as webhook verification (see [Webhook Verification](/guides/webhooks#webhook-verification) section).

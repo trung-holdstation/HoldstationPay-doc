@@ -58,7 +58,9 @@
             "group": "Partner Merchant Virtual Account",
             "pages": [
               "guides/partner-merchant-virtual-account/overview-and-authentication",
-              "guides/partner-merchant-virtual-account/signed-endpoints-and-callback"
+              "guides/partner-merchant-virtual-account/get-mid-balance",
+              "guides/partner-merchant-virtual-account/virtual-account-payment-callback",
+              "guides/partner-merchant-virtual-account/other-signed-endpoints"
             ]
           },
           {

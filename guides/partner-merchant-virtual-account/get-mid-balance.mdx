@@ -1,0 +1,25 @@
+---
+title: "Get MID Balance"
+---
+
+Get the MID's account balance.
+
+All endpoints are under `/api/signed/` and require both `Partner-App-Key` and `X-HSPay-Signature` headers.
+
+`POST /api/signed/partners/mid/balance`
+
+**Request Body:**
+```json
+{
+    "request_id": "unique-request-id"
+}
+```
+
+**Response:**
+```json
+{
+    "merchant_id": "MID123",
+    "merchant_email": "partner@example.com",
+    "balance": "1,000,000"
+}
+```
