@@ -94,9 +94,9 @@ func verifySignature(publicKeyB64 string, body []byte, signatureB64 string) bool
 
 ## Signed API Endpoints
 
-All endpoints are under `/api/signed/` and require both `Partner-App-Key` and `X-HSPay-Signature` headers.
+All endpoints require both `Partner-App-Key` and `X-HSPay-Signature` headers.
 
-### POST /api/signed/partners/mid/balance
+### POST /api/partners/mid/balance
 
 Get the MID's account balance.
 
@@ -118,7 +118,7 @@ Get the MID's account balance.
 
 ---
 
-### GET /api/signed/partners/mid/va-callback
+### GET /api/partners/mid/va-callback
 
 Get the current VA callback URL.
 
@@ -131,7 +131,7 @@ Get the current VA callback URL.
 
 ---
 
-### POST /api/signed/partners/mid/va-callback
+### POST /api/partners/mid/va-callback
 
 Update the VA callback URL.
 
@@ -144,7 +144,7 @@ Update the VA callback URL.
 
 ---
 
-### POST /api/signed/partners/verify-key
+### POST /api/partners/verify-key
 
 Update the partner's verify key (Ed25519 public key).
 
