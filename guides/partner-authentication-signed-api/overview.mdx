@@ -2,7 +2,9 @@
 title: "Overview"
 ---
 
-For signed API, partners need to use Ed25519 signature-based authentication instead of JWT. Each request body must be cryptographically signed using an Ed25519 private key held by the partner. Holdstation Pay verifies the signature on the server side using the partner's registered public key (`verify_key`). This ensures both the authenticity and integrity of every request, preventing tampering or replay attacks.
+For signed APIs, partners need to use Ed25519 signature-based authentication instead of JWT. Each request body must be cryptographically signed using an Ed25519 private key held by the partner.
+
+Holdstation Pay verifies the signature on the server side using the partner's registered public key. This ensures both the authenticity and integrity of every request, preventing tampering or replay attacks.
 
 <Note>
   Signed API authentication is required in addition to the `Partner-App-Key` header — both must be present on every signed request.
