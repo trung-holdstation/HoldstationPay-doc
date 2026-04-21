@@ -1,9 +1,6 @@
 ---
 title: "Signing Requests"
-description: "How to sign request bodies using your Ed25519 private key for Holdstation Pay signed API endpoints."
 ---
-
-## Signing Requests
 
 Sign the **raw JSON request body** (byte-for-byte, before any formatting changes) using your Ed25519 private key. Include the resulting base64-encoded signature in the `X-HSPay-Signature` header.
 
