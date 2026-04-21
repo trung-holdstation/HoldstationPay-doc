@@ -1,0 +1,67 @@
+---
+title: "List Fund Logs"
+api: "GET https://pay-api.holdstation.com/partners/funds/logs"
+description: "List fund transaction logs with optional filters."
+---
+
+Partners can list fund transaction logs with optional filters. Each log entry records a balance change caused by a deposit, withdrawal, or compensation event.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="token" type="string">
+  Filter by token symbol (e.g., `USDT`, `USDC`).
+</ParamField>
+
+<ParamField query="change_type" type="integer">
+  Filter by change type. `1` = Deposit, `2` = Withdraw, `3` = Compensate.
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number for pagination.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Number of results per page.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": "",
+    "logs": [
+      {
+        "id": 101,
+        "partner_fund_id": 1,
+        "change_type": 2,
+        "change_amount": "50.00",
+        "pre_balance": "1050.50",
+        "post_balance": "1000.50",
+        "metadata": {},
+        "caused_at": { "seconds": 1700000000, "nanos": 0 }
+      }
+    ],
+    "total_count": 1,
+    "page": 1,
+    "page_size": 20
+  }
+}
+```
+</ResponseExample>

@@ -41,6 +41,7 @@
               "guides/order-flow",
               "guides/onramp-flow",
               "guides/offramp-flow",
+              "guides/partner-funds",
               "guides/webhooks"
             ]
           },
@@ -118,6 +119,16 @@
             "group": "Configurations",
             "pages": [
               "api-reference/configurations/get-transaction-threshold"
+            ]
+          },
+          {
+            "group": "Funds",
+            "pages": [
+              "api-reference/funds/list-funds",
+              "api-reference/funds/get-balance",
+              "api-reference/funds/list-deposit-addresses",
+              "api-reference/funds/list-logs",
+              "api-reference/funds/withdraw"
             ]
           }
         ]

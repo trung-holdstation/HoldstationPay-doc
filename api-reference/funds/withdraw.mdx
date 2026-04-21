@@ -1,0 +1,120 @@
+---
+title: "Withdraw from Fund"
+api: "POST https://pay-api.holdstation.com/partners/orders/withdraw"
+description: "Create a withdrawal order that debits a partner fund and pays out to a bank account."
+---
+
+Create a withdrawal order that debits a partner fund balance and pays out to a bank account via VND fiat transfer. Use the `idempotency_key` to ensure the withdrawal request is not processed more than once.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="amount" type="string" required>
+  Amount to withdraw.
+</ParamField>
+
+<ParamField body="currency" type="string" required>
+  Currency of the amount. Available values: `vnd`, `token`.
+</ParamField>
+
+<ParamField body="token_symbol" type="string" required>
+  Token symbol for the withdrawal (e.g., `USDT`, `USDC`, `USD1`).
+</ParamField>
+
+<ParamField body="payment_info" type="object" required>
+  Bank payment information for the withdrawal recipient.
+
+  <Expandable title="payment_info">
+    <ParamField body="bank_id" type="integer" required>
+      Bank ID. See [List Banks](/api-reference/banks/list-banks).
+    </ParamField>
+    <ParamField body="full_name" type="string" required>
+      Full name of the account holder.
+    </ParamField>
+    <ParamField body="account_type" type="integer" required>
+      Type of account number. `1` = Bank account number, `2` = ATM card number.
+    </ParamField>
+    <ParamField body="account_number" type="string" required>
+      Bank account number.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="callback" type="string" required>
+  Callback URL for receiving withdrawal status updates.
+</ParamField>
+
+<ParamField body="reference_no" type="string" required>
+  Reference number for the withdrawal order.
+</ParamField>
+
+<ParamField body="idempotency_key" type="string" required>
+  Idempotency key to ensure the withdrawal is not processed twice.
+</ParamField>
+
+<RequestExample>
+```json Request
+{
+  "amount": "100.00",
+  "currency": "token",
+  "token_symbol": "USDT",
+  "payment_info": {
+    "bank_id": 970423,
+    "full_name": "NGUYEN VAN A",
+    "account_type": 1,
+    "account_number": "03815492701"
+  },
+  "callback": "https://yourapp.com/api/webhooks/payment",
+  "reference_no": "WITHDRAW-001",
+  "idempotency_key": "unique-idempotency-key-001"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": "",
+    "order": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "code": 200001,
+      "order_type": 2,
+      "state": 2,
+      "processing_state": 23,
+      "amount": "100.00",
+      "outcome": "2575000",
+      "currency": "token",
+      "rate": "25750",
+      "reference_no": "WITHDRAW-001",
+      "callback": "https://yourapp.com/api/webhooks/payment",
+      "created_at": { "seconds": 1700000000, "nanos": 0 }
+    }
+  }
+}
+```
+
+```json 400
+{
+  "error": "insufficient balance",
+  "error_code": "INSUFFICIENT_BALANCE",
+  "message": "Partner fund balance is insufficient"
+}
+```
+</ResponseExample>

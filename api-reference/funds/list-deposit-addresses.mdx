@@ -1,0 +1,53 @@
+---
+title: "List Deposit Addresses"
+api: "GET https://pay-api.holdstation.com/partners/funds/deposit-addresses"
+description: "List deposit addresses for receiving on-chain funds."
+---
+
+Partners can list their deposit addresses for receiving on-chain funds. Each address is associated with a specific blockchain.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="chain_id" type="integer">
+  Filter by chain ID (optional).
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "deposit_addresses": [
+      {
+        "partner_id": "partner-xyz",
+        "chain_id": 56,
+        "address": "0xDEPOSIT_ADDRESS_ON_BSC"
+      },
+      {
+        "partner_id": "partner-xyz",
+        "chain_id": 1,
+        "address": "0xDEPOSIT_ADDRESS_ON_ETH"
+      }
+    ],
+    "total_count": 2,
+    "page": 1,
+    "page_size": 20
+  }
+}
+```
+</ResponseExample>

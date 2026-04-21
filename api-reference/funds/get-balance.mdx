@@ -1,0 +1,55 @@
+---
+title: "Get Fund Balance"
+api: "GET https://pay-api.holdstation.com/partners/funds/balance"
+description: "Get the balance of a specific partner fund by token symbol."
+---
+
+Partners can query the balance of a specific fund by token symbol.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="token" type="string" required>
+  Token symbol (e.g., `USDT`, `USDC`).
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": "",
+    "fund": {
+      "id": 1,
+      "partner_id": "partner-xyz",
+      "token": "USDT",
+      "balance": "1000.50",
+      "updated_at": { "seconds": 1700000000, "nanos": 0 }
+    }
+  }
+}
+```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "token is required"
+}
+```
+</ResponseExample>

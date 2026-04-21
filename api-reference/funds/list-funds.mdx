@@ -1,0 +1,60 @@
+---
+title: "List Funds"
+api: "GET https://pay-api.holdstation.com/partners/funds"
+description: "List all partner fund balances across supported tokens."
+---
+
+Partners can list all their fund balances across supported tokens. Each fund represents the available balance for a specific token that can be used for withdrawal orders.
+
+## Authentication
+
+This endpoint requires signed authentication. Include the following headers on every request:
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data. See [Partner Authentication for Signed API](/guides/partner-authentication-signed-api/overview).
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": "",
+    "funds": [
+      {
+        "id": 1,
+        "partner_id": "partner-xyz",
+        "token": "USDT",
+        "balance": "1000.50",
+        "updated_at": { "seconds": 1700000000, "nanos": 0 }
+      },
+      {
+        "id": 2,
+        "partner_id": "partner-xyz",
+        "token": "USDC",
+        "balance": "500.00",
+        "updated_at": { "seconds": 1700000000, "nanos": 0 }
+      }
+    ]
+  }
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid signature or timestamp"
+}
+```
+</ResponseExample>

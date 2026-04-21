@@ -1,0 +1,38 @@
+---
+title: "Partner Funds"
+description: "Manage partner fund balances, deposit addresses, transaction logs, and withdrawals."
+---
+
+Partner funds let you maintain token balances with Holdstation Pay that can be used to pay out VND withdrawals directly. Instead of settling each order individually, you pre-fund a balance with on-chain deposits, then debit that balance whenever you trigger a withdrawal.
+
+<Note>
+  All partner fund endpoints require signed authentication. See [Partner Authentication for Signed API](/guides/partner-authentication-signed-api/overview) for how to sign requests.
+</Note>
+
+## Workflow
+
+1. **Get deposit addresses** — call [List Deposit Addresses](/api-reference/funds/list-deposit-addresses) to retrieve the on-chain addresses assigned to you for each supported chain.
+2. **Send tokens on-chain** — transfer supported tokens (e.g., USDT, USDC) to the address for the matching `chain_id`. Holdstation Pay credits the received amount to your fund balance.
+3. **Check balance** — use [List Funds](/api-reference/funds/list-funds) to view all balances, or [Get Fund Balance](/api-reference/funds/get-balance) for a single token.
+4. **Withdraw** — call [Withdraw from Fund](/api-reference/funds/withdraw) to debit the fund and pay out VND to a bank account. Include an `idempotency_key` to prevent duplicate withdrawals.
+5. **Audit** — use [List Fund Logs](/api-reference/funds/list-logs) to review the full history of balance changes (deposits, withdrawals, and compensations).
+
+## Change Types
+
+Every balance change is recorded in the fund logs with a `change_type`:
+
+| Value | Type | Description |
+|---|---|---|
+| `1` | Deposit | On-chain deposit credited to the fund balance |
+| `2` | Withdraw | Withdrawal debit triggered by a fund withdrawal order |
+| `3` | Compensate | Manual adjustment by Holdstation Pay (e.g., refund, correction) |
+
+## Endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/partners/funds` | List all fund balances |
+| GET | `/partners/funds/balance` | Get balance for a single token |
+| GET | `/partners/funds/deposit-addresses` | List on-chain deposit addresses |
+| GET | `/partners/funds/logs` | List fund transaction logs |
+| POST | `/partners/orders/withdraw` | Create a withdrawal order against a fund |
