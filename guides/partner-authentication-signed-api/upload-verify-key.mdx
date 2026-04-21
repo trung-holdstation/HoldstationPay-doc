@@ -2,7 +2,9 @@
 title: "Upload Public Key"
 ---
 
-After generating your key pair, upload your public key to Holdstation Pay using the signed API endpoint.
+For the initial setup, provide your public key to the Holdstation team directly — they will register it on your account.
+
+Use this endpoint only to **rotate your public key** later (for example, if you generate a new key pair).
 
 `POST /api/partners/verify-key`
 
@@ -14,5 +16,5 @@ After generating your key pair, upload your public key to Holdstation Pay using 
 ```
 
 <Note>
-  This endpoint itself requires a valid `Partner-App-Key` header. The `X-HSPay-Signature` header is not required for this initial upload since your key has not yet been registered.
+  This request must be signed with your **current** private key — include the `Partner-App-Key`, `X-HSPay-Signature`, and `X-HSPay-Timestamp` headers. Once the request succeeds, subsequent requests must be signed with the new private key.
 </Note>
