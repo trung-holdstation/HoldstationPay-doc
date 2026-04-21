@@ -57,7 +57,8 @@
           {
             "group": "Partner Merchant Virtual Account",
             "pages": [
-              "guides/partner-merchant-virtual-account/overview-and-authentication"
+              "guides/partner-merchant-virtual-account/overview-and-authentication",
+              "guides/partner-merchant-virtual-account/signed-endpoints-and-callback"
             ]
           },
           {
@@ -66,8 +67,7 @@
               "guides/partner-authentication-signed-api/overview",
               "guides/partner-authentication-signed-api/key-generation",
               "guides/partner-authentication-signed-api/upload-verify-key",
-              "guides/partner-authentication-signed-api/signing-requests",
-              "guides/partner-merchant-virtual-account/signed-endpoints-and-callback"
+              "guides/partner-authentication-signed-api/signing-requests"
             ]
           }
         ]
