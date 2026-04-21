@@ -2,7 +2,17 @@
 title: "Signing Requests"
 ---
 
-Sign the **raw JSON request body** (byte-for-byte, before any formatting changes) using your Ed25519 private key. Include the resulting base64-encoded signature in the `X-HSPay-Signature` header.
+Sign the request using your Ed25519 private key. The **sign data** is built by joining the sorted query string, the raw request body, and a Unix timestamp with `\n`:
+
+```
+sign_data = sorted_query_string + "\n" + body + "\n" + timestamp
+```
+
+- **sorted_query_string** — query parameters sorted alphabetically by key, formatted as `key1=value1&key2=value2`. Empty string when there are no query parameters.
+- **body** — the raw request body (byte-for-byte). Empty string for requests with no body.
+- **timestamp** — Unix timestamp in seconds. Send the same value in the `X-HSPay-Timestamp` header.
+
+Include the base64-encoded signature in the `X-HSPay-Signature` header and the timestamp in the `X-HSPay-Timestamp` header.
 
 #### Go Example
 
@@ -12,17 +22,42 @@ package main
 import (
     "crypto/ed25519"
     "encoding/base64"
+    "fmt"
+    "net/url"
+    "sort"
+    "strings"
+    "time"
 )
 
-func signRequest(privateKeyB64 string, body []byte) string {
-    privateKey, _ := base64.StdEncoding.DecodeString(privateKeyB64)
-    signature := ed25519.Sign(ed25519.PrivateKey(privateKey), body)
-    return base64.StdEncoding.EncodeToString(signature)
+// buildSortedQueryString sorts query parameters by key.
+func buildSortedQueryString(query url.Values) string {
+    keys := make([]string, 0, len(query))
+    for k := range query {
+        keys = append(keys, k)
+    }
+    sort.Strings(keys)
+
+    pairs := make([]string, 0, len(keys))
+    for _, k := range keys {
+        pairs = append(pairs, k+"="+query.Get(k))
+    }
+    return strings.Join(pairs, "&")
 }
 
-func verifySignature(publicKeyB64 string, body []byte, signatureB64 string) bool {
+// signRequest signs the request using Ed25519.
+// signData = sorted_query_string + "\n" + body + "\n" + timestamp
+func signRequest(privateKeyB64 string, queryString string, body []byte) (signature string, timestamp string) {
+    privateKey, _ := base64.StdEncoding.DecodeString(privateKeyB64)
+    ts := fmt.Sprintf("%d", time.Now().Unix())
+    signData := queryString + "\n" + string(body) + "\n" + ts
+    sig := ed25519.Sign(ed25519.PrivateKey(privateKey), []byte(signData))
+    return base64.StdEncoding.EncodeToString(sig), ts
+}
+
+func verifySignature(publicKeyB64 string, queryString string, body []byte, timestampStr string, signatureB64 string) bool {
     publicKey, _ := base64.StdEncoding.DecodeString(publicKeyB64)
+    signData := queryString + "\n" + string(body) + "\n" + timestampStr
     signature, _ := base64.StdEncoding.DecodeString(signatureB64)
-    return ed25519.Verify(ed25519.PublicKey(publicKey), body, signature)
+    return ed25519.Verify(ed25519.PublicKey(publicKey), []byte(signData), signature)
 }
 ```
