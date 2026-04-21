@@ -65,7 +65,7 @@
             ]
           },
           {
-            "group": "Partner Authentication for Signed API",
+            "group": "Request Signing",
             "pages": [
               "guides/partner-authentication-signed-api/overview",
               "guides/partner-authentication-signed-api/key-generation",
