@@ -1,0 +1,21 @@
+---
+title: "Upload Verify Key"
+description: "Register your Ed25519 public key with Holdstation Pay to enable signed API authentication."
+---
+
+## Upload Verify Key
+
+After generating your key pair, upload your public key to Holdstation Pay using the signed API endpoint.
+
+`POST /api/signed/partners/verify-key`
+
+**Request Body:**
+```json
+{
+    "verify_key": "base64EncodedEd25519PublicKey"
+}
+```
+
+<Note>
+  This endpoint itself requires a valid `Partner-App-Key` header. The `X-HSPay-Signature` header is not required for this initial upload since your key has not yet been registered.
+</Note>

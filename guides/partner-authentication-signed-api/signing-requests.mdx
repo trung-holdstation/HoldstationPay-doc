@@ -1,0 +1,31 @@
+---
+title: "Signing Requests"
+description: "How to sign request bodies using your Ed25519 private key for Holdstation Pay signed API endpoints."
+---
+
+## Signing Requests
+
+Sign the **raw JSON request body** (byte-for-byte, before any formatting changes) using your Ed25519 private key. Include the resulting base64-encoded signature in the `X-HSPay-Signature` header.
+
+#### Go Example
+
+```go
+package main
+
+import (
+    "crypto/ed25519"
+    "encoding/base64"
+)
+
+func signRequest(privateKeyB64 string, body []byte) string {
+    privateKey, _ := base64.StdEncoding.DecodeString(privateKeyB64)
+    signature := ed25519.Sign(ed25519.PrivateKey(privateKey), body)
+    return base64.StdEncoding.EncodeToString(signature)
+}
+
+func verifySignature(publicKeyB64 string, body []byte, signatureB64 string) bool {
+    publicKey, _ := base64.StdEncoding.DecodeString(publicKeyB64)
+    signature, _ := base64.StdEncoding.DecodeString(signatureB64)
+    return ed25519.Verify(ed25519.PublicKey(publicKey), body, signature)
+}
+```
