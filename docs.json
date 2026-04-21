@@ -55,9 +55,10 @@
             ]
           },
           {
-            "group": "Partner Merchant Virtual Account",
+            "group": "Partner Authentication for Signed API",
             "pages": [
               "guides/partner-merchant-virtual-account/overview-and-authentication",
+              "guides/partner-merchant-virtual-account/authentication-signed-api",
               "guides/partner-merchant-virtual-account/signed-endpoints-and-callback"
             ]
           }
