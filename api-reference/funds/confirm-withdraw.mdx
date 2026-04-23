@@ -1,0 +1,126 @@
+---
+title: "Confirm Withdrawal"
+api: "POST https://pay-api.holdstation.com/partners/orders/{order_id}/confirm-withdraw"
+description: "Confirm a pending withdrawal order and trigger the VND disbursement."
+---
+
+Confirm a withdrawal order previously created via [Create Withdrawal from Fund](/api-reference/funds/withdraw). Once confirmed, Holdstation Pay disburses VND to the recipient bank account using the payment details from the original order.
+
+The order must be confirmed **within 15 minutes** of creation, otherwise it expires and a new order must be created.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="order_id" type="string" required>
+  The `id` of the withdrawal order returned by [Create Withdrawal from Fund](/api-reference/funds/withdraw).
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl --request POST \
+  --url https://pay-api.holdstation.com/partners/orders/{order_id}/confirm-withdraw \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --header 'Partner-App-Key: YOUR_APP_KEY' \
+  --header 'X-HSPay-Signature: BASE64_ED25519_SIGNATURE' \
+  --header 'X-HSPay-Timestamp: 1700000000'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": "",
+    "order": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "code": 200001,
+      "order_type": 2,
+      "state": 2,
+      "processing_state": 23,
+      "partner_id": "partner-xyz",
+      "user_id": "",
+      "external_id": "",
+      "reference_no": "WITHDRAW-001",
+      "amount": "100.00",
+      "outcome": "2575000",
+      "currency": "token",
+      "token_address": "",
+      "chain_id": 0,
+      "rate": "25750",
+      "original_rate": "25750",
+      "provider": 0,
+      "recipient": "",
+      "client_ip": "",
+      "processing_time": 0,
+      "total_fee_vnd": 0,
+      "fees": {
+        "min_fee": 0,
+        "service_fee": 0
+      },
+      "payment_info": {
+        "bank_id": 970423,
+        "full_name": "NGUYEN VAN A",
+        "account_type": 1,
+        "account_number": "03815492701"
+      },
+      "pay_data": {
+        "bank_account_name": "NGUYEN VAN A",
+        "bank_account_number": "03815492701",
+        "bank_bin_code": "970423",
+        "bank_name": "MB Bank",
+        "bank_short_code": "MB",
+        "external_id": "",
+        "payment_link": "",
+        "qr_code": "",
+        "qr_image": ""
+      },
+      "callback": "https://yourapp.com/api/webhooks/payment",
+      "error": {
+        "details": "",
+        "error_code": "",
+        "error_message": "",
+        "retryable": false,
+        "source": 0,
+        "timestamp": ""
+      },
+      "created_at": { "seconds": 1700000000, "nanos": 0 },
+      "updated_at": { "seconds": 1700000030, "nanos": 0 },
+      "expired_at": { "seconds": 1700000900, "nanos": 0 }
+    }
+  }
+}
+```
+
+```json 400
+{
+  "error": "order expired",
+  "error_code": "ORDER_EXPIRED",
+  "message": "Withdrawal order has expired; create a new order"
+}
+```
+
+```json 404
+{
+  "error": "order not found",
+  "error_code": "ORDER_NOT_FOUND",
+  "message": "Withdrawal order not found"
+}
+```
+</ResponseExample>

@@ -128,7 +128,8 @@
               "api-reference/funds/get-balance",
               "api-reference/funds/list-deposit-addresses",
               "api-reference/funds/list-logs",
-              "api-reference/funds/withdraw"
+              "api-reference/funds/withdraw",
+              "api-reference/funds/confirm-withdraw"
             ]
           },
           {

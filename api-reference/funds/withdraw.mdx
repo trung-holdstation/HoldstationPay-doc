@@ -1,10 +1,14 @@
 ---
 title: "Create Withdrawal from Fund"
 api: "POST https://pay-api.holdstation.com/partners/orders/withdraw"
-description: "Create a withdrawal/off-ramp order that debits a partner fund and pays out to a bank account."
+description: "Create a withdrawal/off-ramp order with a confirmed quote. No VND is sent until the order is confirmed."
 ---
 
-Create a withdrawal/off-ramp order that debits a partner fund balance and pays out to a bank account via VND fiat transfer. Use the `idempotency_key` to ensure the withdrawal request is not processed more than once.
+Create a withdrawal/off-ramp order that debits a partner fund balance and locks in a confirmed quote (rate, outcome, fees). **No VND is sent yet** — the order stays in a pending-confirmation state for up to **15 minutes**, after which it expires.
+
+To actually pay out VND, call [Confirm Withdrawal](/api-reference/funds/confirm-withdraw) with the returned `order.id` before the order expires.
+
+Use `idempotency_key` to ensure the order is not created twice.
 
 ## Authentication
 
