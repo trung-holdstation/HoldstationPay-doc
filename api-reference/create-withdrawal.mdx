@@ -15,7 +15,7 @@ Creates a new offramp order for a user to sell tokens and receive VND via bank t
 | `token_address` | string | ✅ | Token contract address — see [List Tokens](/api-reference/tokens/list-tokens) |
 | `payment_info` | object | ✅ | User's bank account to receive VND — see [PaymentInfo](#paymentinfo) |
 | `callback` | string | ✅ | HTTPS URL to receive order status webhook notifications |
-| `reference_no` | string | ✅ | Partner's own reference number for tracking |
+| `reference_no` | string |  | Optional. Use this to map the Holdstation Pay order to your internal order. Must be unique per partner |
 | `buffer` | number | ✅ | Rate buffer override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5% |
 
 ### PaymentInfo

@@ -61,8 +61,8 @@ Use `idempotency_key` to ensure the order is not created twice.
   Callback URL for receiving withdrawal status updates.
 </ParamField>
 
-<ParamField body="reference_no" type="string" required>
-  Reference number for the withdrawal order.
+<ParamField body="reference_no" type="string">
+  Optional. Use this to map the Holdstation Pay order to your internal order. Must be unique per partner.
 </ParamField>
 
 <ParamField body="idempotency_key" type="string" required>

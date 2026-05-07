@@ -15,7 +15,7 @@ Creates a new onramp order for a user to buy tokens by depositing VND via bank t
 | `token_address` | string | ✅ | Token contract address — see [List Tokens](/api-reference/tokens/list-tokens) |
 | `recipient` | string | ✅ | User's wallet address to receive the tokens |
 | `callback` | string | ✅ | HTTPS URL to receive order status webhook notifications |
-| `reference_no` | string | ✅ | Partner's own reference number for tracking |
+| `reference_no` | string |  | Optional. Use this to map the Holdstation Pay order to your internal order. Must be unique per partner |
 | `buffer` | number | ✅ | Rate buffer override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5% |
 
 ## Response

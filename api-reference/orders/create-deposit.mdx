@@ -32,8 +32,8 @@ Partner uses this API to create a new on-chain token transfer order. See [Onramp
   HTTPS URL to receive order status webhook notifications.
 </ParamField>
 
-<ParamField body="reference_no" type="string" required>
-  Partner's own reference number for tracking.
+<ParamField body="reference_no" type="string">
+  Optional. Use this to map the Holdstation Pay order to your internal order. Must be unique per partner.
 </ParamField>
 
 <ParamField body="buffer" type="number" required>
