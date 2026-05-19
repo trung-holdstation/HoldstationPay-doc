@@ -1,0 +1,89 @@
+---
+title: "Decode VietQR"
+api: "POST https://pay-api.holdstation.com/api/v1/payment-methods/qr/decode"
+description: "Decode a VietQR string or image URL into structured payment information."
+---
+
+## Overview
+
+Partners can decode a VietQR string or QR image URL into structured payment information — bank BIN code, destination account number, amount, and purpose. Pass exactly one of `qr_string` or `qr_image_url` per request.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="qr_string" type="string">
+  Raw VietQR string. Mutually exclusive with `qr_image_url`.
+</ParamField>
+
+<ParamField body="qr_image_url" type="string">
+  HTTPS URL pointing to a QR code image. Mutually exclusive with `qr_string`.
+</ParamField>
+
+## Error Codes
+
+When decoding fails, the response includes a non-zero `error_code`:
+
+| `error_code` | Meaning                |
+|--------------|------------------------|
+| `1`          | Invalid input          |
+| `2`          | Image download failed  |
+| `3`          | Image decode failed    |
+| `4`          | Parse failed           |
+
+<RequestExample>
+```json QR String
+{
+  "qr_string": "00020101021238570010A000000727012700069704360113VQRQ12345678900208QRIBFTTA53037045802VN62160812Test payment6304ABCD"
+}
+```
+
+```json QR Image URL
+{
+  "qr_image_url": "https://example.com/qr/order-12345.png"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 Success
+{
+  "message": "success",
+  "data": {
+    "data": {
+      "bank_bin_code": "970436",
+      "bank_account_number": "1234567890",
+      "amount": 1000000,
+      "purpose": "Test payment"
+    },
+    "error": "",
+    "error_code": 0,
+    "message": ""
+  }
+}
+```
+
+```json 200 Decode Failed
+{
+  "message": "success",
+  "data": {
+    "data": null,
+    "error": "failed to decode QR image",
+    "error_code": 3,
+    "message": "image decode failed"
+  }
+}
+```
+</ResponseExample>
