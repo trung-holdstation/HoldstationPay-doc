@@ -13,9 +13,15 @@ A partner can:
 - **Revoke** a virtual account (mark it expired).
 - **Receive** a callback every time a customer transfers in.
 
+See [Virtual Account](/guides/partner-merchant-virtual-account/virtual-account) for the full request/response shapes, and [Get MID Balance](/guides/partner-merchant-virtual-account/get-mid-balance) for balance queries.
+
 <Note>
   Contact Holdstation to enable this feature and receive your MID.
 </Note>
+
+## Authentication
+
+All MID endpoints use Ed25519 request signing. See [Request Signing](/guides/partner-authentication-signed-api/overview) for how to sign requests and upload your verify key.
 
 ## Virtual Account Lifecycle
 
@@ -24,18 +30,3 @@ A partner can:
 | Active | `1`   | VA accepts incoming transfers |
 | Expired | `2`  | VA past its TTL or revoked    |
 | Revoked | `4`  | VA explicitly revoked (returned by the revoke endpoint as `va_status`) |
-
-## Endpoints
-
-All endpoints require Ed25519 request signing.
-
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/partners/mid/va` | [Create a virtual account](/api-reference/mid/create-va) |
-| `GET` | `/partners/mid/va` | [List virtual accounts](/api-reference/mid/list-vas) |
-| `GET` | `/partners/mid/va/{va_account}` | [Get a virtual account](/api-reference/mid/get-va) |
-| `DELETE` | `/partners/mid/va/{va_account}` | [Revoke a virtual account](/api-reference/mid/revoke-va) |
-| `GET` | `/partners/mid/va/{va_account}/inquiry` | [Inquire transactions](/api-reference/mid/inquiry-va) |
-| `POST` | `/api/partners/mid/balance` | [Get MID balance](/api-reference/mid/get-balance) |
-| `GET` | `/api/partners/mid/va-callback` | [Get callback URL](/api-reference/mid/get-va-callback) |
-| `POST` | `/api/partners/mid/va-callback` | [Update callback URL](/api-reference/mid/update-va-callback) |

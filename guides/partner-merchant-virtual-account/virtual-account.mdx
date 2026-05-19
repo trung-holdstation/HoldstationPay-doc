@@ -1,0 +1,182 @@
+---
+title: "Virtual Account"
+description: "Create, list, look up, and revoke virtual accounts, plus configure the payment callback URL."
+---
+
+This page covers the full lifecycle of a virtual account (VA): create, list, look up, inquire transactions, revoke, and configure the payment callback that fires when a customer transfers in.
+
+All endpoints here require Ed25519 request signing — see [Request Signing](/guides/partner-authentication-signed-api/overview).
+
+## Endpoint Summary
+
+| Method | Path | Reference |
+|---|---|---|
+| `POST` | `/partners/mid/va` | [Create Virtual Account](/api-reference/mid/create-va) |
+| `GET` | `/partners/mid/va` | [List Virtual Accounts](/api-reference/mid/list-vas) |
+| `GET` | `/partners/mid/va/{va_account}` | [Get Virtual Account](/api-reference/mid/get-va) |
+| `DELETE` | `/partners/mid/va/{va_account}` | [Revoke Virtual Account](/api-reference/mid/revoke-va) |
+| `GET` | `/partners/mid/va/{va_account}/inquiry` | [Inquire Transactions](/api-reference/mid/inquiry-va) |
+| `GET` | `/api/partners/mid/va-callback` | [Get Callback URL](/api-reference/mid/get-va-callback) |
+| `POST` | `/api/partners/mid/va-callback` | [Update Callback URL](/api-reference/mid/update-va-callback) |
+
+## Create a Virtual Account
+
+`POST /partners/mid/va` — creates a multi-use virtual account under the partner's assigned HPay merchant. The VA is stored in Holdstation Pay and can be managed via the list, get, inquiry, and revoke endpoints.
+
+**Request Body:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `va_name` | string | Yes | Display name for the virtual account (max 200 chars) |
+| `remark` | string | Yes | Remark for the virtual account (max 50 chars) |
+| `va_expiration_time` | integer \| null | Yes | Expiration as Unix timestamp (seconds). Pass `null` to use the maximum allowed TTL. |
+
+```json
+{
+  "va_name": "PARTNER ABC ORDER 12345",
+  "remark": "order-12345",
+  "va_expiration_time": 1735689600
+}
+```
+
+**Response:**
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "partner_id": "partner-xyz",
+  "va_account": "1234567890",
+  "va_name": "PARTNER ABC ORDER 12345",
+  "va_bank": "Vietcombank",
+  "remark": "order-12345",
+  "status": 1,
+  "created_at": "2024-01-15T10:30:00Z",
+  "updated_at": "2024-01-15T10:30:00Z",
+  "expired_at": "2025-01-01T00:00:00Z"
+}
+```
+
+`status` values: `1` = active, `2` = expired.
+
+## List Virtual Accounts
+
+`GET /partners/mid/va` — returns all virtual accounts owned by the partner, sorted by creation time descending. Served from Holdstation Pay's database (no upstream call).
+
+```json
+{
+  "vas": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "partner_id": "partner-xyz",
+      "va_account": "1234567890",
+      "va_name": "PARTNER ABC ORDER 12345",
+      "va_bank": "Vietcombank",
+      "remark": "order-12345",
+      "status": 1,
+      "created_at": "2024-01-15T10:30:00Z",
+      "updated_at": "2024-01-15T10:30:00Z",
+      "expired_at": "2025-01-01T00:00:00Z"
+    }
+  ],
+  "total_count": 1,
+  "page": 1,
+  "page_size": 20
+}
+```
+
+## Get a Virtual Account
+
+`GET /partners/mid/va/{va_account}` — returns the details of a single VA the partner owns. Response shape matches the entries in [List Virtual Accounts](#list-virtual-accounts).
+
+## Revoke a Virtual Account
+
+`DELETE /partners/mid/va/{va_account}` — marks the VA as expired in Holdstation Pay. The VA will no longer accept incoming transfers.
+
+```json
+{
+  "merchant_id": "MID123",
+  "va_account": "1234567890",
+  "va_status": "4"
+}
+```
+
+`va_status` `4` indicates the virtual account has been revoked.
+
+## Inquire Transactions
+
+`GET /partners/mid/va/{va_account}/inquiry` — fetches live transaction history for a virtual account directly from the payment service provider.
+
+```json
+{
+  "merchant_id": "MID123",
+  "va_account": "1234567890",
+  "va_name": "PARTNER ABC ORDER 12345",
+  "va_bank": "Vietcombank",
+  "transactions": [
+    {
+      "trans_id": 9876543210,
+      "amount": 1000000,
+      "time_paid": 1700000000,
+      "cashin_id": 1234567890,
+      "remark": "order-12345"
+    }
+  ]
+}
+```
+
+## Payment Callback URL
+
+Holdstation Pay calls a partner-configured URL whenever a customer transfers into one of the partner's virtual accounts.
+
+### Get the Callback URL
+
+`GET /api/partners/mid/va-callback`
+
+```json
+{
+  "va_callback": "https://partner.example.com/va/callback"
+}
+```
+
+### Update the Callback URL
+
+`POST /api/partners/mid/va-callback`
+
+```json
+{
+  "va_callback": "https://partner.example.com/va/callback"
+}
+```
+
+The URL must be HTTPS.
+
+## Payment Callback
+
+When a payment is received on a partner's virtual account, Holdstation Pay sends a `POST` request to the configured `va_callback` URL.
+
+### Callback Payload
+
+```json
+{
+  "va_account": "1234567890",
+  "va_account_name": "PARTNER VA",
+  "va_account_addr": "",
+  "va_bank_name": "Vietcombank",
+  "transfer_content": "base64Content",
+  "amount": "1000000",
+  "time_paid": "1679900000",
+  "transaction_id": "TXN123"
+}
+```
+
+### Callback Headers
+
+```
+Content-Type: application/json
+User-Agent: HSPay-Callback-Dispatcher/1.0
+X-HSPay-Response-Signature: <base64 Ed25519 signature>
+```
+
+### Verification
+
+Partners verify the callback using their `checksum_key` (the public key derived from the partner's `sign_key`), the same way as webhook verification — see [Webhook Verification](/guides/webhooks#webhook-verification).
