@@ -41,8 +41,8 @@
               "guides/order-flow",
               "guides/onramp-flow",
               "guides/offramp-flow",
-              "guides/partner-prefunding",
-              "guides/webhooks"
+              "guides/webhooks",
+              "guides/partner-prefunding"
             ]
           },
           {

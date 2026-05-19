@@ -60,49 +60,7 @@ X-HSPay-Event-Signature: base64_encoded_ed25519_signature
 | Event Type                          | Delivery URL                                  | Description                                                              |
 |-------------------------------------|-----------------------------------------------|--------------------------------------------------------------------------|
 | `pay.order.status-updated`          | Per-order `callback` field                    | Triggered when an order state or processing state changes                |
-| `pay.partner.fund-balance-changed`  | Partner-level webhook (see section below)     | Triggered when a partner fund balance changes (deposit, withdraw, compensate) |
-
-## Fund Balance Change Event
-
-When a partner's prefund balance changes due to an on-chain deposit, an offramp withdrawal, or a manual compensation, Holdstation Pay sends a `pay.partner.fund-balance-changed` event to the URL configured via [Set Partner Webhook URL](/api-reference/partners/set-webhook-url).
-
-### HTTP Headers
-
-```
-Content-Type: application/json
-User-Agent: HSPay-Webhook-Dispatcher/1.0
-X-HSPay-Event-Topic: pay.partner.fund-balance-changed
-X-HSPay-Event-Signature: base64_encoded_ed25519_signature
-```
-
-### Payload Example
-
-```json
-{
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "topic": "pay.partner.fund-balance-changed",
-  "ts": "2024-01-15T10:30:00Z",
-  "payload": {
-    "partner_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "token": "USDT",
-    "pre_balance": "1000.000000",
-    "post_balance": "1500.000000",
-    "change_amount": "500.000000",
-    "change_type": 1,
-    "fund_log_id": 42
-  }
-}
-```
-
-### `change_type` values
-
-| Value | Name         | Description                                  |
-|-------|--------------|----------------------------------------------|
-| `1`   | `DEPOSIT`    | On-chain deposit credited to fund            |
-| `2`   | `WITHDRAW`   | Withdrawal deducted from fund                |
-| `3`   | `COMPENSATE` | Manual compensation credited to fund         |
-
-The `X-HSPay-Event-Signature` header is computed exactly the same way as for order webhooks — verify it with your **Webhook Checksum Key** (see [Webhook Verification](#webhook-verification) below).
+| `pay.partner.fund-balance-changed`  | Partner-level webhook                         | Triggered when a partner fund balance changes. See [Balance Change Webhook](/guides/partner-prefunding#balance-change-webhook). |
 
 ## Webhook Verification
 
