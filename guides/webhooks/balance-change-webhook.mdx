@@ -3,6 +3,14 @@ title: "Balance Change Webhook"
 description: "Receive real-time notifications when your prefund balance changes."
 ---
 
+## Webhook Event
+
+| Event Type                          | Delivery URL                                  | Description                                                              |
+|-------------------------------------|-----------------------------------------------|--------------------------------------------------------------------------|
+| `pay.partner.fund-balance-changed`  | Partner-level webhook ([set here](/api-reference/partners/set-webhook-url)) | Triggered when a partner fund balance changes (deposit, withdraw, or compensation) |
+
+## Overview
+
 When a partner's prefund balance changes due to an on-chain deposit, a withdrawal, or a manual compensation, Holdstation Pay sends a `pay.partner.fund-balance-changed` event to the URL configured via [Set Partner Webhook URL](/api-reference/partners/set-webhook-url).
 
 ## HTTP Headers
