@@ -93,8 +93,8 @@ See the full processing state table in [Order Flow → Withdraw Orders](/guides/
 | GET | `/partners/funds/logs` | List balance-change history |
 | POST | `/partners/orders/withdraw` | Create a withdraw order (quote only, pending confirmation) |
 | POST | `/partners/orders/{order_id}/confirm-withdraw` | Confirm the order and release the VND payout |
-| POST | `/partners/webhook-url` | Set the URL that receives [Balance Change Webhook](/guides/partner-prefunding/balance-change-webhook) events |
+| POST | `/partners/webhook-url` | Set the URL that receives [Balance Change Webhook](/guides/webhooks/balance-change-webhook) events |
 
 ## Balance Change Webhook
 
-To get notified whenever your prefund balance changes (deposit, withdraw, or compensation), configure a partner-level webhook URL. See [Balance Change Webhook](/guides/partner-prefunding/balance-change-webhook) for the event headers, payload, and `change_type` values.
+To get notified whenever your prefund balance changes (deposit, withdraw, or compensation), configure a partner-level webhook URL. See [Balance Change Webhook](/guides/webhooks/balance-change-webhook) for the event headers, payload, and `change_type` values.

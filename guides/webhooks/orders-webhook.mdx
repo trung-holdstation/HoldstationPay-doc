@@ -1,11 +1,11 @@
 ---
-title: "Webhooks"
+title: "Orders Webhook"
 description: "Receive real-time notifications about order status changes."
 ---
 
 ## Overview
 
-Webhooks allow you to receive real-time notifications about order status changes. When creating an order, provide a webhook URL via the `callback` parameter to receive automatic updates.
+The Orders Webhook delivers real-time notifications about order status changes. When creating an order, provide a webhook URL via the `callback` parameter to receive automatic updates.
 
 ## Setting Up Webhooks
 
@@ -60,7 +60,7 @@ X-HSPay-Event-Signature: base64_encoded_ed25519_signature
 | Event Type                          | Delivery URL                                  | Description                                                              |
 |-------------------------------------|-----------------------------------------------|--------------------------------------------------------------------------|
 | `pay.order.status-updated`          | Per-order `callback` field                    | Triggered when an order state or processing state changes                |
-| `pay.partner.fund-balance-changed`  | Partner-level webhook                         | Triggered when a partner fund balance changes. See [Balance Change Webhook](/guides/partner-prefunding#balance-change-webhook). |
+| `pay.partner.fund-balance-changed`  | Partner-level webhook                         | Triggered when a partner fund balance changes. See [Balance Change Webhook](/guides/webhooks/balance-change-webhook). |
 
 ## Webhook Verification
 
