@@ -42,7 +42,13 @@
               "guides/onramp-flow",
               "guides/offramp-flow",
               "guides/webhooks",
-              "guides/partner-prefunding"
+              {
+                "group": "Offramp from Prefunding",
+                "pages": [
+                  "guides/partner-prefunding",
+                  "guides/partner-prefunding/balance-change-webhook"
+                ]
+              }
             ]
           },
           {

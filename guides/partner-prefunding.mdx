@@ -93,46 +93,8 @@ See the full processing state table in [Order Flow → Withdraw Orders](/guides/
 | GET | `/partners/funds/logs` | List balance-change history |
 | POST | `/partners/orders/withdraw` | Create a withdraw order (quote only, pending confirmation) |
 | POST | `/partners/orders/{order_id}/confirm-withdraw` | Confirm the order and release the VND payout |
-| POST | `/partners/webhook-url` | Set the URL that receives [balance change events](#balance-change-webhook) |
+| POST | `/partners/webhook-url` | Set the URL that receives [Balance Change Webhook](/guides/partner-prefunding/balance-change-webhook) events |
 
 ## Balance Change Webhook
 
-When a partner's prefund balance changes due to an on-chain deposit, a withdrawal, or a manual compensation, Holdstation Pay sends a `pay.partner.fund-balance-changed` event to the URL configured via [Set Partner Webhook URL](/api-reference/partners/set-webhook-url).
-
-### HTTP Headers
-
-```
-Content-Type: application/json
-User-Agent: HSPay-Webhook-Dispatcher/1.0
-X-HSPay-Event-Topic: pay.partner.fund-balance-changed
-X-HSPay-Event-Signature: base64_encoded_ed25519_signature
-```
-
-### Payload Example
-
-```json
-{
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "topic": "pay.partner.fund-balance-changed",
-  "ts": "2024-01-15T10:30:00Z",
-  "payload": {
-    "partner_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "token": "USDT",
-    "pre_balance": "1000.000000",
-    "post_balance": "1500.000000",
-    "change_amount": "500.000000",
-    "change_type": 1,
-    "fund_log_id": 42
-  }
-}
-```
-
-### `change_type` values
-
-| Value | Name         | Description                                  |
-|-------|--------------|----------------------------------------------|
-| `1`   | `DEPOSIT`    | On-chain deposit credited to fund            |
-| `2`   | `WITHDRAW`   | Withdrawal deducted from fund                |
-| `3`   | `COMPENSATE` | Manual compensation credited to fund         |
-
-The `X-HSPay-Event-Signature` header is computed exactly the same way as for order webhooks — verify it with your **Webhook Checksum Key** (see [Webhook Verification](/guides/webhooks#webhook-verification)).
+To get notified whenever your prefund balance changes (deposit, withdraw, or compensation), configure a partner-level webhook URL. See [Balance Change Webhook](/guides/partner-prefunding/balance-change-webhook) for the event headers, payload, and `change_type` values.
