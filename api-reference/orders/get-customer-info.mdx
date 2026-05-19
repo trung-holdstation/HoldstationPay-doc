@@ -8,6 +8,12 @@ Retrieve the customer (sender) information associated with an onramp order. The 
 
 This endpoint is **only meaningful for onramp orders** that have received a fiat deposit callback. If the provider does not return customer info, or if the callback has not yet arrived, the response indicates the reason via the `code` field.
 
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
 ## Path Parameters
 
 <ParamField path="order_id" type="string" required>

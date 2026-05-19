@@ -1,20 +1,15 @@
 ---
 title: "Set Partner Webhook URL"
 api: "POST https://pay-api.holdstation.com/partners/webhook-url"
-description: "Set (or clear) the partner-level webhook URL that receives Holdstation Pay events."
+description: "Set (or clear) the webhook URL that receives partner fund balance change events."
 ---
 
-Set or clear the partner-level webhook URL. Holdstation Pay sends a `POST` request to this URL for every event addressed to the partner — including order status updates and fund balance changes.
-
-| Event topic                         | When it fires                                                                                          | Reference |
-|-------------------------------------|--------------------------------------------------------------------------------------------------------|-----------|
-| `pay.order.status-updated`          | An order's state or processing state changes.                                                          | [Orders Webhook](/guides/webhooks/orders-webhook) |
-| `pay.partner.fund-balance-changed`  | The partner's prefund balance changes (deposit, withdraw, or compensation).                            | [Balance Change Webhook](/guides/webhooks/balance-change-webhook) |
+Set or clear the partner-level webhook URL that receives [`pay.partner.fund-balance-changed`](/guides/webhooks/balance-change-webhook) events. Whenever the partner's prefund balance changes due to a deposit, withdrawal, or compensation, Holdstation Pay sends a `POST` request to this URL.
 
 Pass an empty string `""` as `webhook_url` to disable notifications.
 
 <Note>
-  Each order may also override the destination by passing its own `callback` field at creation time. When an order-level callback is set, order events for that order go there instead of the partner-level URL.
+  This endpoint configures the destination for the **Balance Change Webhook** only. Order events (`pay.order.status-updated`) are delivered to the per-order `callback` field set when the order is created — see [Orders Webhook](/guides/webhooks/orders-webhook).
 </Note>
 
 ## Authentication
@@ -34,13 +29,13 @@ Pass an empty string `""` as `webhook_url` to disable notifications.
 ## Body Parameters
 
 <ParamField body="webhook_url" type="string" required>
-  HTTPS URL to receive partner events. Pass an empty string `""` to clear the webhook.
+  HTTPS URL to receive fund balance change events. Pass an empty string `""` to clear the webhook.
 </ParamField>
 
 <RequestExample>
 ```json Set
 {
-  "webhook_url": "https://yourapp.com/api/webhooks/hspay"
+  "webhook_url": "https://yourapp.com/api/webhooks/fund-balance"
 }
 ```
 
@@ -56,7 +51,7 @@ Pass an empty string `""` as `webhook_url` to disable notifications.
 {
   "message": "success",
   "data": {
-    "webhook_url": "https://yourapp.com/api/webhooks/hspay"
+    "webhook_url": "https://yourapp.com/api/webhooks/fund-balance"
   }
 }
 ```
@@ -72,7 +67,4 @@ Pass an empty string `""` as `webhook_url` to disable notifications.
 
 ## Event Delivery
 
-For event payloads, headers, and signature verification, see:
-
-- [Orders Webhook](/guides/webhooks/orders-webhook)
-- [Balance Change Webhook](/guides/webhooks/balance-change-webhook)
+See [Balance Change Webhook](/guides/webhooks/balance-change-webhook) for the headers, payload schema, `change_type` values, and signature verification.
