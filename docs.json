@@ -41,14 +41,14 @@
               "guides/order-flow",
               "guides/onramp-flow",
               "guides/offramp-flow",
+              "guides/partner-prefunding",
               {
                 "group": "Webhooks",
                 "pages": [
                   "guides/webhooks/orders-webhook",
                   "guides/webhooks/balance-change-webhook"
                 ]
-              },
-              "guides/partner-prefunding"
+              }
             ]
           },
           {
