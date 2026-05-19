@@ -43,7 +43,7 @@
               "guides/offramp-flow",
               "guides/webhooks",
               {
-                "group": "Offramp from Prefunding",
+                "group": "Prefunding Offramp Flow",
                 "pages": [
                   "guides/partner-prefunding",
                   "guides/partner-prefunding/balance-change-webhook"
