@@ -1,0 +1,65 @@
+---
+title: "Create Virtual Account"
+api: "POST https://pay-api.holdstation.com/partners/mid/va"
+description: "Create a multi-use virtual account under the partner's assigned HPay merchant."
+---
+
+Create a multi-use virtual account under the partner's assigned HPay merchant. The VA is stored in Holdstation Pay and can be managed via the [list](/api-reference/mid/list-vas), [get](/api-reference/mid/get-va), [inquiry](/api-reference/mid/inquiry-va), and [revoke](/api-reference/mid/revoke-va) endpoints.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="va_name" type="string" required>
+  Display name for the virtual account (max 200 chars).
+</ParamField>
+
+<ParamField body="remark" type="string" required>
+  Optional remark for the virtual account (max 50 chars).
+</ParamField>
+
+<ParamField body="va_expiration_time" type="integer | null" required>
+  Expiration as a Unix timestamp (seconds). Pass `null` to use the maximum allowed TTL.
+</ParamField>
+
+<RequestExample>
+```json Request
+{
+  "va_name": "PARTNER ABC ORDER 12345",
+  "remark": "order-12345",
+  "va_expiration_time": 1735689600
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "partner_id": "partner-xyz",
+    "va_account": "1234567890",
+    "va_name": "PARTNER ABC ORDER 12345",
+    "va_bank": "Vietcombank",
+    "remark": "order-12345",
+    "status": 1,
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+    "expired_at": "2025-01-01T00:00:00Z"
+  }
+}
+```
+</ResponseExample>

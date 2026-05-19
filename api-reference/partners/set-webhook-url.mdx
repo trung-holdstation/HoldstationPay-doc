@@ -1,0 +1,66 @@
+---
+title: "Set Partner Webhook URL"
+api: "POST https://pay-api.holdstation.com/partners/webhook-url"
+description: "Set (or clear) the webhook URL that receives fund balance change events."
+---
+
+Set or clear the partner-level webhook URL that receives [`pay.partner.fund-balance-changed`](/guides/webhooks#fund-balance-change-event) events. Whenever the partner's prefund balance changes due to a deposit, withdrawal, or compensation, Holdstation Pay sends a `POST` request to this URL.
+
+Pass an empty string `""` as `webhook_url` to disable notifications.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="webhook_url" type="string" required>
+  HTTPS URL to receive fund balance change events. Pass an empty string `""` to clear the webhook.
+</ParamField>
+
+<RequestExample>
+```json Set
+{
+  "webhook_url": "https://yourapp.com/api/webhooks/fund-balance"
+}
+```
+
+```json Clear
+{
+  "webhook_url": ""
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "webhook_url": "https://yourapp.com/api/webhooks/fund-balance"
+  }
+}
+```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "webhook_url must be a valid HTTPS URL"
+}
+```
+</ResponseExample>
+
+## Event Delivery
+
+See [Fund Balance Change Event](/guides/webhooks#fund-balance-change-event) for the headers, payload schema, `change_type` values, and signature verification.

@@ -112,6 +112,7 @@
               "api-reference/orders/list-orders",
               "api-reference/orders/get-order-by-id",
               "api-reference/orders/get-order-by-reference",
+              "api-reference/orders/get-customer-info",
               "api-reference/orders/close-order"
             ]
           },
@@ -136,8 +137,19 @@
             "group": "Merchant Virtual Account",
             "pages": [
               "api-reference/mid/get-balance",
+              "api-reference/mid/create-va",
+              "api-reference/mid/list-vas",
+              "api-reference/mid/get-va",
+              "api-reference/mid/revoke-va",
+              "api-reference/mid/inquiry-va",
               "api-reference/mid/get-va-callback",
               "api-reference/mid/update-va-callback"
+            ]
+          },
+          {
+            "group": "Partners",
+            "pages": [
+              "api-reference/partners/set-webhook-url"
             ]
           }
         ]

@@ -1,0 +1,47 @@
+---
+title: "Get Virtual Account"
+api: "GET https://pay-api.holdstation.com/partners/mid/va/{va_account}"
+description: "Get details of a specific virtual account owned by the partner."
+---
+
+Get details of a specific virtual account owned by the partner.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="va_account" type="string" required>
+  The virtual account number to look up.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "partner_id": "partner-xyz",
+    "va_account": "1234567890",
+    "va_name": "PARTNER ABC ORDER 12345",
+    "va_bank": "Vietcombank",
+    "remark": "order-12345",
+    "status": 1,
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+    "expired_at": "2025-01-01T00:00:00Z"
+  }
+}
+```
+</ResponseExample>

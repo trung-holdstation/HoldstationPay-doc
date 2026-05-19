@@ -1,0 +1,65 @@
+---
+title: "Get Order Customer Info"
+api: "GET https://pay-api.holdstation.com/partners/orders/{order_id}/customer-info"
+description: "Retrieve the customer (sender) information associated with an onramp order."
+---
+
+Retrieve the customer (sender) information associated with an onramp order. The response includes the masked bank account number, bank code, and name of the sender as provided by the payment provider during the fiat deposit callback.
+
+This endpoint is **only meaningful for onramp orders** that have received a fiat deposit callback. If the provider does not return customer info, or if the callback has not yet arrived, the response indicates the reason via the `code` field.
+
+## Path Parameters
+
+<ParamField path="order_id" type="string" required>
+  The UUID of the order.
+</ParamField>
+
+## Response Codes
+
+| `code` | Name             | Meaning                                                                                  |
+|--------|------------------|------------------------------------------------------------------------------------------|
+| `0`    | SUCCESS          | `customer_info` is populated.                                                            |
+| `2`    | NOT_SUPPORTED    | The payment provider for this order does not return customer info.                       |
+| `3`    | NOT_AVAILABLE    | The fiat deposit callback has not yet been received; try again later.                    |
+
+<ResponseExample>
+```json 200 Success
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": "",
+    "customer_info": {
+      "customer_account": "1234****7890",
+      "customer_bank_code": "970423",
+      "customer_name": "NGUYEN VAN A"
+    }
+  }
+}
+```
+
+```json 200 Not Available
+{
+  "message": "success",
+  "data": {
+    "success": false,
+    "code": 3,
+    "error": "customer info not yet available",
+    "customer_info": null
+  }
+}
+```
+
+```json 200 Not Supported
+{
+  "message": "success",
+  "data": {
+    "success": false,
+    "code": 2,
+    "error": "provider does not return customer info",
+    "customer_info": null
+  }
+}
+```
+</ResponseExample>

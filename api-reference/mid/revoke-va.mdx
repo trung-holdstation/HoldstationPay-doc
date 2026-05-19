@@ -1,0 +1,42 @@
+---
+title: "Revoke Virtual Account"
+api: "DELETE https://pay-api.holdstation.com/partners/mid/va/{va_account}"
+description: "Revoke a virtual account and mark it expired."
+---
+
+Revoke a virtual account and mark it as expired in Holdstation Pay. Revoked accounts can no longer receive payments.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="va_account" type="string" required>
+  The virtual account number to revoke.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "merchant_id": "MID123",
+    "va_account": "1234567890",
+    "va_status": "4"
+  }
+}
+```
+</ResponseExample>
+
+`va_status` value `4` indicates the virtual account has been revoked.

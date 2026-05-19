@@ -34,6 +34,55 @@ Every balance change is recorded in the fund logs with a `change_type`:
 | `2` | Withdraw | Debit from an offramp order |
 | `3` | Compensate | Adjustment by Holdstation Pay (e.g., refund or correction) |
 
+## Withdraw Order Flow
+
+```mermaid
+sequenceDiagram
+    actor P as Partner
+    participant H as Holdstation Pay
+    participant Bank
+
+    P->>+H: POST /partners/orders/withdraw
+    Note over P, H: Input token symbol + amount + payment info
+    H-->>H: Calculate VND amount
+    H-->>-P: Returns {order, rate} (state = Created)
+    Note over P: Partner decides whether to confirm
+    P->>+H: POST /partners/orders/{order_id}/confirm-withdraw
+    H-->>H: Deduct partner fund balance
+    H-->>H: Queue VND disbursement
+    H-->>-P: Returns {order} (state = Processing)
+    H->>Bank: Initiate VND transfer
+    Bank-->>P: (via callback) Transfer result
+```
+
+## Processing States Flow
+
+```mermaid
+stateDiagram-v2
+    state "State -> Completed" as C
+    state "State -> Failed" as F
+    state "State -> Closed" as CL
+    state "Created = 1" as CR
+    state "Fiat Queued = 31" as FQ
+    state "Fiat Processing = 32" as FP
+    state "Fiat Confirmed = 33" as FC
+    state "Fiat Failed = 34" as FF
+
+    [*] --> CR: POST /partners/orders/withdraw
+    CR --> FQ: POST /partners/orders/{order_id}/confirm-withdraw
+    CR --> CL: Expired or closed manually
+    FQ --> FP: Payment gateway picks up order
+    FP --> FC: VND transfer successful
+    FC --> C
+    FP --> FF: VND transfer failed
+    FF --> F
+    F --> [*]
+    C --> [*]
+    CL --> [*]
+```
+
+See the full processing state table in [Order Flow → Withdraw Orders](/guides/order-flow#withdraw-orders-prefunded-disbursement).
+
 ## Endpoints
 
 | Method | Path | Description |
@@ -42,5 +91,6 @@ Every balance change is recorded in the fund logs with a `change_type`:
 | GET | `/partners/funds/balance` | Get balance for a single token |
 | GET | `/partners/funds/deposit-addresses` | List on-chain deposit addresses |
 | GET | `/partners/funds/logs` | List balance-change history |
-| POST | `/partners/orders/withdraw` | Create an offramp order (quote only, pending confirmation) |
+| POST | `/partners/orders/withdraw` | Create a withdraw order (quote only, pending confirmation) |
 | POST | `/partners/orders/{order_id}/confirm-withdraw` | Confirm the order and release the VND payout |
+| POST | `/partners/webhook-url` | Set the URL that receives [fund balance change events](/guides/webhooks#fund-balance-change-event) |
