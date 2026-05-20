@@ -95,6 +95,22 @@ See the full processing state table in [Order Flow → Withdraw Orders](/guides/
 | POST | `/partners/orders/{order_id}/confirm-withdraw` | Confirm the order and release the VND payout |
 | POST | `/partners/webhook-url` | Set the URL that receives [Balance Change Webhook](/guides/webhooks/balance-change-webhook) events |
 
+## Withdraw Error Codes
+
+Both [`POST /partners/orders/withdraw`](/api-reference/funds/withdraw) and [`POST /partners/orders/{order_id}/confirm-withdraw`](/api-reference/funds/confirm-withdraw) return a numeric `code` in the response body when the operation cannot be completed. Use this code to drive retries and partner-side error handling.
+
+| `code` | Name                          | Meaning                                                                                                |
+|--------|-------------------------------|--------------------------------------------------------------------------------------------------------|
+| `1`    | `INVALID_INPUT`               | The request body failed validation (missing or malformed fields, unsupported currency, etc.).          |
+| `2`    | `PARTNER_NOT_FOUND`           | The authenticated partner cannot be resolved.                                                          |
+| `3`    | `INSUFFICIENT_BALANCE`        | The partner's fund balance for the requested token is below the order amount + fees.                   |
+| `4`    | `DUPLICATE_REQUEST`           | The `idempotency_key` has already been used to create another withdraw order.                          |
+| `5`    | `ORDER_NOT_FOUND`             | No order matches the supplied `order_id` (confirm-withdraw only).                                      |
+| `6`    | `ORDER_NOT_OWNED_BY_PARTNER`  | The order exists but belongs to a different partner (confirm-withdraw only).                           |
+| `7`    | `INVALID_ORDER_STATE`         | The order is not in a state that allows confirmation (e.g., already confirmed, expired, or closed).    |
+| `8`    | `INVALID_ORDER_TYPE`          | The order is not a withdraw order (confirm-withdraw only).                                             |
+| `99`   | `INTERNAL_ERROR`              | Unexpected server error; safe to retry after a short backoff.                                          |
+
 ## Balance Change Webhook
 
 To get notified whenever your prefund balance changes (deposit, withdraw, or compensation), configure a partner-level webhook URL. See [Balance Change Webhook](/guides/webhooks/balance-change-webhook) for the event headers, payload, and `change_type` values.
