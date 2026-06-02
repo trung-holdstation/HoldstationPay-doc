@@ -22,7 +22,8 @@ You top up your balance with on-chain deposits once, then debit it directly when
 3. **Check balance** — use [List Funds](/api-reference/funds/list-funds) to view all balances, or [Get Fund Balance](/api-reference/funds/get-balance) for a single token.
 4. **Create offramp order** — call [Create Withdrawal from Fund](/api-reference/funds/withdraw) to create an order with a confirmed quote (rate, outcome, fees). No VND is sent yet — the order is held for up to **15 minutes** awaiting confirmation. Always include an `idempotency_key` to avoid duplicate orders.
 5. **Confirm disbursement** — call [Confirm Withdrawal](/api-reference/funds/confirm-withdraw) with the `order_id` from step 4 to release the payout. Holdstation Pay debits your balance and sends VND to the recipient bank account using the details on the order. If not confirmed within 15 minutes, the order expires and must be recreated.
-6. **Audit** — use [List Fund Logs](/api-reference/funds/list-logs) to review every balance change (deposits, offramp debits, and compensations).
+6. **Balance Change History** — use [List Fund Logs](/api-reference/funds/list-logs) to review every balance change (deposits, offramp debits, and compensations/refunds).
+7. **Balance Change Webhook** — to get notified the moment your prefund balance changes, configure a partner-level webhook URL via [Set Partner Webhook URL](/api-reference/partners/set-webhook-url). See [Balance Change Webhook](/guides/webhooks/balance-change-webhook) for the event headers, payload, and `change_type` values.
 
 ## Change Types
 
@@ -32,7 +33,7 @@ Every balance change is recorded in the fund logs with a `change_type`:
 |---|---|---|
 | `1` | Deposit | On-chain deposit credited to the balance |
 | `2` | Withdraw | Debit from an offramp order |
-| `3` | Compensate | Adjustment by Holdstation Pay (e.g., refund or correction) |
+| `3` | Compensation/Refund | Adjustment by Holdstation Pay (e.g., refund or correction) |
 
 ## Withdraw Order Flow
 
@@ -110,7 +111,3 @@ Both [`POST /partners/orders/withdraw`](/api-reference/funds/withdraw) and [`POS
 | `7`    | `INVALID_ORDER_STATE`         | The order is not in a state that allows confirmation (e.g., already confirmed, expired, or closed).    |
 | `8`    | `INVALID_ORDER_TYPE`          | The order is not a withdraw order (confirm-withdraw only).                                             |
 | `99`   | `INTERNAL_ERROR`              | Unexpected server error; safe to retry after a short backoff.                                          |
-
-## Balance Change Webhook
-
-To get notified whenever your prefund balance changes (deposit, withdraw, or compensation), configure a partner-level webhook URL. See [Balance Change Webhook](/guides/webhooks/balance-change-webhook) for the event headers, payload, and `change_type` values.
