@@ -38,6 +38,43 @@ sequenceDiagram
     H-->>P: (via callback) Order Completed
 ```
 
+## Processing States
+
+Crypto payout orders move through a dedicated processing-state set. State updates are delivered to your configured `callback` as [Orders Webhook](/guides/webhooks/orders-webhook) events.
+
+| Processing State        | Value | Description                                                |
+|-------------------------|-------|------------------------------------------------------------|
+| Waiting For Approval    | 40    | Created; awaiting Holdstation operator to settle           |
+| Crypto Pending          | 41    | Token send submitted on-chain; awaiting confirmation       |
+| Crypto Confirmed        | 42    | Token transfer confirmed on-chain                          |
+| Crypto Failed           | 43    | Token transfer failed; VND refunded, re-settle allowed     |
+| Crypto Queued           | 44    | VND debited; crypto send queued for transferring           |
+
+```mermaid
+stateDiagram-v2
+    state "State -> Completed" as C
+    state "State -> Failed" as F
+    state "State -> Closed" as CL
+    state "Waiting For Approval = 40" as WA
+    state "Crypto Queued = 44" as CQ
+    state "Crypto Pending = 41" as CP
+    state "Crypto Confirmed = 42" as CC
+    state "Crypto Failed = 43" as CF
+
+    [*] --> WA: POST /partners/orders/crypto-payout
+    WA --> CQ: Operator approves; VND debited
+    WA --> CL: Expired or closed manually
+    CQ --> CP: Crypto send submitted on-chain
+    CP --> CC: Transfer confirmed
+    CC --> C
+    CP --> CF: Transfer failed
+    CF --> F
+    Note right of CF: VND refunded; operator may re-settle
+    F --> [*]
+    C --> [*]
+    CL --> [*]
+```
+
 ## Currency Modes
 
 The `currency` field controls how `amount` is interpreted:
