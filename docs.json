@@ -66,7 +66,8 @@
             "pages": [
               "guides/partner-merchant-virtual-account/overview-and-authentication",
               "guides/partner-merchant-virtual-account/virtual-account",
-              "guides/partner-merchant-virtual-account/get-mid-balance"
+              "guides/partner-merchant-virtual-account/get-mid-balance",
+              "guides/partner-merchant-virtual-account/crypto-payout"
             ]
           },
           {
@@ -149,7 +150,8 @@
               "api-reference/mid/revoke-va",
               "api-reference/mid/inquiry-va",
               "api-reference/mid/get-va-callback",
-              "api-reference/mid/update-va-callback"
+              "api-reference/mid/update-va-callback",
+              "api-reference/mid/crypto-payout"
             ]
           },
           {

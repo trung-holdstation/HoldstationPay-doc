@@ -1,0 +1,130 @@
+---
+title: "Create Crypto Payout"
+api: "POST https://pay-api.holdstation.com/partners/orders/crypto-payout"
+description: "Spend the MID's VND balance to send a stablecoin to a recipient wallet."
+---
+
+Spend the partner's MID VND balance to send a stablecoin to a recipient wallet. The order is created in a pending state awaiting operator approval — **no VND is debited at create time**. Once approved, Holdstation Pay debits the VND balance and broadcasts the on-chain stablecoin transfer.
+
+See the [Crypto Payout](/guides/partner-merchant-virtual-account/crypto-payout) guide for the full flow.
+
+<Note>
+  The `token_address` must reference a stablecoin (token with `token_type=STABLECOIN`).
+</Note>
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+<ParamField header="X-Idempotency-Key" type="string">
+  Optional idempotency key to prevent duplicate orders. Can also be supplied in the request body via `idempotency_key`.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="amount" type="string" required>
+  Amount to spend or receive, depending on `currency`. Example: `"500000"`.
+</ParamField>
+
+<ParamField body="currency" type="string" required>
+  How to interpret `amount`. `vnd` spends exactly this many VND from the MID balance; `token` sends exactly this many tokens to the recipient. Defaults to `vnd` if omitted.
+</ParamField>
+
+<ParamField body="token_address" type="string" required>
+  Stablecoin token contract address on the target chain. Token must have `token_type=STABLECOIN`.
+</ParamField>
+
+<ParamField body="chain_id" type="integer" required>
+  Target chain ID.
+</ParamField>
+
+<ParamField body="recipient" type="string" required>
+  Recipient crypto wallet address.
+</ParamField>
+
+<ParamField body="callback" type="string" required>
+  HTTPS webhook URL for receiving order status updates. See [Orders Webhook](/guides/webhooks/orders-webhook).
+</ParamField>
+
+<ParamField body="reference_no" type="string" required>
+  Partner reference number. Use this to map the Holdstation Pay order to your internal record.
+</ParamField>
+
+<ParamField body="idempotency_key" type="string" required>
+  Idempotency key to prevent duplicate orders. May also be passed via the `X-Idempotency-Key` header instead.
+</ParamField>
+
+<RequestExample>
+```json Spend VND
+{
+  "amount": "500000",
+  "currency": "vnd",
+  "token_address": "0x55d398326f99059ff775485246999027b3197955",
+  "chain_id": 56,
+  "recipient": "0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E",
+  "callback": "https://yourapp.com/api/webhooks/payment",
+  "reference_no": "PAYOUT-001",
+  "idempotency_key": "unique-idempotency-key-001"
+}
+```
+
+```json Target Token Amount
+{
+  "amount": "20",
+  "currency": "token",
+  "token_address": "0x55d398326f99059ff775485246999027b3197955",
+  "chain_id": 56,
+  "recipient": "0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E",
+  "callback": "https://yourapp.com/api/webhooks/payment",
+  "reference_no": "PAYOUT-002",
+  "idempotency_key": "unique-idempotency-key-002"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": "",
+    "order": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "code": 300001,
+      "state": 1,
+      "processing_state": 0,
+      "amount": "500000",
+      "currency": "vnd",
+      "outcome": "20",
+      "rate": "25000",
+      "token_address": "0x55d398326f99059ff775485246999027b3197955",
+      "chain_id": 56,
+      "recipient": "0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E",
+      "reference_no": "PAYOUT-001",
+      "callback": "https://yourapp.com/api/webhooks/payment",
+      "created_at": { "seconds": 1700000000, "nanos": 0 }
+    }
+  }
+}
+```
+
+```json 400
+{
+  "error": "invalid token",
+  "error_code": "INVALID_TOKEN",
+  "message": "token_address is not a stablecoin"
+}
+```
+</ResponseExample>
