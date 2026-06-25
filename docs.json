@@ -71,6 +71,12 @@
             ]
           },
           {
+            "group": "Partner Customer KYC",
+            "pages": [
+              "guides/partner-customer-kyc/overview"
+            ]
+          },
+          {
             "group": "Request Signing",
             "pages": [
               "guides/partner-authentication-signed-api/overview",
@@ -158,6 +164,15 @@
             "group": "Partners",
             "pages": [
               "api-reference/partners/set-webhook-url"
+            ]
+          },
+          {
+            "group": "Partner Customer KYC",
+            "pages": [
+              "api-reference/kyc/create-kyc",
+              "api-reference/kyc/update-kyc",
+              "api-reference/kyc/get-kyc",
+              "api-reference/kyc/list-kyc"
             ]
           }
         ]

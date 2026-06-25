@@ -1,0 +1,105 @@
+---
+title: "Update Customer KYC"
+api: "PUT https://pay-api.holdstation.com/partners/kycs/{id}"
+description: "Update an existing partner customer KYC record."
+---
+
+Update an existing partner customer KYC record. Fails with `404 Not Found` if the id is unknown. KYC records cannot be deleted.
+
+See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for the field reference.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  Partner-provided unique id of the customer KYC record to update.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="name" type="string" required>
+  Full name.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  Email.
+</ParamField>
+
+<ParamField body="phone" type="string" required>
+  Phone number.
+</ParamField>
+
+<ParamField body="id_number" type="string" required>
+  Identity document number.
+</ParamField>
+
+<ParamField body="id_type" type="integer" required>
+  `1` = Citizen ID, `2` = Passport, `3` = License.
+</ParamField>
+
+<ParamField body="sex" type="integer" required>
+  `1` = Male, `2` = Female, `3` = Other.
+</ParamField>
+
+<ParamField body="nationality" type="string" required>
+  Nationality.
+</ParamField>
+
+<ParamField body="date_of_expiry" type="string" required>
+  Identity document expiry date in ISO `YYYY-MM-DD` format.
+</ParamField>
+
+<RequestExample>
+```json Request
+{
+  "name": "Jane Doe",
+  "email": "jane.new@example.com",
+  "phone": "+84123456789",
+  "id_number": "012345678",
+  "id_type": 2,
+  "sex": 2,
+  "nationality": "VN",
+  "date_of_expiry": "2032-01-01"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "id": "cust-001",
+    "name": "Jane Doe",
+    "email": "jane.new@example.com",
+    "phone": "+84123456789",
+    "id_number": "012345678",
+    "id_type": 2,
+    "sex": 2,
+    "nationality": "VN",
+    "date_of_expiry": "2032-01-01"
+  }
+}
+```
+
+```json 404
+{
+  "error": "kyc not found",
+  "error_code": "KYC_NOT_FOUND",
+  "message": "No KYC record with this id"
+}
+```
+</ResponseExample>

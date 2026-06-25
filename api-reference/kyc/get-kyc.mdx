@@ -1,0 +1,54 @@
+---
+title: "Get Customer KYC"
+api: "GET https://pay-api.holdstation.com/partners/kycs/{id}"
+description: "Fetch a single partner customer KYC record."
+---
+
+Fetch one KYC record by its partner-provided id.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  Partner-provided unique id of the customer KYC record.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "id": "cust-001",
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "phone": "+84123456789",
+    "id_number": "012345678",
+    "id_type": 2,
+    "sex": 2,
+    "nationality": "VN",
+    "date_of_expiry": "2030-01-01"
+  }
+}
+```
+
+```json 404
+{
+  "error": "kyc not found",
+  "error_code": "KYC_NOT_FOUND",
+  "message": "No KYC record with this id"
+}
+```
+</ResponseExample>

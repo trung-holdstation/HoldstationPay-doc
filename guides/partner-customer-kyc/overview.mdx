@@ -1,0 +1,68 @@
+---
+title: "Overview"
+description: "Register and reference customer KYC records for onramp, offramp, and withdraw orders."
+---
+
+When the `partner_kyc` feature flag is enabled for your partner account, every onramp, offramp, and withdraw order **must** reference a previously-registered customer KYC record via `kyc_id`. Register your KYC records ahead of time, then pass the `kyc_id` on the order.
+
+<Note>
+  Customer KYC records are append-only — they can be created, updated, listed, and fetched, but **not deleted**. The `kyc_id` is retained as an audit link on every order that referenced it.
+</Note>
+
+<Note>
+  Contact Holdstation to enable the `partner_kyc` feature flag and to confirm which fields are required for your account.
+</Note>
+
+## Authentication
+
+KYC endpoints use the same Ed25519 signed-API scheme as the MID endpoints — `Partner-App-Key`, `X-HSPay-Signature`, and `X-HSPay-Timestamp` headers. See [Request Signing](/guides/partner-authentication-signed-api/overview).
+
+## Fields
+
+| Field            | Type           | Notes |
+|------------------|----------------|-------|
+| `id`             | string (path)  | Partner-provided unique id for this customer; this is the `kyc_id` used on orders |
+| `name`           | string         | Full name |
+| `email`          | string         | Email |
+| `phone`          | string         | Phone number |
+| `id_number`      | string         | Identity document number |
+| `id_type`        | int enum       | `1` = Citizen ID, `2` = Passport, `3` = License |
+| `sex`            | int enum       | `1` = Male, `2` = Female, `3` = Other |
+| `nationality`    | string         | Nationality |
+| `date_of_expiry` | string         | Identity document expiry, ISO `YYYY-MM-DD` |
+
+Some fields are **required** for your account. Holdstation configures the required set per partner; contact us to confirm which fields apply to you. A create or update is rejected with `MISSING_REQUIRED_FIELD` if a required field is empty (or, for `id_type` / `sex`, left unspecified / `0`).
+
+## Endpoints
+
+The request body is the same for create and update:
+
+```json
+{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "phone": "+84123456789",
+  "id_number": "012345678",
+  "id_type": 2,
+  "sex": 2,
+  "nationality": "VN",
+  "date_of_expiry": "2030-01-01"
+}
+```
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/partners/kycs/{id}` | [Create KYC record](/api-reference/kyc/create-kyc). Fails with `409 Conflict` if the id already exists. |
+| `PUT` | `/partners/kycs/{id}` | [Update KYC record](/api-reference/kyc/update-kyc). Fails with `404 Not Found` if the id is unknown. |
+| `GET` | `/partners/kycs/{id}` | [Get KYC record](/api-reference/kyc/get-kyc) |
+| `GET` | `/partners/kycs` | [List KYC records](/api-reference/kyc/list-kyc), paged. `page_size` is capped at `100`. |
+
+## Using `kyc_id` on Orders
+
+Add `kyc_id` to the request body when calling:
+
+- `POST /partners/orders/deposit` (onramp)
+- `POST /partners/orders/withdrawal` (offramp)
+- `POST /partners/orders/withdraw` (withdraw from prefunding)
+
+When the `partner_kyc` flag is enabled, an order with a missing or unknown `kyc_id` is rejected.

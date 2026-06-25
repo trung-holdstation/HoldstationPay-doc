@@ -1,0 +1,63 @@
+---
+title: "List Customer KYC"
+api: "GET https://pay-api.holdstation.com/partners/kycs"
+description: "List your customer KYC records, paged."
+---
+
+List the partner's customer KYC records. Results are paged. `page_size` is capped at `100`.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="page" type="integer">
+  Page number (1-based). Defaults to `1`.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Number of records per page. Defaults to `20`; capped at `100`.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": [
+    {
+      "id": "cust-001",
+      "name": "Jane Doe",
+      "email": "jane@example.com",
+      "phone": "+84123456789",
+      "id_number": "012345678",
+      "id_type": 2,
+      "sex": 2,
+      "nationality": "VN",
+      "date_of_expiry": "2030-01-01"
+    },
+    {
+      "id": "cust-002",
+      "name": "John Smith",
+      "email": "john@example.com",
+      "phone": "+84987654321",
+      "id_number": "987654321",
+      "id_type": 1,
+      "sex": 1,
+      "nationality": "VN",
+      "date_of_expiry": "2031-06-15"
+    }
+  ]
+}
+```
+</ResponseExample>
