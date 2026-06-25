@@ -1,0 +1,30 @@
+---
+title: "How to use in orders"
+description: "Attach a kyc_id to onramp, offramp, and withdraw orders."
+---
+
+Once a customer has a registered KYC record (see [KYC Management](/guides/partner-customer-kyc/kyc-management)), pass its `id` as `kyc_id` in the request body when creating orders for that customer.
+
+Add `kyc_id` to the request body when calling:
+
+- `POST /partners/orders/deposit` — onramp ([Create Deposit](/api-reference/orders/create-deposit))
+- `POST /partners/orders/withdrawal` — offramp ([Create Withdrawal](/api-reference/orders/create-withdrawal))
+- `POST /partners/orders/withdraw` — withdraw from prefunding ([Create Withdrawal from Fund](/api-reference/funds/withdraw))
+
+When the `partner_kyc` flag is enabled, an order with a missing or unknown `kyc_id` is rejected.
+
+## Example
+
+```json
+{
+  "amount": "1000000",
+  "currency": "vnd",
+  "chain_id": 56,
+  "token_address": "0x55d398326f99059ff775485246999027b3197955",
+  "recipient": "0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E",
+  "callback": "https://yourapp.com/api/webhooks/payment",
+  "reference_no": "ORDER-001",
+  "buffer": 0.005,
+  "kyc_id": "cust-001"
+}
+```

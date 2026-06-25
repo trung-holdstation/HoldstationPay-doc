@@ -73,7 +73,9 @@
           {
             "group": "Partner Customer KYC",
             "pages": [
-              "guides/partner-customer-kyc/overview"
+              "guides/partner-customer-kyc/overview",
+              "guides/partner-customer-kyc/kyc-management",
+              "guides/partner-customer-kyc/how-to-use-in-orders"
             ]
           },
           {
