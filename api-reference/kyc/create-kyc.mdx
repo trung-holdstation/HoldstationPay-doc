@@ -42,6 +42,10 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
   Phone number.
 </ParamField>
 
+<ParamField body="address" type="string" required>
+  Residential address.
+</ParamField>
+
 <ParamField body="id_number" type="string" required>
   Identity document number.
 </ParamField>
@@ -58,6 +62,10 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
   Nationality.
 </ParamField>
 
+<ParamField body="date_of_issue" type="string" required>
+  Identity document issue date in ISO `YYYY-MM-DD` format.
+</ParamField>
+
 <ParamField body="date_of_expiry" type="string" required>
   Identity document expiry date in ISO `YYYY-MM-DD` format.
 </ParamField>
@@ -68,10 +76,12 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
   "name": "Jane Doe",
   "email": "jane@example.com",
   "phone": "+84123456789",
+  "address": "123 Le Loi, District 1, Ho Chi Minh City",
   "id_number": "012345678",
   "id_type": 2,
   "sex": 2,
   "nationality": "VN",
+  "date_of_issue": "2020-01-01",
   "date_of_expiry": "2030-01-01"
 }
 ```
@@ -86,10 +96,12 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
     "name": "Jane Doe",
     "email": "jane@example.com",
     "phone": "+84123456789",
+    "address": "123 Le Loi, District 1, Ho Chi Minh City",
     "id_number": "012345678",
     "id_type": 2,
     "sex": 2,
     "nationality": "VN",
+    "date_of_issue": "2020-01-01",
     "date_of_expiry": "2030-01-01"
   }
 }
