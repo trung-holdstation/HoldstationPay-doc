@@ -9,21 +9,23 @@ KYC endpoints use the same Ed25519 signed-API scheme as the MID endpoints — `P
 
 ## Fields
 
-| Field            | Type           | Notes |
-|------------------|----------------|-------|
-| `id`             | string (path)  | Partner-provided unique id for this customer; this is the `kyc_id` used on orders |
-| `name`           | string         | Full name |
-| `email`          | string         | Email |
-| `phone`          | string         | Phone number |
-| `address`        | string         | Residential address |
-| `id_number`      | string         | Identity document number |
-| `id_type`        | int enum       | `1` = Citizen ID, `2` = Passport, `3` = License |
-| `sex`            | int enum       | `1` = Male, `2` = Female, `3` = Other |
-| `nationality`    | string         | Nationality |
-| `date_of_issue`  | string         | Identity document issue date, ISO `YYYY-MM-DD` |
-| `date_of_expiry` | string         | Identity document expiry date, ISO `YYYY-MM-DD` |
+| Field            | Type           | Required | Notes |
+|------------------|----------------|----------|-------|
+| `id`             | string (path)  | Yes      | Partner-provided unique id for this customer; this is the `kyc_id` used on orders |
+| `name`           | string         | Yes      | Full name |
+| `email`          | string         | Conditional | At least one of `email` or `phone` must be provided |
+| `phone`          | string         | Conditional | At least one of `email` or `phone` must be provided |
+| `address`        | string         | Yes      | Residential address |
+| `id_number`      | string         | Yes      | Identity document number |
+| `id_type`        | int enum       | Yes      | Only `1` = Citizen ID is currently supported |
+| `sex`            | int enum       | Yes      | `1` = Male, `2` = Female, `3` = Other |
+| `nationality`    | string         | Yes      | Nationality |
+| `date_of_issue`  | string         | Yes      | Identity document issue date, ISO `YYYY-MM-DD` |
+| `date_of_expiry` | string         | Yes      | Identity document expiry date, ISO `YYYY-MM-DD` |
 
-Some fields are **required** for your account. Holdstation configures the required set per partner; contact us to confirm which fields apply to you. A create or update is rejected with `MISSING_REQUIRED_FIELD` if a required field is empty (or, for `id_type` / `sex`, left unspecified / `0`).
+<Note>
+  All fields marked **Yes** are mandatory. `email` and `phone` are conditional: at least one of them must be provided, but you don't need both. A create or update is rejected with `MISSING_REQUIRED_FIELD` if a required field is empty (or, for `id_type` / `sex`, left unspecified / `0`).
+</Note>
 
 ## Endpoints
 
@@ -36,7 +38,7 @@ The request body is the same for create and update:
   "phone": "+84123456789",
   "address": "123 Le Loi, District 1, Ho Chi Minh City",
   "id_number": "012345678",
-  "id_type": 2,
+  "id_type": 1,
   "sex": 2,
   "nationality": "VN",
   "date_of_issue": "2020-01-01",

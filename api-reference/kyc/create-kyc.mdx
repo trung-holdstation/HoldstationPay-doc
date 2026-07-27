@@ -30,16 +30,20 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
 
 ## Body Parameters
 
+<Note>
+  At least one of `email` or `phone` must be provided. Every other body field is mandatory.
+</Note>
+
 <ParamField body="name" type="string" required>
   Full name.
 </ParamField>
 
-<ParamField body="email" type="string" required>
-  Email.
+<ParamField body="email" type="string">
+  Email. Required if `phone` is not provided.
 </ParamField>
 
-<ParamField body="phone" type="string" required>
-  Phone number.
+<ParamField body="phone" type="string">
+  Phone number. Required if `email` is not provided.
 </ParamField>
 
 <ParamField body="address" type="string" required>
@@ -51,7 +55,7 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
 </ParamField>
 
 <ParamField body="id_type" type="integer" required>
-  `1` = Citizen ID, `2` = Passport, `3` = License.
+  Only `1` = Citizen ID is currently supported.
 </ParamField>
 
 <ParamField body="sex" type="integer" required>
@@ -78,7 +82,7 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
   "phone": "+84123456789",
   "address": "123 Le Loi, District 1, Ho Chi Minh City",
   "id_number": "012345678",
-  "id_type": 2,
+  "id_type": 1,
   "sex": 2,
   "nationality": "VN",
   "date_of_issue": "2020-01-01",
@@ -98,7 +102,7 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
     "phone": "+84123456789",
     "address": "123 Le Loi, District 1, Ho Chi Minh City",
     "id_number": "012345678",
-    "id_type": 2,
+    "id_type": 1,
     "sex": 2,
     "nationality": "VN",
     "date_of_issue": "2020-01-01",

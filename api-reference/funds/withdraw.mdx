@@ -69,6 +69,10 @@ Use `idempotency_key` to ensure the order is not created twice.
   Idempotency key to ensure the withdrawal is not processed twice.
 </ParamField>
 
+<ParamField body="kyc_id" type="string">
+  Partner customer KYC id. **Required** when the `partner_kyc` feature flag is enabled for your account — the order is rejected if this is missing or does not match a registered KYC record. See [Partner Customer KYC](/guides/partner-customer-kyc/overview).
+</ParamField>
+
 <RequestExample>
 ```json Request
 {
@@ -83,7 +87,8 @@ Use `idempotency_key` to ensure the order is not created twice.
   },
   "callback": "https://yourapp.com/api/webhooks/payment",
   "reference_no": "WITHDRAW-001",
-  "idempotency_key": "unique-idempotency-key-001"
+  "idempotency_key": "unique-idempotency-key-001",
+  "kyc_id": "cust-001"
 }
 ```
 </RequestExample>
