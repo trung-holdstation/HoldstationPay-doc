@@ -39,17 +39,24 @@ stateDiagram-v2
     state "State -> Completed" as C
     state "State -> Failed" as F
     state "State -> Closed" as CL
+    state "State -> Rejected" as RJ
     state "Fiat Pending = 10" as FP
     state "Fiat Confirmed = 11" as FC
     state "Fiat Failed = 12" as FF
     state "Crypto Pending = 13" as CP
     state "Crypto Confirmed = 14" as CC
     state "Crypto Failed = 15" as CF
+    state "Need To Review = 17" as NR
+    state "Review Rejected = 18" as RR
 
     [*] --> FP
     FP --> FC: Bank notify successful result
     FP --> CL: Order expired or closed manually
     FP --> FF: Bank notify failure result
+    FP --> NR: Sender name does not match KYC
+    NR --> FC: Operator accepts
+    NR --> RR: Operator rejects
+    RR --> RJ
     FF --> F
     FC --> CP: Transfer USDT
     CP --> CC: Transfer successful
@@ -59,6 +66,7 @@ stateDiagram-v2
     F --> [*]
     C --> [*]
     CL --> [*]
+    RJ --> [*]
 ```
 
 ## Step-by-Step

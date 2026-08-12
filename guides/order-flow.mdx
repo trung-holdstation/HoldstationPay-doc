@@ -14,6 +14,7 @@ Holdstation Pay uses specific order states and processing states to track the st
 | **Completed**  | 3     | Order has been completed successfully                                                                |
 | **Failed**     | 4     | Order has failed                                                                                     |
 | **Closed**     | 5     | Order has been closed                                                                                |
+| **Rejected**   | 8     | Order was rejected by an operator after manual review                                                |
 
 ```mermaid
 stateDiagram-v2
@@ -22,6 +23,7 @@ stateDiagram-v2
     state "Completed = 3" as C
     state "Failed = 4" as F
     state "Closed = 5" as CL
+    state "Rejected = 8" as RJ
 
     [*] --> CR: Create withdraw order
     [*] --> P: Create onramp / offramp order
@@ -30,9 +32,11 @@ stateDiagram-v2
     P --> C: Complete USDT/VND transfer
     P --> F: Failed at some step
     P --> CL: Expired or closed manually
+    P --> RJ: Rejected by operator after manual review
     C --> [*]
     F --> [*]
     CL --> [*]
+    RJ --> [*]
 ```
 
 ## Processing States
@@ -41,14 +45,16 @@ When the order state is `Processing`, it will have more detailed processing stat
 
 ### Deposit Orders (Onramp)
 
-| Processing State    | Value | Description                          |
-|---------------------|-------|--------------------------------------|
-| Fiat Pending        | 10    | Waiting for user to deposit fiat     |
-| Fiat Confirmed      | 11    | Fiat deposit confirmed               |
-| Fiat Failed         | 12    | Fiat failed to deposit               |
-| Crypto Pending      | 13    | Waiting for USDT transfer on-chain   |
-| Crypto Confirmed    | 14    | USDT transfer confirmed              |
-| Crypto Failed       | 15    | USDT failed to transfer              |
+| Processing State    | Value | Description                                                                     |
+|---------------------|-------|---------------------------------------------------------------------------------|
+| Fiat Pending        | 10    | Waiting for user to deposit fiat                                                |
+| Fiat Confirmed      | 11    | Fiat deposit confirmed                                                          |
+| Fiat Failed         | 12    | Fiat failed to deposit                                                          |
+| Crypto Pending      | 13    | Waiting for USDT transfer on-chain                                              |
+| Crypto Confirmed    | 14    | USDT transfer confirmed                                                         |
+| Crypto Failed       | 15    | USDT failed to transfer                                                         |
+| Need To Review      | 17    | Fiat received; sender name needs operator review (order state stays Processing) |
+| Review Rejected     | 18    | Operator rejected the order after review (order state becomes Rejected)         |
 
 ### Withdrawal Orders (Offramp)
 
