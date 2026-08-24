@@ -1,0 +1,119 @@
+---
+title: "Submitting Documents"
+description: "Encode, size, and validate the files attached to a KYB submission."
+---
+
+Every document on a KYB submission carries its files inline, base64-encoded in the `data` field. There is no separate upload endpoint — the whole submission goes up in one `POST /partners/kyb` request.
+
+## Accepted Formats
+
+| `content_type` | Format |
+|---|---|
+| `application/pdf` | PDF |
+| `image/jpeg` | JPEG |
+| `image/png` | PNG |
+| `image/heic` | HEIC |
+
+<Warning>
+  The declared `content_type` **must match the actual bytes**. A mismatch is rejected. Encrypted (password-protected) PDFs are also rejected — decrypt before encoding.
+</Warning>
+
+## Size Limits
+
+| Limit | Value |
+|---|---|
+| Per file (decoded) | **10 MB** |
+| Whole request body | **40 MB** |
+| Files per document | **10** |
+
+Base64 inflates payloads by roughly one third, so budget against the 40 MB body cap when attaching several large scans. Downscale image scans rather than splitting a submission — a partial submission still consumes the one-record slot.
+
+## Encoding a File
+
+<CodeGroup>
+```bash Shell
+base64 -i incorporation.pdf | tr -d '\n'
+```
+
+```go Go
+data, err := os.ReadFile("incorporation.pdf")
+if err != nil {
+    return err
+}
+encoded := base64.StdEncoding.EncodeToString(data)
+```
+
+```javascript Node.js
+const encoded = fs.readFileSync("incorporation.pdf").toString("base64");
+```
+</CodeGroup>
+
+Send the result as the `data` field, with no data URI prefix:
+
+```json
+{
+  "type": 1,
+  "document_number": "",
+  "date_of_issue": "2020-03-15",
+  "date_of_expiry": "2030-03-15",
+  "files": [
+    {
+      "filename": "incorporation.pdf",
+      "content_type": "application/pdf",
+      "data": "JVBERi0xLjcKJcfsj6IKNSAwIG9iago8PC9MZW5..."
+    }
+  ]
+}
+```
+
+## Where Each Document Goes
+
+Company documents (types `1`–`9`) go in the top-level `documents[]` array. Personal identity documents (types `10` passport and `11` citizen ID) go in `persons[].documents[]`, attached to the person they identify.
+
+```json
+{
+  "documents": [
+    { "type": 1, "files": [ /* incorporation paper */ ] }
+  ],
+  "persons": [
+    {
+      "role": 1,
+      "name": "Jane Doe",
+      "documents": [
+        { "type": 11, "files": [ /* citizen ID scan */ ] }
+      ]
+    }
+  ]
+}
+```
+
+## Validation Errors
+
+| Status | Meaning | What to do |
+|---|---|---|
+| `400` | Malformed request — bad JSON, undecodable base64, or a body over the 40 MB cap | Fix the payload and retry |
+| `409` | A **Pending** or **Approved** KYB record already exists | Read it with [Get KYB](/api-reference/kyb/get-kyb); only a Rejected record can be replaced |
+| `422` | Field validation failed | Inspect `details[]` and correct the flagged fields |
+
+A `422` response carries a `details[]` array, each entry pointing at the offending field with a JSON-pointer `target`:
+
+```json
+{
+  "error": "validation failed",
+  "message": "One or more fields are invalid",
+  "details": [
+    {
+      "target": "/persons/0/documents/0/type",
+      "message": "type 1 is not allowed on a person document; use 10 or 11"
+    },
+    {
+      "target": "/documents/0/files/0/content_type",
+      "message": "declared content_type does not match file contents"
+    }
+  ]
+}
+```
+
+<Tip>
+  Validation runs over the whole submission, so a single `422` usually reports every problem at once. Fix all of them before resubmitting rather than iterating one field at a time.
+</Tip>

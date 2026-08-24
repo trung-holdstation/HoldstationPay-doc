@@ -1,0 +1,136 @@
+---
+title: "Get KYB"
+api: "GET https://pay-api.holdstation.com/partners/kyb/{id}"
+description: "Fetch your business verification record by id, including its current status."
+---
+
+Fetch your business verification record by the `id` returned at submission, including its current status and, when rejected, the rejection reason.
+
+See the [Partner Business KYB guide](/guides/partner-business-kyb/overview) for the status lifecycle.
+
+<Note>
+  There is no list endpoint — keep the `id` returned by [Submit KYB](/api-reference/kyb/submit-kyb).
+</Note>
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The server-generated KYB record id returned by [Submit KYB](/api-reference/kyb/submit-kyb).
+</ParamField>
+
+## Status Values
+
+| Status | Value | Description |
+|---|---|---|
+| **Pending** | `1` | Submitted; awaiting review. `reviewed_at` is `null`. |
+| **Approved** | `2` | Verified and accepted |
+| **Rejected** | `3` | Rejected after review; `rejection_reason` explains why |
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "kyb": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "partner_id": "partner-xyz",
+      "subject_type": 1,
+      "status": 3,
+      "legal_name": "Example Trading Company Limited",
+      "registration_number": "0312345678",
+      "incorporation_country": "VN",
+      "incorporation_date": "2018-06-01",
+      "address": "123 Le Loi, District 1, Ho Chi Minh City",
+      "email": "compliance@example.com",
+      "phone": "+842812345678",
+      "website": "https://example.com",
+      "nature_of_business": "Cross-border e-commerce and payment services",
+      "geographic_scope": ["VN", "SG"],
+      "persons": [
+        {
+          "role": 1,
+          "name": "Jane Doe",
+          "date_of_birth": "1985-04-12",
+          "email": "jane@example.com",
+          "phone": "+84123456789",
+          "address": "45 Nguyen Hue, District 1, Ho Chi Minh City",
+          "id_number": "012345678",
+          "id_type": 1,
+          "sex": 2,
+          "nationality": "VN",
+          "date_of_issue": "2020-01-01",
+          "date_of_expiry": "2030-01-01",
+          "documents": [
+            {
+              "type": 11,
+              "document_number": "012345678",
+              "date_of_issue": "2020-01-01",
+              "date_of_expiry": "2030-01-01",
+              "files": [
+                {
+                  "file_ref": "kyb/550e8400/citizen-id-front.jpg",
+                  "filename": "citizen-id-front.jpg",
+                  "content_type": "image/jpeg",
+                  "size": 284913
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "documents": [
+        {
+          "type": 1,
+          "document_number": "",
+          "date_of_issue": "2018-06-01",
+          "date_of_expiry": "2030-06-01",
+          "files": [
+            {
+              "file_ref": "kyb/550e8400/incorporation.pdf",
+              "filename": "incorporation.pdf",
+              "content_type": "application/pdf",
+              "size": 1048576
+            }
+          ]
+        }
+      ],
+      "rejection_reason": "Business registration extract is illegible",
+      "submitted_at": "2026-08-24T10:30:00Z",
+      "reviewed_at": "2026-08-25T09:15:00Z",
+      "created_at": "2026-08-24T10:30:00Z",
+      "updated_at": "2026-08-25T09:15:00Z"
+    }
+  }
+}
+```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing API key"
+}
+```
+</ResponseExample>

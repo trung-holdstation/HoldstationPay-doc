@@ -71,6 +71,14 @@
             ]
           },
           {
+            "group": "Partner Business KYB",
+            "pages": [
+              "guides/partner-business-kyb/overview",
+              "guides/partner-business-kyb/field-reference",
+              "guides/partner-business-kyb/submitting-documents"
+            ]
+          },
+          {
             "group": "Partner Customer KYC",
             "pages": [
               "guides/partner-customer-kyc/overview",
@@ -166,6 +174,13 @@
             "group": "Partners",
             "pages": [
               "api-reference/partners/set-webhook-url"
+            ]
+          },
+          {
+            "group": "Partner Business KYB",
+            "pages": [
+              "api-reference/kyb/submit-kyb",
+              "api-reference/kyb/get-kyb"
             ]
           },
           {
