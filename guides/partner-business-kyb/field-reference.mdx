@@ -3,7 +3,7 @@ title: "Field Reference"
 description: "Every field on a KYB submission — business details, persons, documents, and files."
 ---
 
-The request body for [`POST /partners/kyb`](/api-reference/kyb/submit-kyb) is a single JSON object. **Every field below is mandatory** — the arrays `persons` and `documents` must be present, and Holdstation Pay validates each nested entry.
+The request body for [`POST /partners/kyb`](/api-reference/kyb/submit-kyb) is a single JSON object. Every field is mandatory except `date_of_issue` and `date_of_expiry` on a document — the arrays `persons` and `documents` must be present, and Holdstation Pay validates each nested entry.
 
 ## Business Fields
 
@@ -51,12 +51,14 @@ Each entry in `persons[]` is one legal representative or director.
 
 The same document object is used in both `documents[]` and `persons[].documents[]` — only the accepted `type` values differ.
 
+`date_of_issue` and `date_of_expiry` are the only optional fields on a KYB submission — omit them for documents that carry no issue or expiry date, such as an incorporation paper or product images. This applies to the document object only; the `date_of_issue` and `date_of_expiry` on a **person** remain mandatory.
+
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | `type` | int enum | Yes | See [Document Types](#document-types) |
 | `document_number` | string | Yes | Must be present. Carries the licence number for type `4`; send an empty string for types that have no number. |
-| `date_of_issue` | string | Yes | ISO `YYYY-MM-DD` |
-| `date_of_expiry` | string | Yes | ISO `YYYY-MM-DD` |
+| `date_of_issue` | string | No | ISO `YYYY-MM-DD`. Omit when the document has no issue date. |
+| `date_of_expiry` | string | No | ISO `YYYY-MM-DD`. Omit when the document does not expire. |
 | `files` | object[] | Yes | Up to **10 files** per document — see [Files](#files) |
 
 ### Document Types

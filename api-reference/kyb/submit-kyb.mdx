@@ -27,7 +27,7 @@ See the [Partner Business KYB guide](/guides/partner-business-kyb/overview) for 
 ## Body Parameters
 
 <Note>
-  Every field below is mandatory, including the `persons` and `documents` arrays.
+  Every field below is mandatory, including the `persons` and `documents` arrays. The only optional fields on a submission are `date_of_issue` and `date_of_expiry` inside a document object.
 </Note>
 
 <ParamField body="subject_type" type="integer" required>
@@ -79,7 +79,7 @@ See the [Partner Business KYB guide](/guides/partner-business-kyb/overview) for 
 </ParamField>
 
 <ParamField body="documents" type="object[]" required>
-  Company documents, types `1`–`9` only. Each entry requires `type`, `document_number`, `date_of_issue`, `date_of_expiry`, and `files` (max 10 per document).
+  Company documents, types `1`–`9` only. Each entry requires `type`, `document_number`, and `files` (max 10 per document). `date_of_issue` and `date_of_expiry` are optional — omit them for documents with no issue or expiry date.
 </ParamField>
 
 ## Document Types
@@ -148,8 +148,6 @@ Files are sent inline, base64-encoded in `data`. Accepted `content_type` values 
     {
       "type": 1,
       "document_number": "",
-      "date_of_issue": "2018-06-01",
-      "date_of_expiry": "2030-06-01",
       "files": [
         {
           "filename": "incorporation.pdf",
@@ -219,8 +217,6 @@ Files are sent inline, base64-encoded in `data`. Accepted `content_type` values 
         {
           "type": 1,
           "document_number": "",
-          "date_of_issue": "2018-06-01",
-          "date_of_expiry": "2030-06-01",
           "files": [
             {
               "file_ref": "kyb/550e8400/incorporation.pdf",
