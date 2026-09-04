@@ -1,0 +1,54 @@
+---
+title: "Submission Rules"
+description: "The cross-field checks a KYB submission must pass before it is accepted."
+---
+
+Beyond the per-field requirements in the [Field Reference](/guides/partner-business-kyb/field-reference), a submission must satisfy several rules that span multiple fields. All of them are checked in one pass, so a `422` reports every violation at once.
+
+## Exactly one legal representative
+
+Every submission must name **exactly one** person with `role: 1` — the person legally allowed to sign for the company. Everyone else is a director (`role: 2`), and you may list as many directors as you need.
+
+A submission with no `role: 1` person is rejected with `MISSING_LEGAL_REPRESENTATIVE` on `/persons`.
+
+## Foreign nationals must use a passport
+
+If a person's `nationality` differs from the company's `incorporation_country`, that person must identify with a **passport** — `id_type: 2` and an identity document of type `10`.
+
+A citizen ID (`id_type: 1`, document type `11`) is accepted only when the person is a national of the country where the company is incorporated. A citizen ID issued by one country cannot be checked against the registries of another; a passport is verifiable for anyone.
+
+Getting this wrong is rejected with `INVALID_FORMAT` on `/persons/{n}/id_type`.
+
+<Tip>
+  If the mismatch is a typo in `nationality` rather than a genuine foreign national, correct the nationality instead of swapping the document.
+</Tip>
+
+## One identity document per person
+
+Each person carries **exactly one** entry in `persons[].documents[]` — a passport (type `10`) or a citizen ID (type `11`), matching their `id_type`. That single document may hold several files: a citizen ID front and back are two files in one document, not two documents.
+
+## Required company documents
+
+Two company documents are mandatory in the top-level `documents[]`:
+
+| Type | Document | Why |
+|---|---|---|
+| `1` | Incorporation paper | Proves the company exists and is registered |
+| `3` | Nature of business & geographic scope declaration, **with company stamp** | The company's own signed-off statement of what it does and where, which Holdstation Pay compares against `nature_of_business` and `geographic_scope` |
+
+Missing either is rejected with `MISSING_DOCUMENT`. Types `2`, `4`, `5`, and `9` are optional — accepted when sent, never demanded.
+
+## Nothing is saved until every check passes
+
+A rejected submission stores nothing. Fix every reported violation and resubmit the whole body — there is no partial save and no update endpoint.
+
+## Pre-submission checklist
+
+- [ ] Exactly one person has `role: 1`
+- [ ] Every person whose `nationality` differs from `incorporation_country` uses `id_type: 2` with a type `10` document
+- [ ] Every person has exactly one identity document, type `10` or `11`, matching their `id_type`
+- [ ] Company documents include type `1` and type `3`
+- [ ] Type `4` documents carry a `document_number`
+- [ ] Every file has `data` holding the base64-encoded file content, not a path or URL
+- [ ] No file over 10 MB decoded, whole request under 40 MB
+- [ ] Each `content_type` matches the actual file bytes, and no PDF is password-protected

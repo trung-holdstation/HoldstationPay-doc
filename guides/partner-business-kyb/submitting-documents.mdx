@@ -1,9 +1,13 @@
 ---
 title: "Submitting Documents"
-description: "Encode, size, and validate the files attached to a KYB submission."
+description: "Encode files, stay inside the limits, and read the validation errors."
 ---
 
 Every document on a KYB submission carries its files inline, base64-encoded in the `data` field. There is no separate upload endpoint — the whole submission goes up in one `POST /partners/kyb` request.
+
+<Warning>
+  `data` must contain **the file itself**, base64-encoded. Holdstation Pay cannot and will not fetch a file from a storage path, URL, or reference you supply — a file sent that way arrives empty and is rejected with `FILE_CORRUPT`.
+</Warning>
 
 ## Accepted Formats
 
@@ -14,19 +18,24 @@ Every document on a KYB submission carries its files inline, base64-encoded in t
 | `image/png` | PNG |
 | `image/heic` | HEIC |
 
-<Warning>
-  The declared `content_type` **must match the actual bytes**. A mismatch is rejected. Encrypted (password-protected) PDFs are also rejected — decrypt before encoding.
-</Warning>
+The declared `content_type` must match the actual bytes — a PNG must be sent as `image/png`, not `image/jpeg`, or the file is rejected with `MEDIA_TYPE_MISMATCH`. Password-protected PDFs are rejected with `FILE_ENCRYPTED`; decrypt before encoding. A file type outside this list is rejected with `415`.
 
-## Size Limits
+## Limits
 
 | Limit | Value |
 |---|---|
-| Per file (decoded) | **10 MB** |
-| Whole request body | **40 MB** |
+| Per file, decoded | **10 MB** |
+| Total request body, encoded | **40 MB** |
 | Files per document | **10** |
+| Documents per submission | **30** |
+| Persons per submission | **20** |
+| Request timeout | **120 s** |
 
-Base64 inflates payloads by roughly one third, so budget against the 40 MB body cap when attaching several large scans. Downscale image scans rather than splitting a submission — a partial submission still consumes the one-record slot.
+Base64 encoding increases payload size by roughly one third, so budget against the 40 MB ceiling when attaching several large scans. Downscale image scans rather than splitting a submission — a partial submission still consumes the one-record slot.
+
+<Note>
+  A body over 40 MB is rejected with `400`, not `413`. The signature middleware reads the body before the handler runs, and the cap is enforced ahead of that read, so an oversized body is never fully buffered.
+</Note>
 
 ## Encoding a File
 
@@ -53,7 +62,7 @@ Send the result as the `data` field, with no data URI prefix:
 ```json
 {
   "type": 1,
-  "document_number": "",
+  "date_of_issue": "2019-03-14",
   "files": [
     {
       "filename": "incorporation.pdf",
@@ -66,52 +75,76 @@ Send the result as the `data` field, with no data URI prefix:
 
 ## Where Each Document Goes
 
-Company documents (types `1`–`9`) go in the top-level `documents[]` array. Personal identity documents (types `10` passport and `11` citizen ID) go in `persons[].documents[]`, attached to the person they identify.
+Company documents (types `1`–`9`) go in the top-level `documents[]` array. Personal identity documents (types `10` passport and `11` citizen ID) go in `persons[].documents[]`, attached to the person they identify. A citizen ID front and back are **two files in one document**, not two documents.
 
 ```json
 {
   "documents": [
-    { "type": 1, "files": [ /* incorporation paper */ ] }
+    { "type": 1, "files": [ /* incorporation paper */ ] },
+    { "type": 3, "files": [ /* stamped nature & scope declaration */ ] }
   ],
   "persons": [
     {
       "role": 1,
-      "name": "Jane Doe",
+      "name": "Nguyen Van A",
       "documents": [
-        { "type": 11, "files": [ /* citizen ID scan */ ] }
+        { "type": 11, "files": [ /* citizen ID front, citizen ID back */ ] }
       ]
     }
   ]
 }
 ```
 
-## Validation Errors
+## HTTP Status Codes
 
-| Status | Meaning | What to do |
-|---|---|---|
-| `400` | Malformed request — bad JSON, undecodable base64, or a body over the 40 MB cap | Fix the payload and retry |
-| `409` | A **Pending** or **Approved** KYB record already exists | Read it with [Get KYB](/api-reference/kyb/get-kyb); only a Rejected record can be replaced |
-| `422` | Field validation failed | Inspect `details[]` and correct the flagged fields |
+| Status | Meaning |
+|---|---|
+| `201` | Created — the record is stored with status Pending |
+| `400` | Malformed body or invalid JSON. Also returned for an oversized body. |
+| `401` | Missing or invalid signature |
+| `404` | No record with this `id` under this partner |
+| `409` | A Pending or Approved record already exists for this subject |
+| `415` | File type not accepted |
+| `422` | Field validation failed, or a required document is missing |
+| `500` | Storage or backend failure. Any file uploaded during the failed request is deleted. |
 
-A `422` response carries a `details[]` array, each entry pointing at the offending field with a JSON-pointer `target`:
+Rate limiting (`429`) is not implemented for these endpoints.
+
+## Reading a 422 Response
+
+Validation runs over the whole submission, so a single `422` reports every problem at once — you only need one round to see everything.
+
+The per-field violations ride inside `detail` as a **JSON-encoded string**, not as a nested object. Parse `detail` to read them:
 
 ```json
 {
-  "error": "validation failed",
+  "error": "VALIDATION_FAILED",
   "message": "One or more fields are invalid",
-  "details": [
-    {
-      "target": "/persons/0/documents/0/type",
-      "message": "type 1 is not allowed on a person document; use 10 or 11"
-    },
-    {
-      "target": "/documents/0/files/0/content_type",
-      "message": "declared content_type does not match file contents"
-    }
-  ]
+  "detail": "{\"code\":\"VALIDATION_FAILED\",\"details\":[{\"code\":\"MISSING_FIELD\",\"target\":\"/persons/0/date_of_birth\"},{\"code\":\"FILE_TOO_LARGE\",\"target\":\"/documents/2/files/0\"}]}"
 }
 ```
 
-<Tip>
-  Validation runs over the whole submission, so a single `422` usually reports every problem at once. Fix all of them before resubmitting rather than iterating one field at a time.
-</Tip>
+Decoded, that `detail` reads:
+
+```
+MISSING_FIELD      /persons/0/date_of_birth
+FILE_TOO_LARGE     /documents/2/files/0
+```
+
+`target` is a JSON pointer into the request body, and counting starts at `0`: `/persons/0/id_type` is the `id_type` of the first person, and `/documents/2/files/0` is the first file of the third company document. `target` is empty when the violation concerns the body as a whole.
+
+### Validation Detail Codes
+
+| Code | Meaning |
+|---|---|
+| `MISSING_FIELD` | Required field absent |
+| `INVALID_FORMAT` | Wrong type, bad date format, or invalid enum value |
+| `MISSING_DOCUMENT` | A required document type was not included |
+| `INVALID_DOCUMENT_TYPE` | Document type used in the wrong array |
+| `MISSING_LEGAL_REPRESENTATIVE` | No person with `role = 1` |
+| `FILE_TOO_LARGE` | File exceeds the 10 MB per-file limit |
+| `FILE_CORRUPT` | Base64 could not be decoded, or the file is zero-byte or truncated |
+| `FILE_ENCRYPTED` | Password-protected PDF |
+| `MEDIA_TYPE_MISMATCH` | `content_type` does not match the file contents |
+
+See [Submission Rules](/guides/partner-business-kyb/submission-rules) for what triggers the cross-field codes.

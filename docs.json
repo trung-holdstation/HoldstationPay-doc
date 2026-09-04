@@ -75,6 +75,7 @@
             "pages": [
               "guides/partner-business-kyb/overview",
               "guides/partner-business-kyb/field-reference",
+              "guides/partner-business-kyb/submission-rules",
               "guides/partner-business-kyb/submitting-documents"
             ]
           },
@@ -180,6 +181,7 @@
             "group": "Partner Business KYB",
             "pages": [
               "api-reference/kyb/submit-kyb",
+              "api-reference/kyb/list-kyb",
               "api-reference/kyb/get-kyb"
             ]
           },

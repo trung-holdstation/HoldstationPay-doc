@@ -1,0 +1,95 @@
+---
+title: "List KYB"
+api: "GET https://pay-api.holdstation.com/partners/kyb"
+description: "List your business verification records, newest first."
+---
+
+Lists the partner's own KYB records, newest first. Use `reference_id` to check whether a merchant has already been filed and to recover its `id`.
+
+See the [Partner Business KYB guide](/guides/partner-business-kyb/overview) for the lifecycle.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="reference_id" type="string">
+  Exact match on your own id for the subject.
+</ParamField>
+
+<ParamField query="subject_type" type="integer">
+  `1` = partner (self), `2` = sub-merchant.
+</ParamField>
+
+<ParamField query="status" type="integer">
+  `1` = Pending, `2` = Approved, `3` = Rejected.
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number. Defaults to `1`.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Results per page. Defaults to `20`, capped at `100`.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "kybs": [
+      {
+        "id": "7c2f1a90-4d3b-4e2a-9f61-0b8c5d7e1234",
+        "partner_id": "11111111-1111-1111-1111-111111111111",
+        "subject_type": 2,
+        "reference_id": "merchant-00042",
+        "status": 2,
+        "legal_name": "ABC Trading Co., Ltd",
+        "registration_number": "0312345678",
+        "incorporation_country": "VN",
+        "incorporation_date": "2019-03-14",
+        "rejection_reason": "",
+        "submitted_at": "2026-08-15T04:12:33Z",
+        "reviewed_at": "2026-08-16T09:41:02Z"
+      }
+    ],
+    "total_count": 1,
+    "page": 1,
+    "page_size": 20
+  }
+}
+```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing signature"
+}
+```
+</ResponseExample>
+
+<Note>
+  Each entry has the same shape as the [Get KYB](/api-reference/kyb/get-kyb) record, including `persons[]` and `documents[]`. The example above is abbreviated.
+</Note>
