@@ -31,7 +31,7 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
 ## Body Parameters
 
 <Note>
-  At least one of `email` or `phone` must be provided. Every other body field is mandatory.
+  At least one of `email` or `phone` must be provided. `date_of_expiry` is optional. Every other body field is mandatory.
 </Note>
 
 <ParamField body="name" type="string" required>
@@ -55,7 +55,7 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
 </ParamField>
 
 <ParamField body="id_type" type="integer" required>
-  Only `1` = Citizen ID is currently supported.
+  `1` = Citizen ID, `2` = Passport, `3` = Driver License.
 </ParamField>
 
 <ParamField body="sex" type="integer" required>
@@ -70,8 +70,8 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
   Identity document issue date in ISO `YYYY-MM-DD` format.
 </ParamField>
 
-<ParamField body="date_of_expiry" type="string" required>
-  Identity document expiry date in ISO `YYYY-MM-DD` format.
+<ParamField body="date_of_expiry" type="string">
+  Optional. Identity document expiry date in ISO `YYYY-MM-DD` format. Omit when the document does not expire.
 </ParamField>
 
 <RequestExample>

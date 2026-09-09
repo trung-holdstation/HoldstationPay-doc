@@ -17,11 +17,11 @@ KYC endpoints use the same Ed25519 signed-API scheme as the MID endpoints — `P
 | `phone`          | string         | Conditional | At least one of `email` or `phone` must be provided |
 | `address`        | string         | Yes      | Residential address |
 | `id_number`      | string         | Yes      | Identity document number |
-| `id_type`        | int enum       | Yes      | Only `1` = Citizen ID is currently supported |
+| `id_type`        | int enum       | Yes      | `1` = Citizen ID, `2` = Passport, `3` = Driver License |
 | `sex`            | int enum       | Yes      | `1` = Male, `2` = Female, `3` = Other |
 | `nationality`    | string         | Yes      | Nationality |
 | `date_of_issue`  | string         | Yes      | Identity document issue date, ISO `YYYY-MM-DD` |
-| `date_of_expiry` | string         | Yes      | Identity document expiry date, ISO `YYYY-MM-DD` |
+| `date_of_expiry` | string         | No       | Identity document expiry date, ISO `YYYY-MM-DD`. Omit when the document does not expire. |
 
 <Note>
   All fields marked **Yes** are mandatory. `email` and `phone` are conditional: at least one of them must be provided, but you don't need both. A create or update is rejected with `MISSING_REQUIRED_FIELD` if a required field is empty (or, for `id_type` / `sex`, left unspecified / `0`).
