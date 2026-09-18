@@ -46,8 +46,8 @@ Each entry in `persons[]` is one legal representative or director. Field names m
 | `id_type` | int enum | Yes | `1` = Citizen ID, `2` = Passport |
 | `sex` | int enum | Yes | `1` = Male, `2` = Female, `3` = Other |
 | `nationality` | string | Yes | ISO 3166-1 alpha-2 preferred. Alpha-3 and full names are accepted and normalized. |
-| `date_of_issue` | string | No | Identity document issue date, ISO `YYYY-MM-DD` |
-| `date_of_expiry` | string | No | Identity document expiry date, ISO `YYYY-MM-DD` |
+| `date_of_issue` | string | Yes | Identity document issue date, ISO `YYYY-MM-DD` |
+| `date_of_expiry` | string | No | Identity document expiry date, ISO `YYYY-MM-DD`. Omit when the document does not expire. |
 | `documents` | object[] | Yes | **Exactly one** identity document, of type `10` or `11`, matching `id_type` |
 
 <Warning>
@@ -63,8 +63,8 @@ The same document object is used in both `documents[]` and `persons[].documents[
 | `type` | int enum | Yes | See [Document Types](#document-types) |
 | `files` | object[] | Yes | Up to **10 files** per document — see [Files](#files). An empty array is accepted by the API, but a document with no file cannot be reviewed. |
 | `document_number` | string | Conditional | Required for type `4` (import/export licence). Not needed for other types. |
-| `date_of_issue` | string | No | ISO `YYYY-MM-DD` |
-| `date_of_expiry` | string | No | ISO `YYYY-MM-DD` |
+| `date_of_issue` | string | Yes | ISO `YYYY-MM-DD` |
+| `date_of_expiry` | string | No | ISO `YYYY-MM-DD`. Omit when the document does not expire. |
 
 ### Document Types
 

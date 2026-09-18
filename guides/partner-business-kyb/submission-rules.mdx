@@ -49,6 +49,7 @@ A rejected submission stores nothing. Fix every reported violation and resubmit 
 - [ ] Every person has exactly one identity document, type `10` or `11`, matching their `id_type`
 - [ ] Company documents include type `1` and type `3`
 - [ ] Type `4` documents carry a `document_number`
+- [ ] Every person and every document carries a `date_of_issue` (`date_of_expiry` is optional)
 - [ ] Every file has `data` holding the base64-encoded file content, not a path or URL
 - [ ] No file over 10 MB decoded, whole request under 40 MB
 - [ ] Each `content_type` matches the actual file bytes, and no PDF is password-protected
