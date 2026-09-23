@@ -74,6 +74,22 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
   Optional. Identity document expiry date in ISO `YYYY-MM-DD` format. Omit when the document does not expire.
 </ParamField>
 
+<ParamField body="id_front_img" type="object">
+  Optional. Photo of the identity document front. `{ "content_type": "image/jpeg|image/png|image/heic", "data": "<base64>" }` — see [Images](/guides/partner-customer-kyc/kyc-management#images).
+</ParamField>
+
+<ParamField body="id_back_img" type="object">
+  Optional. Photo of the identity document back. Same shape as `id_front_img`.
+</ParamField>
+
+<ParamField body="selfie_img" type="object">
+  Optional. Selfie photo of the customer. Same shape as `id_front_img`.
+</ParamField>
+
+<Note>
+  The three image fields are optional and independent — send any, all, or none. **An image you omit is left as it was stored** — an update never clears an image; sending one replaces the stored image and deletes the old one. Each is `content_type` (`image/jpeg`, `image/png`, or `image/heic`; **PDF is not accepted**) plus base64 `data`. There is no `filename`: the stored name comes from the field, so `selfie_img` is stored as `selfie_img.jpg`. Each image is capped at **10 MB decoded** and the whole body at **32 MB encoded**. See [Images](/guides/partner-customer-kyc/kyc-management#images).
+</Note>
+
 <RequestExample>
 ```json Request
 {
@@ -86,7 +102,19 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
   "sex": 2,
   "nationality": "VN",
   "date_of_issue": "2020-01-01",
-  "date_of_expiry": "2032-01-01"
+  "date_of_expiry": "2032-01-01",
+  "id_front_img": {
+    "content_type": "image/jpeg",
+    "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+  },
+  "id_back_img": {
+    "content_type": "image/jpeg",
+    "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+  },
+  "selfie_img": {
+    "content_type": "image/jpeg",
+    "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+  }
 }
 ```
 </RequestExample>
@@ -106,7 +134,22 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
     "sex": 2,
     "nationality": "VN",
     "date_of_issue": "2020-01-01",
-    "date_of_expiry": "2032-01-01"
+    "date_of_expiry": "2032-01-01",
+    "id_front_img": {
+      "file_ref": "f_3c81aa27d904",
+      "content_type": "image/jpeg",
+      "size": 284913
+    },
+    "id_back_img": {
+      "file_ref": "f_5d02be48e115",
+      "content_type": "image/jpeg",
+      "size": 271406
+    },
+    "selfie_img": {
+      "file_ref": "f_7e93cf59f226",
+      "content_type": "image/jpeg",
+      "size": 198442
+    }
   }
 }
 ```

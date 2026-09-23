@@ -22,10 +22,89 @@ KYC endpoints use the same Ed25519 signed-API scheme as the MID endpoints — `P
 | `nationality`    | string         | Yes      | Nationality |
 | `date_of_issue`  | string         | Yes      | Identity document issue date, ISO `YYYY-MM-DD` |
 | `date_of_expiry` | string         | No       | Identity document expiry date, ISO `YYYY-MM-DD`. Omit when the document does not expire. |
+| `id_front_img`   | object         | No       | Photo of the identity document front — see [Images](#images) |
+| `id_back_img`    | object         | No       | Photo of the identity document back — see [Images](#images) |
+| `selfie_img`     | object         | No       | Selfie photo of the customer — see [Images](#images) |
 
 <Note>
   All fields marked **Yes** are mandatory. `email` and `phone` are conditional: at least one of them must be provided, but you don't need both. A create or update is rejected with `MISSING_REQUIRED_FIELD` if a required field is empty (or, for `id_type` / `sex`, left unspecified / `0`).
 </Note>
+
+<Warning>
+  Holdstation Pay configures the **required set per partner**, so fields marked optional here — including the three images — may be mandatory for your account. Contact Holdstation to confirm which apply to you.
+</Warning>
+
+## Images
+
+The three image fields are **optional and independent**: send any of them, all of them, or none.
+
+### Image object
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `content_type` | string | Yes | `image/jpeg`, `image/png`, or `image/heic`. **PDF is not accepted.** |
+| `data` | string | Yes | Base64-encoded image contents. Must decode to at least one byte and match `content_type`. |
+
+```json
+{
+  "selfie_img": {
+    "content_type": "image/jpeg",
+    "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+  }
+}
+```
+
+<Note>
+  There is no `filename` field. The stored name is generated from the field the image is sent in, so `selfie_img` is stored as `selfie_img.jpg`.
+</Note>
+
+Responses return stored metadata only — `file_ref`, `content_type`, and `size` — never the base64:
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `file_ref` | string | Opaque reference to the stored image |
+| `content_type` | string | MIME type of the stored image |
+| `size` | integer | Size in bytes of the decoded image |
+
+### Updating an image
+
+An image field you **omit on update is left as it was stored** — an update never clears an image. Sending one replaces the stored image, and the old one is deleted. There is no way to remove an image without replacing it.
+
+### Limits
+
+| Limit | Value |
+|-------|-------|
+| Per image, decoded | **10 MB** |
+| Total request body, encoded | **32 MB** |
+| Request timeout | **120 s** |
+
+Base64 encoding increases payload size by roughly one third, and the body cap applies to the **encoded** size. The two limits interact: three images at the full 10 MB encode to about 40 MB and would exceed the 32 MB body cap. In practice the body cap binds first on a multi-image submission — roughly **23 MB of images in total**, in any split across the three fields.
+
+<Note>
+  A body over the ceiling is rejected with `400`, not `413`. The signature middleware reads the body before the handler runs and aborts on the read error. The message is generic, so check your total encoded size first if you get an unexplained `400` on a large submission.
+</Note>
+
+### Image errors
+
+An image with an unaccepted `content_type` is rejected with `415`. An image that fails any other check is rejected with `422`, and the per-field violations ride inside `detail` as a JSON-encoded string:
+
+```json
+{
+  "code": "VALIDATION_FAILED",
+  "details": [
+    { "code": "FILE_TOO_LARGE", "target": "/selfie_img" }
+  ]
+}
+```
+
+| Code | Meaning |
+|------|---------|
+| `MISSING_FIELD` | A required sub-field of the image object is absent |
+| `FILE_CORRUPT` | Base64 could not be decoded, or the image is zero-byte or truncated |
+| `FILE_TOO_LARGE` | Image exceeds the 10 MB per-image limit |
+| `MEDIA_TYPE_MISMATCH` | `content_type` does not match the image contents |
+
+Every other field keeps the normal error shape.
 
 ## Endpoints
 
@@ -42,7 +121,19 @@ The request body is the same for create and update:
   "sex": 2,
   "nationality": "VN",
   "date_of_issue": "2020-01-01",
-  "date_of_expiry": "2030-01-01"
+  "date_of_expiry": "2030-01-01",
+  "id_front_img": {
+    "content_type": "image/jpeg",
+    "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+  },
+  "id_back_img": {
+    "content_type": "image/jpeg",
+    "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+  },
+  "selfie_img": {
+    "content_type": "image/jpeg",
+    "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+  }
 }
 ```
 
