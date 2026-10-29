@@ -1,10 +1,12 @@
 ---
 title: "List Fund Logs"
 api: "GET https://pay-api.holdstation.com/partners/funds/logs"
-description: "List fund transaction logs with optional filters."
+description: "List fund transaction logs, with the metadata explaining what caused each balance change."
 ---
 
-Partners can list fund transaction logs with optional filters. Each log entry records a balance change caused by a deposit, withdrawal, or compensation event.
+Lists the partner's fund transaction logs. Every balance change is recorded here — VND and crypto deposits, offramp withdrawals, crypto payouts, compensations, and stablecoin conversions.
+
+`change_type` says whether the balance went up or down and broadly why; **`metadata.source` says what actually caused it**. The two are not interchangeable — see [Metadata](#metadata).
 
 ## Authentication
 
@@ -23,7 +25,7 @@ Partners can list fund transaction logs with optional filters. Each log entry re
 ## Query Parameters
 
 <ParamField query="token" type="string">
-  Filter by token symbol (e.g., `USDT`, `USDC`).
+  Filter by token symbol (e.g., `USDT`, `USDC`, `VND`).
 </ParamField>
 
 <ParamField query="change_type" type="integer">
@@ -35,8 +37,85 @@ Partners can list fund transaction logs with optional filters. Each log entry re
 </ParamField>
 
 <ParamField query="page_size" type="integer">
-  Number of results per page.
+  Results per page. Default `20`, max `100`.
 </ParamField>
+
+## Log Fields
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | integer | Fund log ID |
+| `partner_fund_id` | integer | The fund (partner + token) this change applies to |
+| `change_type` | integer | `1` = Deposit, `2` = Withdraw, `3` = Compensate, `4` = Convert out, `5` = Convert in |
+| `change_amount` | string | Net amount applied to the balance, signed |
+| `fee` | string | Fee charged on this change |
+| `pre_balance` | string | Balance before the change |
+| `post_balance` | string | Balance after the change |
+| `metadata` | object | What caused the change — see [Metadata](#metadata) |
+| `caused_at` | object | `{ seconds, nanos }` timestamp |
+
+<Warning>
+  `change_amount` is the **net** amount. The gross amount is `change_amount` + `fee`. A 5,000,000 VND bank transfer with a 5,000 VND deposit fee is recorded as `change_amount` `4995000` and `fee` `5000` — reconcile against the gross, not the net.
+</Warning>
+
+## Metadata
+
+Every log's `metadata` carries:
+
+| Field | Notes |
+|---|---|
+| `source` | What caused the change: `fiat_deposit`, `crypto_deposit`, `withdraw`, `crypto_payout`, `compensate`, or `convert` |
+| `reference_id` | Reference for the causing event |
+| `reason` | Present only when set |
+
+<Note>
+  `source` is finer-grained than `change_type`. A VND bank deposit and an on-chain stablecoin deposit are both `change_type` `1` — only `source` (`fiat_deposit` vs `crypto_deposit`) tells them apart. The same holds for `withdraw` and `crypto_payout`, which are both `change_type` `2`. **Branch on `source`, not on `change_type`.**
+</Note>
+
+Each source adds its own fields:
+
+### `fiat_deposit`
+
+A VND transfer into a [deposit account](/guides/partner-prefunding#vnd-deposit-accounts).
+
+| Field | Notes |
+|---|---|
+| `provider` | Provider holding the deposit account, e.g. `GPAY` |
+| `account_number` | The deposit account the money arrived in |
+| `transaction_id` | Provider transaction ID |
+| `bank_transaction_id` | Bank transaction ID |
+| `bank_trace_id` | Bank trace number. Empty when the provider does not send it. |
+| `sender_name` | Name on the sending account |
+| `sender_account` | Sending bank account number |
+| `sender_bank_bin` | BIN code of the sending bank |
+| `transfer_content` | Transfer note the sender wrote |
+| `paid_at` | When the transfer was paid. Empty when the provider does not send it. |
+
+### `crypto_deposit`
+
+An on-chain deposit to one of your [deposit addresses](/api-reference/funds/list-deposit-addresses).
+
+| Field | Notes |
+|---|---|
+| `chain_id` | Chain the deposit arrived on |
+| `tx_hash` | On-chain transaction hash |
+
+### `withdraw`, `crypto_payout`, `compensate`
+
+| Field | Notes |
+|---|---|
+| `order_id` | The order that caused the change |
+
+### `convert`
+
+One [conversion](/guides/partner-prefunding#converting-between-stablecoins) writes two logs — convert out and convert in — sharing a single `convert_ref`.
+
+| Field | Notes |
+|---|---|
+| `convert_ref` | Pairs the two legs of the conversion |
+| `from_token` | Source stablecoin |
+| `to_token` | Target stablecoin |
+| `rate` | Conversion rate — always `1` |
 
 <ResponseExample>
 ```json 200
@@ -48,17 +127,80 @@ Partners can list fund transaction logs with optional filters. Each log entry re
     "error": "",
     "logs": [
       {
-        "id": 101,
-        "partner_fund_id": 1,
+        "id": 5121,
+        "partner_fund_id": 12,
+        "change_type": 5,
+        "change_amount": "999.000000",
+        "fee": "0.000000",
+        "pre_balance": "1500.000000",
+        "post_balance": "2499.000000",
+        "metadata": {
+          "source": "convert",
+          "reference_id": "cvt_01HQ8X2M4K",
+          "convert_ref": "cvt_01HQ8X2M4K",
+          "from_token": "USDT",
+          "to_token": "USDC",
+          "rate": "1"
+        },
+        "caused_at": { "seconds": 1793750062, "nanos": 0 }
+      },
+      {
+        "id": 4312,
+        "partner_fund_id": 7,
+        "change_type": 1,
+        "change_amount": "4995000",
+        "fee": "5000",
+        "pre_balance": "12000000",
+        "post_balance": "16995000",
+        "metadata": {
+          "source": "fiat_deposit",
+          "reference_id": "GPAY-TXN-88231",
+          "provider": "GPAY",
+          "account_number": "96247100123456",
+          "transaction_id": "GPAY-TXN-88231",
+          "bank_transaction_id": "FT26302991234567",
+          "bank_trace_id": "302991234567",
+          "sender_name": "NGUYEN VAN A",
+          "sender_account": "0123456789",
+          "sender_bank_bin": "970436",
+          "transfer_content": "NAP TIEN PARTNER XYZ",
+          "paid_at": "2026-10-29T04:02:51Z"
+        },
+        "caused_at": { "seconds": 1793746971, "nanos": 0 }
+      },
+      {
+        "id": 3980,
+        "partner_fund_id": 11,
+        "change_type": 1,
+        "change_amount": "5000.000000",
+        "fee": "0.000000",
+        "pre_balance": "0.000000",
+        "post_balance": "5000.000000",
+        "metadata": {
+          "source": "crypto_deposit",
+          "reference_id": "0x9f2c...a41e",
+          "chain_id": 56,
+          "tx_hash": "0x9f2c8d1b4e7a3f06c25d8b91a7e4f3029c6d5a41e"
+        },
+        "caused_at": { "seconds": 1793660000, "nanos": 0 }
+      },
+      {
+        "id": 3844,
+        "partner_fund_id": 11,
         "change_type": 2,
-        "change_amount": "50.00",
-        "pre_balance": "1050.50",
-        "post_balance": "1000.50",
-        "metadata": {},
-        "caused_at": { "seconds": 1700000000, "nanos": 0 }
+        "change_amount": "-250.000000",
+        "fee": "0.500000",
+        "pre_balance": "5250.500000",
+        "post_balance": "5000.500000",
+        "metadata": {
+          "source": "withdraw",
+          "reference_id": "550e8400-e29b-41d4-a716-446655440000",
+          "order_id": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "caused_at": { "seconds": 1793570000, "nanos": 0 }
       }
     ],
-    "total_count": 1,
+    "total_count": 4,
     "page": 1,
     "page_size": 20
   }

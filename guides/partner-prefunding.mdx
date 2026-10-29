@@ -95,11 +95,15 @@ Every balance change is recorded in the fund logs with a `change_type`:
 
 | Value | Type | Description |
 |---|---|---|
-| `1` | Deposit | On-chain deposit credited to the balance |
-| `2` | Withdraw | Debit from an offramp order |
+| `1` | Deposit | Deposit credited to the balance — either a VND bank transfer or an on-chain token deposit |
+| `2` | Withdraw | Debit from an offramp order or a crypto payout |
 | `3` | Compensation/Refund | Adjustment by Holdstation Pay (e.g., refund or correction) |
 | `4` | Convert out | Debit from the source token of a [conversion](#converting-between-stablecoins) |
 | `5` | Convert in | Credit to the target token of a [conversion](#converting-between-stablecoins) |
+
+<Note>
+  `change_type` is coarse — a VND bank deposit and an on-chain token deposit are both `1`, and an offramp debit and a crypto payout are both `2`. The fund log's `metadata.source` says which one it actually was. See [Metadata](/api-reference/funds/list-logs#metadata) for the full field set per source.
+</Note>
 
 ## Withdraw Order Flow
 

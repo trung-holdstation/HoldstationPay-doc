@@ -45,11 +45,15 @@ X-HSPay-Event-Signature: base64_encoded_ed25519_signature
 
 | Value | Name         | Description                                  |
 |-------|--------------|----------------------------------------------|
-| `1`   | `DEPOSIT`    | On-chain deposit credited to fund            |
-| `2`   | `WITHDRAW`   | Withdrawal deducted from fund                |
+| `1`   | `DEPOSIT`    | Deposit credited to fund — VND bank transfer or on-chain token |
+| `2`   | `WITHDRAW`   | Debit from an offramp order or a crypto payout |
 | `3`   | `COMPENSATE` | Manual compensation credited to fund         |
 | `4`   | `CONVERT_OUT` | Debit from the source token of a [stablecoin conversion](/guides/partner-prefunding#converting-between-stablecoins) |
 | `5`   | `CONVERT_IN` | Credit to the target token of a [stablecoin conversion](/guides/partner-prefunding#converting-between-stablecoins) |
+
+<Note>
+  The payload carries no metadata — only `change_type` and `fund_log_id`. To learn what actually caused the change, fetch the log with [List Fund Logs](/api-reference/funds/list-logs) and read its [`metadata.source`](/api-reference/funds/list-logs#metadata), which distinguishes a VND deposit from an on-chain one and an offramp debit from a crypto payout.
+</Note>
 
 ## Signature Verification
 
