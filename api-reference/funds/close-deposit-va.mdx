@@ -1,0 +1,64 @@
+---
+title: "Close VND Deposit Account"
+api: "POST https://pay-api.holdstation.com/partners/funds/deposit-vas/{va_id}/close"
+description: "Close a VND deposit account so transfers to it stop being accepted."
+---
+
+Closes a VND deposit account. Transfers to it stop being accepted.
+
+<Warning>
+  Closing is not reversible. Calling [Get VND Deposit Account](/api-reference/funds/get-deposit-va) afterwards opens a **new account with a different account number** — it does not reopen the closed one. Make sure anyone sending you VND has the new details before you close the old account.
+</Warning>
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="va_id" type="string" required>
+  Deposit account ID, from [Get VND Deposit Account](/api-reference/funds/get-deposit-va) or [List VND Deposit Accounts](/api-reference/funds/list-deposit-vas).
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "id": "dva_01HQ8X2M4K",
+    "provider": "GPAY",
+    "account_number": "96247100123456",
+    "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
+    "bank_code": "BIDV",
+    "status": "CLOSED",
+    "created_at": "2026-10-29T03:14:22Z"
+  }
+}
+```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing signature"
+}
+```
+</ResponseExample>

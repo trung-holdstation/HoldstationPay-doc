@@ -1,0 +1,91 @@
+---
+title: "List Deposit Account Transactions"
+api: "GET https://pay-api.holdstation.com/partners/funds/deposit-vas/{va_id}/transactions"
+description: "List the VND transfers credited to the fund through one deposit account."
+---
+
+Lists the VND transfers credited to the partner's fund through one deposit account, **newest first**.
+
+Each entry's `id` is the **fund log ID**, so the same credit also appears in [List Fund Logs](/api-reference/funds/list-logs) alongside your other balance changes.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="va_id" type="string" required>
+  Deposit account ID, from [Get VND Deposit Account](/api-reference/funds/get-deposit-va) or [List VND Deposit Accounts](/api-reference/funds/list-deposit-vas).
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="page" type="integer">
+  Page number.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Results per page. Default `20`, max `100`.
+</ParamField>
+
+## Transaction Fields
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | Fund log ID |
+| `amount` | string | VND credited to the fund, **after** fee |
+| `fee` | string | Deposit fee charged. The amount the sender transferred is `amount` + `fee`. |
+| `sender_name` | string | Name on the sending account |
+| `sender_account` | string | Sending bank account number |
+| `sender_bank_bin` | string | BIN code of the sending bank |
+| `transfer_content` | string | Transfer note the sender wrote |
+| `transaction_id` | string | Provider transaction ID |
+| `bank_transaction_id` | string | Bank transaction ID |
+| `bank_trace_id` | string | Bank trace number, when the provider sends it |
+| `created_at` | string | ISO 8601 timestamp |
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "transactions": [
+      {
+        "id": "4312",
+        "amount": "4995000",
+        "fee": "5000",
+        "sender_name": "NGUYEN VAN A",
+        "sender_account": "0123456789",
+        "sender_bank_bin": "970436",
+        "transfer_content": "NAP TIEN PARTNER XYZ",
+        "transaction_id": "GPAY-TXN-88231",
+        "bank_transaction_id": "FT26302991234567",
+        "bank_trace_id": "302991234567",
+        "created_at": "2026-10-29T04:02:51Z"
+      }
+    ],
+    "total_count": 1,
+    "page": 1,
+    "page_size": 20
+  }
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing signature"
+}
+```
+</ResponseExample>

@@ -1,0 +1,63 @@
+---
+title: "List VND Deposit Accounts"
+api: "GET https://pay-api.holdstation.com/partners/funds/deposit-vas"
+description: "List the partner's VND deposit accounts across all providers."
+---
+
+Lists the partner's VND deposit accounts, across all providers. Closed accounts are included — check `status` to tell them apart.
+
+See [Prefunding Offramp Flow → VND Deposit Accounts](/guides/partner-prefunding#vnd-deposit-accounts) for the workflow.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": [
+    {
+      "id": "dva_01HQ8X2M4K",
+      "provider": "GPAY",
+      "account_number": "96247100123456",
+      "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
+      "bank_code": "BIDV",
+      "status": "ACTIVE",
+      "created_at": "2026-10-29T03:14:22Z"
+    },
+    {
+      "id": "dva_01HNT5B9PZ",
+      "provider": "GPAY",
+      "account_number": "96247100987654",
+      "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
+      "bank_code": "BIDV",
+      "status": "CLOSED",
+      "created_at": "2026-07-02T08:41:10Z"
+    }
+  ]
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing signature"
+}
+```
+</ResponseExample>
+
+<Note>
+  `data` is a plain array — this endpoint is not paged.
+</Note>
