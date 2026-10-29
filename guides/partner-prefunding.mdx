@@ -66,6 +66,29 @@ Each credit is reported by the [Balance Change Webhook](/guides/webhooks/balance
   Closing is not reversible. Getting an account again afterwards opens a **new account with a different account number** — it does not reopen the closed one. Make sure every sender has the new details before you close the old account.
 </Warning>
 
+## Converting Between Stablecoins
+
+Call [Convert Fund Balance](/api-reference/funds/convert) to move a prefunded balance from one stablecoin into another at a **1:1 rate**.
+
+Both tokens must be stablecoins — `USDT`, `USDC`, or `USD1`. Fiat balances cannot be converted.
+
+```json
+{
+  "from_token": "USDT",
+  "to_token": "USDC",
+  "amount": "1000",
+  "idempotency_key": "convert-2026-10-29-001"
+}
+```
+
+Omit `amount` to convert the **entire** `from_token` balance. Pass an `idempotency_key` so a retried request does not convert twice.
+
+A conversion charges a fee: `converted_amount` is debited from `from_token`, `fee` is taken, and `received_amount` is credited to `to_token`.
+
+<Note>
+  One conversion writes **two fund logs** — a convert-out leg (`change_type` `4`) and a convert-in leg (`change_type` `5`) — sharing a single `convert_ref`. Use that ref to pair the two sides when reconciling [fund logs](/api-reference/funds/list-logs).
+</Note>
+
 ## Change Types
 
 Every balance change is recorded in the fund logs with a `change_type`:
@@ -75,6 +98,8 @@ Every balance change is recorded in the fund logs with a `change_type`:
 | `1` | Deposit | On-chain deposit credited to the balance |
 | `2` | Withdraw | Debit from an offramp order |
 | `3` | Compensation/Refund | Adjustment by Holdstation Pay (e.g., refund or correction) |
+| `4` | Convert out | Debit from the source token of a [conversion](#converting-between-stablecoins) |
+| `5` | Convert in | Credit to the target token of a [conversion](#converting-between-stablecoins) |
 
 ## Withdraw Order Flow
 
@@ -137,6 +162,7 @@ See the full processing state table in [Order Flow → Withdraw Orders](/guides/
 | POST | `/partners/funds/deposit-vas/{va_id}/close` | Close a VND deposit account |
 | GET | `/partners/funds/deposit-vas/{va_id}/transactions` | List VND transfers credited through one deposit account |
 | GET | `/partners/funds/logs` | List balance-change history |
+| POST | `/partners/funds/convert` | Convert a stablecoin balance into another stablecoin |
 | POST | `/partners/orders/withdraw` | Create a withdraw order (quote only, pending confirmation) |
 | POST | `/partners/orders/{order_id}/confirm-withdraw` | Confirm the order and release the VND payout |
 | POST | `/partners/webhook-url` | Set the URL that receives [Balance Change Webhook](/guides/webhooks/balance-change-webhook) events |

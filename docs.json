@@ -157,6 +157,7 @@
               "api-reference/funds/close-deposit-va",
               "api-reference/funds/list-deposit-va-transactions",
               "api-reference/funds/list-logs",
+              "api-reference/funds/convert",
               "api-reference/funds/withdraw",
               "api-reference/funds/confirm-withdraw"
             ]

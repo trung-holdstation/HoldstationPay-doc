@@ -48,6 +48,8 @@ X-HSPay-Event-Signature: base64_encoded_ed25519_signature
 | `1`   | `DEPOSIT`    | On-chain deposit credited to fund            |
 | `2`   | `WITHDRAW`   | Withdrawal deducted from fund                |
 | `3`   | `COMPENSATE` | Manual compensation credited to fund         |
+| `4`   | `CONVERT_OUT` | Debit from the source token of a [stablecoin conversion](/guides/partner-prefunding#converting-between-stablecoins) |
+| `5`   | `CONVERT_IN` | Credit to the target token of a [stablecoin conversion](/guides/partner-prefunding#converting-between-stablecoins) |
 
 ## Signature Verification
 

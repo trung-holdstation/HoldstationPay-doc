@@ -1,0 +1,143 @@
+---
+title: "Convert Fund Balance"
+api: "POST https://pay-api.holdstation.com/partners/funds/convert"
+description: "Convert a prefunded stablecoin balance into another stablecoin at a 1:1 rate."
+---
+
+Converts a prefunded stablecoin balance into another stablecoin at a **1:1 rate**.
+
+Both tokens must be stablecoins — `USDT`, `USDC`, or `USD1`. Fiat balances cannot be converted.
+
+See [Prefunding Offramp Flow → Converting Between Stablecoins](/guides/partner-prefunding#converting-between-stablecoins) for the workflow.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="from_token" type="string" required>
+  Stablecoin symbol to convert from: `USDT`, `USDC`, or `USD1`.
+</ParamField>
+
+<ParamField body="to_token" type="string" required>
+  Stablecoin symbol to convert to: `USDT`, `USDC`, or `USD1`.
+</ParamField>
+
+<ParamField body="amount" type="string">
+  Decimal amount to convert. **Omit to convert the entire `from_token` balance.**
+</ParamField>
+
+<ParamField body="idempotency_key" type="string">
+  Optional key that de-dupes retries of the same conversion.
+</ParamField>
+
+## Response Fields
+
+| Field | Type | Notes |
+|---|---|---|
+| `success` | boolean | Whether the conversion completed |
+| `code` | integer | Numeric error code when `success` is `false` |
+| `error` | string | Error message when `success` is `false` |
+| `rate` | string | Conversion rate — always `1` |
+| `converted_amount` | string | Amount debited from `from_token` |
+| `received_amount` | string | Amount credited to `to_token` |
+| `fee` | string | Conversion fee charged |
+| `from_fund` | object | The `from_token` fund after the debit |
+| `to_fund` | object | The `to_token` fund after the credit |
+| `from_log` | object | Fund log for the convert-out leg (`change_type` `4`) |
+| `to_log` | object | Fund log for the convert-in leg (`change_type` `5`) |
+
+<Note>
+  One conversion writes **two fund logs** — convert out and convert in — sharing a single `convert_ref` in their metadata. Both appear in [List Fund Logs](/api-reference/funds/list-logs).
+</Note>
+
+<RequestExample>
+```json Request
+{
+  "from_token": "USDT",
+  "to_token": "USDC",
+  "amount": "1000",
+  "idempotency_key": "convert-2026-10-29-001"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": "",
+    "rate": "1",
+    "converted_amount": "1000.000000",
+    "received_amount": "999.000000",
+    "fee": "1.000000",
+    "from_fund": {
+      "id": 11,
+      "partner_id": "partner-xyz",
+      "token": "USDT",
+      "balance": "4000.000000",
+      "fund_type": 1,
+      "updated_at": { "seconds": 1793750062, "nanos": 0 }
+    },
+    "to_fund": {
+      "id": 12,
+      "partner_id": "partner-xyz",
+      "token": "USDC",
+      "balance": "2499.000000",
+      "fund_type": 1,
+      "updated_at": { "seconds": 1793750062, "nanos": 0 }
+    },
+    "from_log": {
+      "id": 5120,
+      "partner_fund_id": 11,
+      "change_type": 4,
+      "change_amount": "-1000.000000",
+      "fee": "1.000000",
+      "pre_balance": "5000.000000",
+      "post_balance": "4000.000000",
+      "caused_at": { "seconds": 1793750062, "nanos": 0 }
+    },
+    "to_log": {
+      "id": 5121,
+      "partner_fund_id": 12,
+      "change_type": 5,
+      "change_amount": "999.000000",
+      "fee": "0.000000",
+      "pre_balance": "1500.000000",
+      "post_balance": "2499.000000",
+      "caused_at": { "seconds": 1793750062, "nanos": 0 }
+    }
+  }
+}
+```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing signature"
+}
+```
+</ResponseExample>
