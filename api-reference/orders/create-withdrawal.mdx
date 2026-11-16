@@ -55,6 +55,10 @@ Partner uses this API to create a new withdrawal order. See [Offramp Flow](/guid
   Optional buffer rate override (fractional). Effective buffer = max(override, configured). Example: `0.005` = 0.5%.
 </ParamField>
 
+<ParamField body="kyc_id" type="string">
+  Partner customer KYC id. **Required** when the `partner_kyc` feature flag is enabled for your account — the order is rejected if this is missing or does not match a registered KYC record. See [Partner Customer KYC](/guides/partner-customer-kyc/overview).
+</ParamField>
+
 <RequestExample>
 ```json
 {
@@ -70,7 +74,8 @@ Partner uses this API to create a new withdrawal order. See [Offramp Flow](/guid
   },
   "callback": "https://yourapp.com/api/webhooks/payment",
   "reference_no": "WITHDRAW-001",
-  "buffer": 0.005
+  "buffer": 0.005,
+  "kyc_id": "cust-001"
 }
 ```
 </RequestExample>
