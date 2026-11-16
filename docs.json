@@ -154,9 +154,11 @@
               "api-reference/funds/list-deposit-addresses",
               "api-reference/funds/create-deposit-va",
               "api-reference/funds/list-deposit-vas",
+              "api-reference/funds/get-deposit-va",
               "api-reference/funds/close-deposit-va",
               "api-reference/funds/list-deposit-va-transactions",
               "api-reference/funds/list-logs",
+              "api-reference/funds/get-log",
               "api-reference/funds/convert",
               "api-reference/funds/withdraw",
               "api-reference/funds/confirm-withdraw"
@@ -179,7 +181,8 @@
           {
             "group": "Partners",
             "pages": [
-              "api-reference/partners/set-webhook-url"
+              "api-reference/partners/set-webhook-url",
+              "api-reference/partners/get-webhook-url"
             ]
           },
           {
@@ -207,10 +210,6 @@
     {
       "source": "/guides/signature-algorithm",
       "destination": "/guides/widget-signature-algorithm"
-    },
-    {
-      "source": "/api-reference/funds/get-deposit-va",
-      "destination": "/api-reference/funds/create-deposit-va"
     }
   ],
   "openapi": [

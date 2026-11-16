@@ -1,10 +1,10 @@
 ---
 title: "List VND Deposit Accounts"
 api: "GET https://pay-api.holdstation.com/partners/funds/deposit-vas"
-description: "List the partner's VND deposit accounts across all providers."
+description: "List the partner's VND deposit accounts."
 ---
 
-Lists the partner's VND deposit accounts, across all providers. A partner can hold several at once. Closed accounts are included — check `status` to tell them apart.
+Lists the partner's VND deposit accounts. A partner can hold several at once. Closed accounts are included — check `status` to tell them apart.
 
 This is how you retrieve accounts you already hold: [Create VND Deposit Account](/api-reference/funds/create-deposit-va) opens a new one on every call, so use this endpoint rather than creating again.
 
@@ -31,28 +31,46 @@ See [Prefunding Offramp Flow → VND Deposit Accounts](/guides/partner-prefundin
   "data": [
     {
       "id": "dva_01HQ8X2M4K",
-      "provider": "GPAY",
       "account_number": "96247100123456",
       "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
-      "bank_code": "BIDV",
+      "bank_id": 4,
+      "bank": {
+        "id": 4,
+        "bin_code": "970418",
+        "short_name": "BIDV",
+        "bank_name": "Ngan hang TMCP Dau tu va Phat trien Viet Nam",
+        "image": "https://cdn.holdstation.com/banks/bidv.png"
+      },
       "status": "ACTIVE",
       "created_at": "2026-10-29T03:14:22Z"
     },
     {
       "id": "dva_01HPB4R7TQ",
-      "provider": "GPAY",
       "account_number": "96247100555888",
       "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
-      "bank_code": "BIDV",
+      "bank_id": 4,
+      "bank": {
+        "id": 4,
+        "bin_code": "970418",
+        "short_name": "BIDV",
+        "bank_name": "Ngan hang TMCP Dau tu va Phat trien Viet Nam",
+        "image": "https://cdn.holdstation.com/banks/bidv.png"
+      },
       "status": "ACTIVE",
       "created_at": "2026-09-14T11:05:38Z"
     },
     {
       "id": "dva_01HNT5B9PZ",
-      "provider": "GPAY",
       "account_number": "96247100987654",
       "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
-      "bank_code": "BIDV",
+      "bank_id": 4,
+      "bank": {
+        "id": 4,
+        "bin_code": "970418",
+        "short_name": "BIDV",
+        "bank_name": "Ngan hang TMCP Dau tu va Phat trien Viet Nam",
+        "image": "https://cdn.holdstation.com/banks/bidv.png"
+      },
       "status": "CLOSED",
       "created_at": "2026-07-02T08:41:10Z"
     }
@@ -70,5 +88,5 @@ See [Prefunding Offramp Flow → VND Deposit Accounts](/guides/partner-prefundin
 </ResponseExample>
 
 <Note>
-  `data` is a plain array — this endpoint is not paged.
+  `data` is a plain array — this endpoint is not paged. To fetch one account by ID, use [Get VND Deposit Account](/api-reference/funds/get-deposit-va).
 </Note>

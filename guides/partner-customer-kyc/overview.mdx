@@ -3,7 +3,7 @@ title: "Overview"
 description: "Register and reference customer KYC records for onramp, offramp, and withdraw orders."
 ---
 
-When the `partner_kyc` feature flag is enabled for your partner account, every onramp, offramp, and withdraw order **must** reference a previously-registered customer KYC record via `kyc_id`. Register your KYC records ahead of time, then pass the `kyc_id` on the order.
+Every onramp, offramp, and withdraw order **must** reference a previously-registered customer KYC record via `kyc_id`. Register your KYC records ahead of time, then pass the `kyc_id` on the order.
 
 <Note>
   Customer KYC records are append-only — they can be created, updated, listed, and fetched, but **not deleted**. The `kyc_id` is retained as an audit link on every order that referenced it.

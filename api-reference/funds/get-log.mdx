@@ -1,0 +1,90 @@
+---
+title: "Get Fund Log"
+api: "GET https://pay-api.holdstation.com/partners/funds/logs/{fund_log_id}"
+description: "Retrieve one fund transaction log by ID."
+---
+
+Returns one fund transaction log, in the same shape as an entry of [List Fund Logs](/api-reference/funds/list-logs).
+
+This is the endpoint to call after a [Balance Change Webhook](/guides/webhooks/balance-change-webhook) event: the payload carries a `fund_log_id` but no metadata, so fetch the log here and read its [`metadata.source`](/api-reference/funds/list-logs#metadata) to learn what actually caused the change.
+
+<Note>
+  An ID that belongs to another partner returns `404`, the same as an unknown ID. A malformed `fund_log_id` returns `400`.
+</Note>
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="fund_log_id" type="integer" required>
+  Fund log ID — the `fund_log_id` from the fund balance change webhook.
+</ParamField>
+
+## Response Fields
+
+The `log` object has the same fields as an entry of [List Fund Logs](/api-reference/funds/list-logs#log-fields), including the [`metadata`](/api-reference/funds/list-logs#metadata) that explains the change.
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "success": true,
+    "code": 0,
+    "error": "",
+    "log": {
+      "id": 4312,
+      "partner_fund_id": 7,
+      "change_type": 1,
+      "change_amount": "4995000",
+      "fee": "5000",
+      "pre_balance": "12000000",
+      "post_balance": "16995000",
+      "metadata": {
+        "source": "fiat_deposit",
+        "reference_id": "GPAY-TXN-88231",
+        "deposit_va_id": "dva_01HQ8X2M4K",
+        "account_number": "96247100123456",
+        "transaction_id": "GPAY-TXN-88231",
+        "bank_transaction_id": "FT26302991234567",
+        "bank_trace_id": "302991234567",
+        "sender_name": "NGUYEN VAN A",
+        "sender_account": "0123456789",
+        "sender_bank_bin": "970436",
+        "transfer_content": "NAP TIEN PARTNER XYZ",
+        "paid_at": "2026-10-29T04:02:51Z"
+      },
+      "caused_at": { "seconds": 1793746971, "nanos": 0 }
+    }
+  }
+}
+```
+
+```json 400
+{
+  "error": "invalid request",
+  "error_code": "BAD_REQUEST",
+  "message": "Invalid parameters"
+}
+```
+
+```json 404
+{
+  "error": "not found",
+  "error_code": "NOT_FOUND",
+  "message": "No fund log with this ID"
+}
+```
+</ResponseExample>

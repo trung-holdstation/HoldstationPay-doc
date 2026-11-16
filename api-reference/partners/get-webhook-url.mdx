@@ -1,0 +1,51 @@
+---
+title: "Get Partner Webhook URL"
+api: "GET https://pay-api.holdstation.com/partners/webhook-url"
+description: "Read the webhook URL currently set for fund balance change notifications."
+---
+
+Returns the webhook URL currently configured for `pay.partner.fund-balance-changed` events. **The value is an empty string when none is set.**
+
+To change it, see [Set Partner Webhook URL](/api-reference/partners/set-webhook-url). For the event payload and signature verification, see [Balance Change Webhook](/guides/webhooks/balance-change-webhook).
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "message": "success",
+  "data": {
+    "webhook_url": "https://yourapp.com/api/webhooks/fund-balance"
+  }
+}
+```
+
+```json 200 (none set)
+{
+  "message": "success",
+  "data": {
+    "webhook_url": ""
+  }
+}
+```
+
+```json 401
+{
+  "error": "unauthorized",
+  "error_code": "UNAUTHORIZED",
+  "message": "Invalid or missing signature"
+}
+```
+</ResponseExample>

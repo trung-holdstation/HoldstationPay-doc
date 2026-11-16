@@ -4,7 +4,7 @@ api: "GET https://pay-api.holdstation.com/partners/funds/logs"
 description: "List fund transaction logs, with the metadata explaining what caused each balance change."
 ---
 
-Lists the partner's fund transaction logs. Every balance change is recorded here — VND and crypto deposits, offramp withdrawals, crypto payouts, compensations, and stablecoin conversions.
+Lists the partner's fund transaction logs. To fetch a single log by ID — for example the `fund_log_id` from a webhook — use [Get Fund Log](/api-reference/funds/get-log). Every balance change is recorded here — VND and crypto deposits, offramp withdrawals, crypto payouts, compensations, and stablecoin conversions.
 
 `change_type` says whether the balance went up or down and broadly why; **`metadata.source` says what actually caused it**. The two are not interchangeable — see [Metadata](#metadata).
 
@@ -80,8 +80,8 @@ A VND transfer into a [deposit account](/guides/partner-prefunding#vnd-deposit-a
 
 | Field | Notes |
 |---|---|
-| `provider` | Provider holding the deposit account, e.g. `GPAY` |
-| `account_number` | The deposit account the money arrived in |
+| `deposit_va_id` | The [deposit account](/api-reference/funds/get-deposit-va) the transfer arrived in |
+| `account_number` | The deposit account number the money arrived in |
 | `transaction_id` | Provider transaction ID |
 | `bank_transaction_id` | Bank transaction ID |
 | `bank_trace_id` | Bank trace number. Empty when the provider does not send it. |
@@ -155,7 +155,7 @@ One [conversion](/guides/partner-prefunding#converting-between-stablecoins) writ
         "metadata": {
           "source": "fiat_deposit",
           "reference_id": "GPAY-TXN-88231",
-          "provider": "GPAY",
+          "deposit_va_id": "dva_01HQ8X2M4K",
           "account_number": "96247100123456",
           "transaction_id": "GPAY-TXN-88231",
           "bank_transaction_id": "FT26302991234567",

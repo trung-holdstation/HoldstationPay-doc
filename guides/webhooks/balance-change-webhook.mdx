@@ -52,7 +52,7 @@ X-HSPay-Event-Signature: base64_encoded_ed25519_signature
 | `5`   | `CONVERT_IN` | Credit to the target token of a [stablecoin conversion](/guides/partner-prefunding#converting-between-stablecoins) |
 
 <Note>
-  The payload carries no metadata — only `change_type` and `fund_log_id`. To learn what actually caused the change, fetch the log with [List Fund Logs](/api-reference/funds/list-logs) and read its [`metadata.source`](/api-reference/funds/list-logs#metadata), which distinguishes a VND deposit from an on-chain one and an offramp debit from a crypto payout.
+  The payload carries no metadata — only `change_type` and `fund_log_id`. To learn what actually caused the change, fetch that log with [Get Fund Log](/api-reference/funds/get-log) and read its [`metadata.source`](/api-reference/funds/list-logs#metadata), which distinguishes a VND deposit from an on-chain one and an offramp debit from a crypto payout.
 </Note>
 
 ## Signature Verification
