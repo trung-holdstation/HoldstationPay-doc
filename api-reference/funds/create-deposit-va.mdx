@@ -1,12 +1,18 @@
 ---
-title: "Get VND Deposit Account"
+title: "Create VND Deposit Account"
 api: "POST https://pay-api.holdstation.com/partners/funds/deposit-vas"
-description: "Get the partner's VND deposit account, opening one if there is none."
+description: "Open a new VND deposit account for receiving bank transfers into the fund."
 ---
 
-Returns the partner's VND deposit account, opening one if there is none. Holdstation Pay sets the provider for each partner. **Calling it again returns the same account** — it is safe to retry.
+Opens a **new** VND deposit account. Holdstation Pay sets the provider for each partner.
 
-Any bank transfer to this account credits the partner's VND fund, and the [Balance Change Webhook](/guides/webhooks/balance-change-webhook) reports it.
+A partner can hold several deposit accounts at once — use them to separate flows, counterparties, or reconciliation streams, and read each one's credits with [List Deposit Account Transactions](/api-reference/funds/list-deposit-va-transactions).
+
+Any bank transfer to any of these accounts credits the same VND fund, and the [Balance Change Webhook](/guides/webhooks/balance-change-webhook) reports it.
+
+<Warning>
+  Every call opens a **new account with a new account number** — it is not idempotent and does not return an existing one. Store the `id` and `account_number` it returns; call [List VND Deposit Accounts](/api-reference/funds/list-deposit-vas) to retrieve accounts you already hold, rather than calling this endpoint again.
+</Warning>
 
 See [Prefunding Offramp Flow → VND Deposit Accounts](/guides/partner-prefunding#vnd-deposit-accounts) for the workflow.
 

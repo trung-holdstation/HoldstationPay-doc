@@ -4,7 +4,9 @@ api: "GET https://pay-api.holdstation.com/partners/funds/deposit-vas"
 description: "List the partner's VND deposit accounts across all providers."
 ---
 
-Lists the partner's VND deposit accounts, across all providers. Closed accounts are included — check `status` to tell them apart.
+Lists the partner's VND deposit accounts, across all providers. A partner can hold several at once. Closed accounts are included — check `status` to tell them apart.
+
+This is how you retrieve accounts you already hold: [Create VND Deposit Account](/api-reference/funds/create-deposit-va) opens a new one on every call, so use this endpoint rather than creating again.
 
 See [Prefunding Offramp Flow → VND Deposit Accounts](/guides/partner-prefunding#vnd-deposit-accounts) for the workflow.
 
@@ -35,6 +37,15 @@ See [Prefunding Offramp Flow → VND Deposit Accounts](/guides/partner-prefundin
       "bank_code": "BIDV",
       "status": "ACTIVE",
       "created_at": "2026-10-29T03:14:22Z"
+    },
+    {
+      "id": "dva_01HPB4R7TQ",
+      "provider": "GPAY",
+      "account_number": "96247100555888",
+      "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
+      "bank_code": "BIDV",
+      "status": "ACTIVE",
+      "created_at": "2026-09-14T11:05:38Z"
     },
     {
       "id": "dva_01HNT5B9PZ",

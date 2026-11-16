@@ -152,7 +152,7 @@
               "api-reference/funds/list-funds",
               "api-reference/funds/get-balance",
               "api-reference/funds/list-deposit-addresses",
-              "api-reference/funds/get-deposit-va",
+              "api-reference/funds/create-deposit-va",
               "api-reference/funds/list-deposit-vas",
               "api-reference/funds/close-deposit-va",
               "api-reference/funds/list-deposit-va-transactions",
@@ -203,6 +203,12 @@
       }
     ]
   },
+  "redirects": [
+    {
+      "source": "/api-reference/funds/get-deposit-va",
+      "destination": "/api-reference/funds/create-deposit-va"
+    }
+  ],
   "openapi": [
     "https://pay-api.holdstation.com/openapi.yaml"
   ],

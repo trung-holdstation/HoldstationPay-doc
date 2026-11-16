@@ -19,7 +19,7 @@ You top up your balance once — with on-chain stablecoin deposits, or with VND 
 
 1. **Get deposit addresses** — call [List Deposit Addresses](/api-reference/funds/list-deposit-addresses) to retrieve the on-chain addresses assigned to you on each supported chain.
 2. **Deposit on-chain** — send supported tokens (e.g., USDT, USDC) to one of those addresses. Holdstation Pay credits the received amount to your balance once the deposit is detected.
-   - **Or deposit VND** — call [Get VND Deposit Account](/api-reference/funds/get-deposit-va) and transfer VND to the bank account it returns. See [VND Deposit Accounts](#vnd-deposit-accounts).
+   - **Or deposit VND** — open a deposit account with [Create VND Deposit Account](/api-reference/funds/create-deposit-va) and transfer VND to the bank account it returns. See [VND Deposit Accounts](#vnd-deposit-accounts).
 3. **Check balance** — use [List Funds](/api-reference/funds/list-funds) to view all balances, or [Get Fund Balance](/api-reference/funds/get-balance) for a single token.
 4. **Create offramp order** — call [Create Withdrawal from Fund](/api-reference/funds/withdraw) to create an order with a confirmed quote (rate, outcome, fees). No VND is sent yet — the order is held for up to **15 minutes** awaiting confirmation. Always include an `idempotency_key` to avoid duplicate orders.
 5. **Confirm disbursement** — call [Confirm Withdrawal](/api-reference/funds/confirm-withdraw) with the `order_id` from step 4 to release the payout. Holdstation Pay debits your balance and sends VND to the recipient bank account using the details on the order. If not confirmed within 15 minutes, the order expires and must be recreated.
@@ -34,9 +34,13 @@ As well as on-chain stablecoin deposits, a partner can top up with **VND bank tr
   Holdstation Pay sets the provider for each partner. You do not choose it.
 </Note>
 
-### Getting your account
+### Creating a deposit account
 
-Call [Get VND Deposit Account](/api-reference/funds/get-deposit-va) — it returns your account, opening one if there is none. The call is idempotent: **calling it again returns the same account**, so it is safe to retry or to call on every startup.
+Call [Create VND Deposit Account](/api-reference/funds/create-deposit-va) to open one. A partner can hold **several accounts at once**, so you can use separate accounts for separate flows, counterparties, or reconciliation streams — all of them credit the same VND fund.
+
+<Warning>
+  Every call opens a **new** account with a new account number. The endpoint is not idempotent, so do not call it on startup or retry it blindly — store the `id` and `account_number` it returns, and use [List VND Deposit Accounts](/api-reference/funds/list-deposit-vas) to retrieve accounts you already hold.
+</Warning>
 
 The response carries the details to give to whoever is sending the money:
 
@@ -50,11 +54,11 @@ The response carries the details to give to whoever is sending the money:
 | `status` | `ACTIVE` or `CLOSED` |
 | `created_at` | ISO 8601 timestamp |
 
-Use [List VND Deposit Accounts](/api-reference/funds/list-deposit-vas) to see every account you hold across providers, closed ones included.
+Use [List VND Deposit Accounts](/api-reference/funds/list-deposit-vas) to see every account you hold across providers, closed ones included. Because each account has its own transaction list, keeping one account per flow makes reconciliation straightforward.
 
 ### Receiving a deposit
 
-Any bank transfer to the account credits your VND fund. Holdstation Pay charges a **deposit fee**: the credited `amount` is what the sender transferred **minus** `fee`, so the sender's transfer equals `amount` + `fee`.
+Any bank transfer to any of your deposit accounts credits your VND fund. Holdstation Pay charges a **deposit fee**: the credited `amount` is what the sender transferred **minus** `fee`, so the sender's transfer equals `amount` + `fee`.
 
 Each credit is reported by the [Balance Change Webhook](/guides/webhooks/balance-change-webhook), and the same credit appears in [List Fund Logs](/api-reference/funds/list-logs). To review the transfers through one account — with sender name, account, bank BIN, and the transfer note — call [List Deposit Account Transactions](/api-reference/funds/list-deposit-va-transactions). Each entry's `id` is the fund log ID.
 
@@ -63,7 +67,7 @@ Each credit is reported by the [Balance Change Webhook](/guides/webhooks/balance
 [Close VND Deposit Account](/api-reference/funds/close-deposit-va) stops transfers to it being accepted.
 
 <Warning>
-  Closing is not reversible. Getting an account again afterwards opens a **new account with a different account number** — it does not reopen the closed one. Make sure every sender has the new details before you close the old account.
+  Closing is not reversible — a closed account cannot be reopened. Creating one afterwards opens a different account with a different account number. Make sure every sender has the new details before you close the old account.
 </Warning>
 
 ## Converting Between Stablecoins
@@ -161,7 +165,7 @@ See the full processing state table in [Order Flow → Withdraw Orders](/guides/
 | GET | `/partners/funds` | List all balances |
 | GET | `/partners/funds/balance` | Get balance for a single token |
 | GET | `/partners/funds/deposit-addresses` | List on-chain deposit addresses |
-| POST | `/partners/funds/deposit-vas` | Get the VND deposit account, opening one if there is none |
+| POST | `/partners/funds/deposit-vas` | Open a new VND deposit account |
 | GET | `/partners/funds/deposit-vas` | List VND deposit accounts across all providers |
 | POST | `/partners/funds/deposit-vas/{va_id}/close` | Close a VND deposit account |
 | GET | `/partners/funds/deposit-vas/{va_id}/transactions` | List VND transfers credited through one deposit account |
