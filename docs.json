@@ -58,7 +58,7 @@
               "guides/widget-configuration",
               "guides/widget-events",
               "guides/partner-integration",
-              "guides/signature-algorithm"
+              "guides/widget-signature-algorithm"
             ]
           },
           {
@@ -204,6 +204,10 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/guides/signature-algorithm",
+      "destination": "/guides/widget-signature-algorithm"
+    },
     {
       "source": "/api-reference/funds/get-deposit-va",
       "destination": "/api-reference/funds/create-deposit-va"

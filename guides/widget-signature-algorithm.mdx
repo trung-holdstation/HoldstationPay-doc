@@ -1,7 +1,13 @@
 ---
-title: "Signature Algorithm"
-description: "Generate Ed25519 signatures for request validation."
+title: "Widget Signature Algorithm"
+description: "Generate the Ed25519 signature passed to the Holdstation Pay Widget as the signature query parameter."
 ---
+
+This page describes the signature algorithm used by the **[Holdstation Pay Widget](/guides/widget-overview)** only. It produces the value you pass as the `signature` query parameter in the widget's iframe URL, alongside your partner app key (`pk`). See [Widget Configuration](/guides/widget-configuration) for the full parameter list.
+
+<Warning>
+  **This is not the signing scheme used by the Holdstation Pay API.** Server-to-server calls to `/partners/*` endpoints use a different algorithm with its own headers — see [Request Signing](/guides/partner-authentication-signed-api/overview). The two are not interchangeable: the widget signs an underscore-joined, lowercased string of widget parameters, while the API signs the query string, request body, and a timestamp.
+</Warning>
 
 ## Basic Rules
 
@@ -10,6 +16,8 @@ description: "Generate Ed25519 signatures for request validation."
 3. All sign message characters are **lowercase**.
 
 ## Sign Message Format
+
+The fields below are the widget URL parameters for each flow, joined in this exact order.
 
 ### Onramp (Buy)
 
@@ -72,3 +80,13 @@ Signature: +EEox+pWc3dC854Av3eIzLbGthud0p2/xrosE9tcOHvLEji8uajyJzDwV95IFClhmCnCq
 <Warning>
   Remember to convert the entire sign message to **lowercase** before signing.
 </Warning>
+
+## Using the Signature
+
+Pass the result as the `signature` query parameter on the widget iframe URL, together with your partner app key:
+
+```
+https://pay.capybera.xyz/?pk=YOUR_PARTNER_APP_KEY&signature=YOUR_SIGNATURE&amount=1000000&chain_id=56&...
+```
+
+See [Widget Configuration](/guides/widget-configuration) for every supported parameter, and [Partner Integration](/guides/partner-integration) for attributing widget transactions to your platform.
