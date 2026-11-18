@@ -1,12 +1,12 @@
 ---
-title: "Decode VietQR"
+title: "Decode QR"
 api: "POST https://pay-api.holdstation.com/partners/payment-methods/qr/decode"
-description: "Decode a VietQR string or image URL into structured payment information."
+description: "Decode a QR string or image URL into structured payment information."
 ---
 
 ## Overview
 
-Partners can decode a VietQR string or QR image URL into structured payment information — bank BIN code, destination account number, amount, and purpose. Pass exactly one of `qr_string` or `qr_image_url` per request.
+Partners can decode a QR string or QR image URL into structured payment information — bank BIN code, destination account number, amount, and purpose. Pass exactly one of `qr_string` or `qr_image_url` per request.
 
 ## Authentication
 
@@ -25,7 +25,7 @@ Partners can decode a VietQR string or QR image URL into structured payment info
 ## Body Parameters
 
 <ParamField body="qr_string" type="string">
-  Raw VietQR string. Mutually exclusive with `qr_image_url`.
+  Raw QR string. Mutually exclusive with `qr_image_url`.
 </ParamField>
 
 <ParamField body="qr_image_url" type="string">
