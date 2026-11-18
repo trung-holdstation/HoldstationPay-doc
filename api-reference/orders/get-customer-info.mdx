@@ -14,6 +14,14 @@ This endpoint is **only meaningful for onramp orders** that have received a fiat
   Your partner app key.
 </ParamField>
 
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
 ## Path Parameters
 
 <ParamField path="order_id" type="string" required>

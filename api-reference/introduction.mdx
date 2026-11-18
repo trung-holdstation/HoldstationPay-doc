@@ -11,7 +11,12 @@ https://pay-api.holdstation.com
 
 ## Authentication
 
-Most endpoints require authentication via the `Partner-App-Key` header. See [Authentication](/authentication) for details.
+Every endpoint requires three headers — `Partner-App-Key`, `X-HSPay-Signature`, and `X-HSPay-Timestamp` — and requests must come from a whitelisted IP address. See [Authentication](/authentication) for details.
+
+| Status Code | Cause |
+|-------------|-------|
+| `401` | Missing or invalid API key, or an invalid signature |
+| `403` | Source IP is not whitelisted |
 
 ## Error Responses
 

@@ -8,6 +8,20 @@ description: "Query a payment order by its partner reference number."
 
 Partners can query a payment order by its reference number to obtain the latest state of the payment order.
 
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
 <ParamField path="reference_no" type="string" required>
   The partner's reference number assigned when creating the order.
 </ParamField>

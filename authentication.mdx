@@ -1,35 +1,80 @@
 ---
 title: "Authentication"
-description: "Learn how to authenticate your API requests to Holdstation Pay."
+description: "Authenticate your API requests to Holdstation Pay with an API key, a request signature, and a whitelisted IP."
 ---
 
-## API Key Authentication
+Every request to the Holdstation Pay API must satisfy three things:
 
-To authenticate API requests, include a valid API key in the request headers. You can request an API key by contacting the Holdstation support team.
+1. **A valid API key** in the `Partner-App-Key` header.
+2. **A request signature** — every endpoint requires signed requests.
+3. **A whitelisted source IP** — requests from other addresses are rejected.
 
-### Header Format
+<Warning>
+  **All API endpoints require request signatures.** There are no unsigned or public endpoints. If you have an older integration that calls some endpoints with only `Partner-App-Key`, add signing to it — see [Request Signing](/guides/partner-authentication-signed-api/overview).
+</Warning>
 
-```bash
-Partner-App-Key: YOUR_API_KEY
+## Required Headers
+
+| Header | Description |
+|---|---|
+| `Partner-App-Key` | Your partner app key, issued by Holdstation Pay |
+| `X-HSPay-Signature` | Base64-encoded Ed25519 signature of the sign data |
+| `X-HSPay-Timestamp` | Unix timestamp in seconds. Must be within **60 seconds** of server time. |
+
+The signature is computed over the **sign data**, which joins the sorted query string, the raw request body, and the timestamp with `\n`:
+
 ```
+sign_data = sorted_query_string + "\n" + body + "\n" + timestamp
+```
+
+See [Request Signing](/guides/partner-authentication-signed-api/overview) for the full algorithm, [Key Generation](/guides/partner-authentication-signed-api/key-generation) for creating your key pair, and [Signing Requests](/guides/partner-authentication-signed-api/signing-requests) for code examples.
 
 ### Example Request
 
 ```bash
 curl -X GET https://pay-api.holdstation.com/api/v1/tokens \
-  -H "Partner-App-Key: YOUR_API_KEY"
+  -H "Partner-App-Key: YOUR_API_KEY" \
+  -H "X-HSPay-Signature: BASE64_ED25519_SIGNATURE" \
+  -H "X-HSPay-Timestamp: 1793746971"
 ```
 
-## Security Scheme
+<Note>
+  The signature covers the request body byte-for-byte. Sign the exact bytes you send — re-serializing the JSON after signing will invalidate the signature.
+</Note>
 
-The API uses the `apiKey` security scheme with the key passed in the request header:
+## IP Whitelisting
 
-| Parameter        | Value              |
-|------------------|--------------------|
-| **Type**         | API Key            |
-| **Location**     | Header             |
-| **Header Name**  | `Partner-App-Key`  |
+Holdstation Pay only accepts API requests from source IP addresses you have registered in advance.
+
+Send the **public IP address or addresses** your systems will use to call the API to the Holdstation team, and they will whitelist them. Requests from any other address are rejected regardless of how they are signed.
+
+<Tip>
+  Include every address that can originate a call — each environment, each region, and any NAT gateway or egress proxy your traffic leaves through. Egress addresses are easy to overlook on autoscaling and serverless platforms, where outbound traffic often leaves from a pool of addresses rather than one. Send the whole range when that is the case.
+</Tip>
+
+Tell Holdstation Pay before your egress addresses change. An unregistered address fails closed, so a routine infrastructure change can take a working integration offline.
 
 <Note>
-  Some endpoints such as **List Banks** and **List Tokens** are publicly accessible and do not require authentication.
+  IP whitelisting applies to your server-to-server API calls. It does not apply to the [Holdstation Pay Widget](/guides/widget-overview), which runs in your users' browsers.
 </Note>
+
+## Getting Set Up
+
+<Steps>
+  <Step title="Request an API key">
+    Contact the Holdstation support team to receive your `Partner-App-Key`.
+  </Step>
+  <Step title="Generate an Ed25519 key pair">
+    Follow [Key Generation](/guides/partner-authentication-signed-api/key-generation), then send Holdstation Pay the **base64-encoded public key**. Keep the private key secret — never share it, including with Holdstation.
+  </Step>
+  <Step title="Register your IP addresses">
+    Send the public IP address(es) your systems will call from, so they can be whitelisted.
+  </Step>
+  <Step title="Sign every request">
+    Add the three headers above to every call. See [Signing Requests](/guides/partner-authentication-signed-api/signing-requests).
+  </Step>
+</Steps>
+
+<Warning>
+  Keep your API key and private key secure. Do not expose them in client-side code or public repositories.
+</Warning>

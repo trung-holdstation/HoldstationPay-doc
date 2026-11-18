@@ -6,7 +6,21 @@ description: "Retrieve the list of banks supported for fiat withdrawals."
 
 ## Overview
 
-Partners can retrieve the list of banks supported for fiat withdrawals. This endpoint is publicly accessible and does not require authentication.
+Partners can retrieve the list of banks supported for fiat withdrawals.
+
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
 
 <ParamField query="page" type="integer">
   Page number for pagination.

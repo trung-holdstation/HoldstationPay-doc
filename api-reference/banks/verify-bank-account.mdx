@@ -8,6 +8,20 @@ description: "Verify a bank account number and retrieve account holder informati
 
 Partners can verify bank account numbers to confirm the account holder's name before initiating withdrawals.
 
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
 <ParamField body="bin_code" type="string" required>
   Bank Identification Number (BIN) code.
 </ParamField>

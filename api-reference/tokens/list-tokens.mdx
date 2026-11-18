@@ -8,6 +8,20 @@ description: "Retrieve the list of tokens supported for buy/sell operations."
 
 Partners use this API to retrieve the list of tokens supported for buy/sell operations in the Holdstation Pay system. Use this to obtain valid `chain_id` and `token_address` values for creating orders.
 
+## Authentication
+
+<ParamField header="Partner-App-Key" type="string" required>
+  Your partner app key.
+</ParamField>
+
+<ParamField header="X-HSPay-Signature" type="string" required>
+  Base64-encoded Ed25519 signature of the sign data.
+</ParamField>
+
+<ParamField header="X-HSPay-Timestamp" type="string" required>
+  Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
+</ParamField>
+
 <ParamField query="chain_id" type="integer">
   Filter by blockchain network ID.
 </ParamField>
