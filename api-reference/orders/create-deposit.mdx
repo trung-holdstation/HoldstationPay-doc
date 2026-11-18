@@ -87,7 +87,10 @@ Partner uses this API to create a new on-chain token transfer order. See [Onramp
       "processing_time": 0,
       "client_ip": "127.0.0.1",
       "callback": "https://yourapp.com/api/webhooks/payment",
-      "fees": { "service_fee": 5000, "min_fee": 2000 },
+      "fees": {
+        "service_fee": 5000,
+        "min_fee": 2000
+      },
       "total_fee_vnd": 5000,
       "pay_data": {
         "bank_account_name": "CONG TY HOLDSTATION",
@@ -102,9 +105,22 @@ Partner uses this API to create a new on-chain token transfer order. See [Onramp
       },
       "payment_info": null,
       "error": null,
-      "created_at": { "seconds": 1700000000, "nanos": 0 },
-      "updated_at": { "seconds": 1700000000, "nanos": 0 },
-      "expired_at": { "seconds": 1700003600, "nanos": 0 }
+      "created_at": {
+        "seconds": 1700000000,
+        "nanos": 0
+      },
+      "updated_at": {
+        "seconds": 1700000000,
+        "nanos": 0
+      },
+      "expired_at": {
+        "seconds": 1700003600,
+        "nanos": 0
+      },
+      "note": "",
+      "outcome_currency": "vnd",
+      "purpose": "",
+      "refund_address": ""
     }
   }
 }

@@ -78,7 +78,8 @@ curl --request POST \
         "bank_id": 970423,
         "full_name": "NGUYEN VAN A",
         "account_type": 1,
-        "account_number": "03815492701"
+        "account_number": "03815492701",
+        "transfer_note": "HSPAY REF 100001"
       },
       "pay_data": {
         "bank_account_name": "NGUYEN VAN A",
@@ -100,9 +101,22 @@ curl --request POST \
         "source": 0,
         "timestamp": ""
       },
-      "created_at": { "seconds": 1700000000, "nanos": 0 },
-      "updated_at": { "seconds": 1700000030, "nanos": 0 },
-      "expired_at": { "seconds": 1700000900, "nanos": 0 }
+      "created_at": {
+        "seconds": 1700000000,
+        "nanos": 0
+      },
+      "updated_at": {
+        "seconds": 1700000030,
+        "nanos": 0
+      },
+      "expired_at": {
+        "seconds": 1700000900,
+        "nanos": 0
+      },
+      "note": "",
+      "outcome_currency": "vnd",
+      "purpose": "",
+      "refund_address": ""
     }
   }
 }

@@ -1,10 +1,10 @@
 ---
 title: "Get MID Balance"
-api: "POST https://pay-api.holdstation.com/api/partners/mid/balance"
+api: "POST https://pay-api.holdstation.com/partners/mid/balance"
 description: "Get the balance of the partner's Merchant ID (MID) account."
 ---
 
-Get the current balance of the partner's MID at the payment service provider.
+Get the VND prefund balance for the partner's assigned HPay merchant (MID).
 
 ## Authentication
 
@@ -20,26 +20,33 @@ Get the current balance of the partner's MID at the payment service provider.
   Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
 </ParamField>
 
-## Body Parameters
+<Note>
+  This endpoint takes no request body.
+</Note>
 
-<ParamField body="request_id" type="string" required>
-  Unique request identifier. Use this to correlate the response with your request.
-</ParamField>
+## Response Fields
 
-<RequestExample>
-```json Request
-{
-  "request_id": "unique-request-id"
-}
-```
-</RequestExample>
+| Field | Type | Notes |
+|---|---|---|
+| `id` | integer | Fund record ID |
+| `partner_id` | string | The partner that owns the balance |
+| `token` | string | Token symbol — `VND` |
+| `balance` | string | Current balance as a decimal string |
+| `fund_type` | integer | `1` = crypto, `2` = fiat |
+| `updated_at` | string | ISO 8601 timestamp |
 
 <ResponseExample>
 ```json 200
 {
-  "merchant_id": "MID123",
-  "merchant_email": "partner@example.com",
-  "balance": "1,000,000"
+  "message": "success",
+  "data": {
+    "id": 3,
+    "partner_id": "partner-xyz",
+    "token": "VND",
+    "balance": "1000000",
+    "fund_type": 2,
+    "updated_at": "2026-11-16T09:42:00Z"
+  }
 }
 ```
 </ResponseExample>

@@ -24,57 +24,76 @@ See [Prefunding Offramp Flow → VND Deposit Accounts](/guides/partner-prefundin
   Unix timestamp (seconds) of the request. Must be within 60 seconds of server time.
 </ParamField>
 
+## Query Parameters
+
+<ParamField query="status" type="integer">
+  Only accounts with this status: `1` = ACTIVE, `2` = CLOSED.
+</ParamField>
+
+<ParamField query="page" type="integer">
+  Page number. Default `1`.
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+  Results per page. Default `20`, max `100`.
+</ParamField>
+
 <ResponseExample>
 ```json 200
 {
   "message": "success",
-  "data": [
-    {
-      "id": "dva_01HQ8X2M4K",
-      "account_number": "96247100123456",
-      "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
-      "bank_id": 4,
-      "bank": {
-        "id": 4,
-        "bin_code": "970418",
-        "short_name": "BIDV",
-        "bank_name": "Ngan hang TMCP Dau tu va Phat trien Viet Nam",
-        "image": "https://cdn.holdstation.com/banks/bidv.png"
+  "data": {
+    "deposit_vas": [
+      {
+        "id": "dva_01HQ8X2M4K",
+        "account_number": "96247100123456",
+        "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
+        "bank_id": 4,
+        "bank": {
+          "id": 4,
+          "bin_code": "970418",
+          "short_name": "BIDV",
+          "bank_name": "Ngan hang TMCP Dau tu va Phat trien Viet Nam",
+          "image": "https://cdn.holdstation.com/banks/bidv.png"
+        },
+        "status": "ACTIVE",
+        "created_at": "2026-10-29T03:14:22Z"
       },
-      "status": "ACTIVE",
-      "created_at": "2026-10-29T03:14:22Z"
-    },
-    {
-      "id": "dva_01HPB4R7TQ",
-      "account_number": "96247100555888",
-      "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
-      "bank_id": 4,
-      "bank": {
-        "id": 4,
-        "bin_code": "970418",
-        "short_name": "BIDV",
-        "bank_name": "Ngan hang TMCP Dau tu va Phat trien Viet Nam",
-        "image": "https://cdn.holdstation.com/banks/bidv.png"
+      {
+        "id": "dva_01HPB4R7TQ",
+        "account_number": "96247100555888",
+        "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
+        "bank_id": 4,
+        "bank": {
+          "id": 4,
+          "bin_code": "970418",
+          "short_name": "BIDV",
+          "bank_name": "Ngan hang TMCP Dau tu va Phat trien Viet Nam",
+          "image": "https://cdn.holdstation.com/banks/bidv.png"
+        },
+        "status": "ACTIVE",
+        "created_at": "2026-09-14T11:05:38Z"
       },
-      "status": "ACTIVE",
-      "created_at": "2026-09-14T11:05:38Z"
-    },
-    {
-      "id": "dva_01HNT5B9PZ",
-      "account_number": "96247100987654",
-      "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
-      "bank_id": 4,
-      "bank": {
-        "id": 4,
-        "bin_code": "970418",
-        "short_name": "BIDV",
-        "bank_name": "Ngan hang TMCP Dau tu va Phat trien Viet Nam",
-        "image": "https://cdn.holdstation.com/banks/bidv.png"
-      },
-      "status": "CLOSED",
-      "created_at": "2026-07-02T08:41:10Z"
-    }
-  ]
+      {
+        "id": "dva_01HNT5B9PZ",
+        "account_number": "96247100987654",
+        "account_name": "CONG TY HOLDSTATION - PARTNER XYZ",
+        "bank_id": 4,
+        "bank": {
+          "id": 4,
+          "bin_code": "970418",
+          "short_name": "BIDV",
+          "bank_name": "Ngan hang TMCP Dau tu va Phat trien Viet Nam",
+          "image": "https://cdn.holdstation.com/banks/bidv.png"
+        },
+        "status": "CLOSED",
+        "created_at": "2026-07-02T08:41:10Z"
+      }
+    ],
+    "total_count": 3,
+    "page": 1,
+    "page_size": 20
+  }
 }
 ```
 
@@ -88,5 +107,5 @@ See [Prefunding Offramp Flow → VND Deposit Accounts](/guides/partner-prefundin
 </ResponseExample>
 
 <Note>
-  `data` is a plain array — this endpoint is not paged. To fetch one account by ID, use [Get VND Deposit Account](/api-reference/funds/get-deposit-va).
+  To fetch one account by ID, use [Get VND Deposit Account](/api-reference/funds/get-deposit-va).
 </Note>

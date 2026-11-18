@@ -113,7 +113,46 @@ Use `idempotency_key` to ensure the order is not created twice.
       "rate": "25750",
       "reference_no": "WITHDRAW-001",
       "callback": "https://yourapp.com/api/webhooks/payment",
-      "created_at": { "seconds": 1700000000, "nanos": 0 }
+      "created_at": {
+        "seconds": 1700000000,
+        "nanos": 0
+      },
+      "chain_id": 56,
+      "token_address": "0x55d398326f99059ff775485246999027b3197955",
+      "recipient": "",
+      "outcome_currency": "vnd",
+      "original_rate": "25500",
+      "fees": {
+        "service_fee": 5000,
+        "min_fee": 2000
+      },
+      "total_fee_vnd": 5000,
+      "payment_info": {
+        "bank_id": 42,
+        "full_name": "NGUYEN VAN A",
+        "account_type": 1,
+        "account_number": "0123456789",
+        "transfer_note": "HSPAY REF 100001"
+      },
+      "pay_data": null,
+      "note": "",
+      "purpose": "",
+      "refund_address": "",
+      "partner_id": "partner-xyz",
+      "user_id": "user-abc",
+      "external_id": "ext-001",
+      "provider": 1,
+      "processing_time": 0,
+      "client_ip": "127.0.0.1",
+      "error": null,
+      "updated_at": {
+        "seconds": 1700000000,
+        "nanos": 0
+      },
+      "expired_at": {
+        "seconds": 1700003600,
+        "nanos": 0
+      }
     }
   }
 }

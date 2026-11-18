@@ -40,19 +40,54 @@ Partners can query a payment order by its reference number to obtain the latest 
         "processing_time": 18200,
         "client_ip": "127.0.0.1",
         "callback": "https://yourapp.com/api/webhooks/payment",
-        "fees": { "service_fee": 0.01, "min_fee": 5000 },
+        "fees": {
+          "service_fee": 0.01,
+          "min_fee": 5000
+        },
         "total_fee_vnd": 25750,
         "pay_data": null,
         "payment_info": {
           "bank_id": 42,
           "full_name": "NGUYEN VAN A",
           "account_type": 1,
-          "account_number": "0123456789"
+          "account_number": "0123456789",
+          "transfer_note": "HSPAY REF 100001"
         },
         "error": null,
-        "created_at": { "seconds": 1700000000, "nanos": 0 },
-        "updated_at": { "seconds": 1700018200, "nanos": 0 },
-        "expired_at": { "seconds": 1700003600, "nanos": 0 }
+        "created_at": {
+          "seconds": 1700000000,
+          "nanos": 0
+        },
+        "updated_at": {
+          "seconds": 1700018200,
+          "nanos": 0
+        },
+        "expired_at": {
+          "seconds": 1700003600,
+          "nanos": 0
+        },
+        "note": "",
+        "outcome_currency": "vnd",
+        "purpose": "",
+        "refund_address": "",
+        "approval_reason": 0,
+        "kyc_id": "cust-001",
+        "body": {},
+        "reference": {
+          "hs_rate": 25000,
+          "usdt_rate": 25500,
+          "token_rate": 1.0,
+          "partner_rate": 25750,
+          "spread": 0.02,
+          "buffer_rate": 0.005,
+          "buffered_rate_usdt": 25628,
+          "buffered_rate_partner": 25750,
+          "addition_share_rate": 0,
+          "partner_override_revenue": 0,
+          "sim_webhook_id": "",
+          "provider_fee": 0,
+          "token_symbol": "USDT"
+        }
       }
     ],
     "total_count": 1

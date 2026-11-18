@@ -114,7 +114,38 @@ See the [Crypto Payout](/guides/partner-merchant-virtual-account/crypto-payout) 
       "recipient": "0x0A24a21949b4eB8b7F434487fE31CA7b96148A4E",
       "reference_no": "PAYOUT-001",
       "callback": "https://yourapp.com/api/webhooks/payment",
-      "created_at": { "seconds": 1700000000, "nanos": 0 }
+      "created_at": {
+        "seconds": 1700000000,
+        "nanos": 0
+      },
+      "order_type": 4,
+      "outcome_currency": "token",
+      "original_rate": "25500",
+      "fees": {
+        "service_fee": 5000,
+        "min_fee": 2000
+      },
+      "total_fee_vnd": 5000,
+      "payment_info": null,
+      "pay_data": null,
+      "note": "",
+      "purpose": "",
+      "refund_address": "",
+      "partner_id": "partner-xyz",
+      "user_id": "user-abc",
+      "external_id": "ext-001",
+      "provider": 1,
+      "processing_time": 0,
+      "client_ip": "127.0.0.1",
+      "error": null,
+      "updated_at": {
+        "seconds": 1700000000,
+        "nanos": 0
+      },
+      "expired_at": {
+        "seconds": 1700003600,
+        "nanos": 0
+      }
     }
   }
 }

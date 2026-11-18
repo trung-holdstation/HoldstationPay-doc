@@ -16,8 +16,8 @@ All endpoints here require Ed25519 request signing — see [Request Signing](/gu
 | `GET` | `/partners/mid/va/{va_account}` | [Get Virtual Account](/api-reference/mid/get-va) |
 | `DELETE` | `/partners/mid/va/{va_account}` | [Revoke Virtual Account](/api-reference/mid/revoke-va) |
 | `GET` | `/partners/mid/va/{va_account}/inquiry` | [Inquire Transactions](/api-reference/mid/inquiry-va) |
-| `GET` | `/api/partners/mid/va-callback` | [Get Callback URL](/api-reference/mid/get-va-callback) |
-| `POST` | `/api/partners/mid/va-callback` | [Update Callback URL](/api-reference/mid/update-va-callback) |
+| `GET` | `/partners/mid/va-callback` | [Get Callback URL](/api-reference/mid/get-va-callback) |
+| `POST` | `/partners/mid/va-callback` | [Update Callback URL](/api-reference/mid/update-va-callback) |
 
 ## Create a Virtual Account
 
@@ -130,7 +130,7 @@ Holdstation Pay calls a partner-configured URL whenever a customer transfers int
 
 ### Get the Callback URL
 
-`GET /api/partners/mid/va-callback`
+`GET /partners/mid/va-callback`
 
 ```json
 {
@@ -140,7 +140,7 @@ Holdstation Pay calls a partner-configured URL whenever a customer transfers int
 
 ### Update the Callback URL
 
-`POST /api/partners/mid/va-callback`
+`POST /partners/mid/va-callback`
 
 ```json
 {

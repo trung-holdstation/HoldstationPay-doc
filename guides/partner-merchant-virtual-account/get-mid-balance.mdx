@@ -2,24 +2,25 @@
 title: "Get MID Balance"
 ---
 
-Get the MID's account balance.
+Get the VND prefund balance for the partner's assigned HPay merchant (MID).
 
 All endpoints require both `Partner-App-Key` and `X-HSPay-Signature` headers.
 
-`POST /api/partners/mid/balance`
-
-**Request Body:**
-```json
-{
-    "request_id": "unique-request-id"
-}
-```
+`POST /partners/mid/balance` — takes no request body.
 
 **Response:**
 ```json
 {
-    "merchant_id": "MID123",
-    "merchant_email": "partner@example.com",
-    "balance": "1,000,000"
+    "message": "success",
+    "data": {
+        "id": 3,
+        "partner_id": "partner-xyz",
+        "token": "VND",
+        "balance": "1000000",
+        "fund_type": 2,
+        "updated_at": "2026-11-16T09:42:00Z"
+    }
 }
 ```
+
+See [Get MID Balance](/api-reference/mid/get-balance) for the field reference.

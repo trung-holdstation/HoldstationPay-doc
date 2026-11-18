@@ -39,7 +39,10 @@ Partners query the details of each payment order by providing the `order_id` to 
       "processing_time": 12400,
       "client_ip": "127.0.0.1",
       "callback": "https://yourapp.com/api/webhooks/payment",
-      "fees": { "service_fee": 5000, "min_fee": 2000 },
+      "fees": {
+        "service_fee": 5000,
+        "min_fee": 2000
+      },
       "total_fee_vnd": 5000,
       "pay_data": {
         "bank_account_name": "CONG TY HOLDSTATION",
@@ -54,9 +57,22 @@ Partners query the details of each payment order by providing the `order_id` to 
       },
       "payment_info": null,
       "error": null,
-      "created_at": { "seconds": 1700000000, "nanos": 0 },
-      "updated_at": { "seconds": 1700012400, "nanos": 0 },
-      "expired_at": { "seconds": 1700003600, "nanos": 0 }
+      "created_at": {
+        "seconds": 1700000000,
+        "nanos": 0
+      },
+      "updated_at": {
+        "seconds": 1700012400,
+        "nanos": 0
+      },
+      "expired_at": {
+        "seconds": 1700003600,
+        "nanos": 0
+      },
+      "note": "",
+      "outcome_currency": "vnd",
+      "purpose": "",
+      "refund_address": ""
     },
     "transaction": {
       "tx_hash": "0xabc123...",
@@ -66,10 +82,30 @@ Partners query the details of each payment order by providing the `order_id` to 
       "nonce_used": 42,
       "order_id": "550e8400-e29b-41d4-a716-446655440000",
       "error_message": "",
-      "metadata": { "retry_id": "" },
+      "metadata": {
+        "retry_id": ""
+      },
       "body": {},
-      "created_at": { "seconds": 1700012400, "nanos": 0 }
-    }
+      "created_at": {
+        "seconds": 1700012400,
+        "nanos": 0
+      }
+    },
+    "total_received": "2575000",
+    "payments": [
+      {
+        "id": "pay-001",
+        "order_id": "550e8400-e29b-41d4-a716-446655440000",
+        "kind": 1,
+        "amount": "2575000",
+        "currency": "vnd",
+        "external_ref": "FT26302991234567",
+        "received_at": {
+          "seconds": 1700000300,
+          "nanos": 0
+        }
+      }
+    ]
   }
 }
 ```
