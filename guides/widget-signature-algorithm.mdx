@@ -31,6 +31,16 @@ The fields below are the widget URL parameters for each flow, joined in this exa
 {amount}_{callback}_{chain_id}_{currency}_{bank_bin_code}_{bank_account_number}_{token_address}
 ```
 
+When `refund_address` is set, it is appended to the end:
+
+```
+{amount}_{callback}_{chain_id}_{currency}_{bank_bin_code}_{bank_account_number}_{token_address}_{refund_address}
+```
+
+<Note>
+  `refund_address` is optional. Omit the trailing field entirely when it is not set — do not append an empty segment.
+</Note>
+
 ## Example
 
 <CodeGroup>

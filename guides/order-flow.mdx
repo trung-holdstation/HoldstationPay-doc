@@ -14,6 +14,7 @@ Holdstation Pay uses specific order states and processing states to track the st
 | **Completed**  | 3     | Order has been completed successfully                                                                |
 | **Failed**     | 4     | Order has failed                                                                                     |
 | **Closed**     | 5     | Order has been closed                                                                                |
+| **Refunded**   | 6     | Bank payout was rejected after the crypto was received; the crypto was sent back to `refund_address`  |
 | **Rejected**   | 8     | Order was rejected by an operator after manual review                                                |
 
 ```mermaid
@@ -23,6 +24,7 @@ stateDiagram-v2
     state "Completed = 3" as C
     state "Failed = 4" as F
     state "Closed = 5" as CL
+    state "Refunded = 6" as RF
     state "Rejected = 8" as RJ
 
     [*] --> CR: Create withdraw order
@@ -33,8 +35,10 @@ stateDiagram-v2
     P --> F: Failed at some step
     P --> CL: Expired or closed manually
     P --> RJ: Rejected by operator after manual review
+    F --> RF: Crypto returned to refund_address
     C --> [*]
     F --> [*]
+    RF --> [*]
     CL --> [*]
     RJ --> [*]
 ```

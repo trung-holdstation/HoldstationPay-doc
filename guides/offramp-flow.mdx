@@ -81,3 +81,13 @@ stateDiagram-v2
     Once verified, Holdstation Pay initiates the VND bank transfer to the user's account. The order moves to **Completed**.
   </Step>
 </Steps>
+
+## Refunds
+
+Pass an optional `refund_address` when creating the order to protect the user if the payout fails. If the bank payout is rejected **after** the crypto has been received, Holdstation Pay sends the crypto back to that address and the order moves to **Refunded** (state `6`).
+
+<Note>
+  The refund arrives as the same [`pay.order.status-updated`](/guides/webhooks/orders-webhook) event — only the order state is new. When the refund is paid on-chain the event also carries `tx_hash`, `chain_id`, and `scan_url`.
+</Note>
+
+`refund_address` must be a wallet on the order's `chain_id` and match that chain's address format. It is **not supported for native tokens**. See [Create Withdrawal](/api-reference/orders/create-withdrawal).

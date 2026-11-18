@@ -57,6 +57,40 @@ X-HSPay-Event-Signature: base64_encoded_ed25519_signature
 }
 ```
 
+### Transaction Fields
+
+Some status changes also carry the on-chain transaction. These three fields are sent **together**, and are left out entirely when there is no transaction.
+
+| Field | Type | Description |
+|---|---|---|
+| `tx_hash` | string | Onramp **Completed**: the token transfer to the user. **Refunded**: the refund transfer to `refund_address`. |
+| `chain_id` | number | Chain of `tx_hash` |
+| `scan_url` | string | Block explorer link for `tx_hash`. Left out when the chain has no known explorer. |
+
+### Refunded Example
+
+When an offramp order was created with a [`refund_address`](/api-reference/orders/create-withdrawal) and the bank payout is rejected after the crypto has been received, the crypto is returned and the order moves to **Refunded** (state `6`):
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440001",
+  "topic": "pay.order.status-updated",
+  "ts": "2024-01-15T10:45:00Z",
+  "payload": {
+    "order_id": "00000000-0000-0000-0000-000000000000",
+    "old_order_state": 4,
+    "new_order_state": 6,
+    "tx_hash": "0x9f2c...e41a",
+    "chain_id": 56,
+    "scan_url": "https://bscscan.com/tx/0x9f2c...e41a"
+  }
+}
+```
+
+<Note>
+  This is the **same event** (`pay.order.status-updated`) — only the order state is new. A refund paid by bank transfer has no on-chain transaction, so its Refunded webhook carries none of the three transaction fields.
+</Note>
+
 <Warning>
   The `type` and `timestamp` fields are deprecated and will be removed in a future version. Use `topic` and `ts` instead.
 </Warning>
