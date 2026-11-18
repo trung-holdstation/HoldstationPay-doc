@@ -49,10 +49,39 @@ Each entry in `persons[]` is one legal representative or director. Field names m
 | `date_of_issue` | string | Yes | Identity document issue date, ISO `YYYY-MM-DD` |
 | `date_of_expiry` | string | No | Identity document expiry date, ISO `YYYY-MM-DD`. Omit when the document does not expire. |
 | `documents` | object[] | Yes | **Exactly one** identity document, of type `10` or `11`, matching `id_type` |
+| `id_card_front` | object | No | Photo of the identity card front — see [Person Images](#person-images) |
+| `id_card_back` | object | No | Photo of the identity card back — see [Person Images](#person-images) |
+| `selfie` | object | No | Selfie photo of the person — see [Person Images](#person-images) |
 
 <Warning>
   A person whose `nationality` differs from the company's `incorporation_country` must use a passport — `id_type: 2` with a type `10` document. See [Submission Rules](/guides/partner-business-kyb/submission-rules#foreign-nationals-must-use-a-passport).
 </Warning>
+
+### Person Images
+
+Separately from `documents[]`, a person can carry up to three standalone images. All three are **optional and independent** — send any of them, all of them, or none.
+
+| Field | Shows |
+|---|---|
+| `id_card_front` | Front of the identity card |
+| `id_card_back` | Back of the identity card |
+| `selfie` | Selfie of the person |
+
+Each uses the same object as a document's [file](#files) — `filename`, `content_type`, and base64 `data`:
+
+```json
+"selfie": {
+  "filename": "selfie.jpg",
+  "content_type": "image/jpeg",
+  "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+}
+```
+
+<Note>
+  These are **not** a replacement for `persons[].documents[]`. Every person still needs exactly one identity document of type `10` or `11`; the images sit alongside it.
+</Note>
+
+Responses return stored metadata only — `file_ref`, `filename`, `content_type`, and `size` — never the base64, the same as document files.
 
 ## Documents
 

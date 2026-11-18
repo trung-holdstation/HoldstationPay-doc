@@ -77,6 +77,8 @@ Send the result as the `data` field, with no data URI prefix:
 
 Company documents (types `1`–`9`) go in the top-level `documents[]` array. Personal identity documents (types `10` passport and `11` citizen ID) go in `persons[].documents[]`, attached to the person they identify. A citizen ID front and back are **two files in one document**, not two documents.
 
+A person can also carry up to three standalone images — `id_card_front`, `id_card_back`, and `selfie` — as fields on the person rather than entries in `documents[]`. They use the same file object and limits. See [Person Images](/guides/partner-business-kyb/field-reference#person-images).
+
 ```json
 {
   "documents": [

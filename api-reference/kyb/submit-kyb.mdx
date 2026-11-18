@@ -75,7 +75,7 @@ See the [Partner Business KYB guide](/guides/partner-business-kyb/overview) for 
 </ParamField>
 
 <ParamField body="persons" type="object[]" required>
-  Legal representative and directors. **Exactly one** person must have `role = 1`. Each entry requires `role` (`1` = Legal representative, `2` = Director), `name`, `date_of_birth`, `address`, `id_number`, `id_type` (`1` = Citizen ID, `2` = Passport), `sex` (`1` = Male, `2` = Female, `3` = Other), `nationality`, `date_of_issue`, and exactly one `documents` entry of type `10` or `11`. `email`, `phone`, and `date_of_expiry` are optional.
+  Legal representative and directors. **Exactly one** person must have `role = 1`. Each entry requires `role` (`1` = Legal representative, `2` = Director), `name`, `date_of_birth`, `address`, `id_number`, `id_type` (`1` = Citizen ID, `2` = Passport), `sex` (`1` = Male, `2` = Female, `3` = Other), `nationality`, `date_of_issue`, and exactly one `documents` entry of type `10` or `11`. `email`, `phone`, and `date_of_expiry` are optional, as are the standalone images `id_card_front`, `id_card_back`, and `selfie` — each `{ "filename", "content_type", "data" }` with base64 `data`, the same shape as a document file. See [Person Images](/guides/partner-business-kyb/field-reference#person-images).
 </ParamField>
 
 <ParamField body="documents" type="object[]" required>
@@ -116,7 +116,10 @@ See the [Partner Business KYB guide](/guides/partner-business-kyb/overview) for 
   "phone": "+84901234567",
   "website": "https://abctrading.vn",
   "nature_of_business": "Wholesale import and distribution of consumer electronics accessories to retail chains. B2B only, net-30 terms, no direct consumer sales.",
-  "geographic_scope": ["VN", "KH"],
+  "geographic_scope": [
+    "VN",
+    "KH"
+  ],
   "persons": [
     {
       "role": 1,
@@ -137,10 +140,29 @@ See the [Partner Business KYB guide](/guides/partner-business-kyb/overview) for 
           "date_of_issue": "2021-01-10",
           "date_of_expiry": "2031-01-10",
           "files": [
-            { "filename": "passport.pdf", "content_type": "application/pdf", "data": "JVBERi0xLjQKJc..." }
+            {
+              "filename": "passport.pdf",
+              "content_type": "application/pdf",
+              "data": "JVBERi0xLjQKJc..."
+            }
           ]
         }
-      ]
+      ],
+      "id_card_front": {
+        "filename": "id_card_front.jpg",
+        "content_type": "image/jpeg",
+        "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+      },
+      "id_card_back": {
+        "filename": "id_card_back.jpg",
+        "content_type": "image/jpeg",
+        "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+      },
+      "selfie": {
+        "filename": "selfie.jpg",
+        "content_type": "image/jpeg",
+        "data": "/9j/4AAQSkZJRgABAQAAAQ..."
+      }
     },
     {
       "role": 2,
@@ -158,8 +180,16 @@ See the [Partner Business KYB guide](/guides/partner-business-kyb/overview) for 
           "type": 11,
           "date_of_issue": "2022-05-04",
           "files": [
-            { "filename": "cid_front.jpg", "content_type": "image/jpeg", "data": "/9j/4AAQSkZJRg..." },
-            { "filename": "cid_back.jpg", "content_type": "image/jpeg", "data": "/9j/4AAQSkZJRg..." }
+            {
+              "filename": "cid_front.jpg",
+              "content_type": "image/jpeg",
+              "data": "/9j/4AAQSkZJRg..."
+            },
+            {
+              "filename": "cid_back.jpg",
+              "content_type": "image/jpeg",
+              "data": "/9j/4AAQSkZJRg..."
+            }
           ]
         }
       ]
@@ -170,14 +200,22 @@ See the [Partner Business KYB guide](/guides/partner-business-kyb/overview) for 
       "type": 1,
       "date_of_issue": "2019-03-14",
       "files": [
-        { "filename": "incorporation.pdf", "content_type": "application/pdf", "data": "JVBERi0xLjQKJc..." }
+        {
+          "filename": "incorporation.pdf",
+          "content_type": "application/pdf",
+          "data": "JVBERi0xLjQKJc..."
+        }
       ]
     },
     {
       "type": 3,
       "date_of_issue": "2026-08-01",
       "files": [
-        { "filename": "nature_and_scope_stamped.pdf", "content_type": "application/pdf", "data": "JVBERi0xLjQKJc..." }
+        {
+          "filename": "nature_and_scope_stamped.pdf",
+          "content_type": "application/pdf",
+          "data": "JVBERi0xLjQKJc..."
+        }
       ]
     },
     {
@@ -186,7 +224,11 @@ See the [Partner Business KYB guide](/guides/partner-business-kyb/overview) for 
       "date_of_issue": "2021-02-15",
       "date_of_expiry": "2027-02-14",
       "files": [
-        { "filename": "import_export_license.pdf", "content_type": "application/pdf", "data": "JVBERi0xLjQKJc..." }
+        {
+          "filename": "import_export_license.pdf",
+          "content_type": "application/pdf",
+          "data": "JVBERi0xLjQKJc..."
+        }
       ]
     }
   ]
