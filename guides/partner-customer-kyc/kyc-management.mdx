@@ -13,7 +13,7 @@ KYC endpoints use the same Ed25519 signed-API scheme as the MID endpoints — `P
 |------------------|----------------|----------|-------|
 | `id`             | string (path)  | Yes      | Partner-provided unique id for this customer; this is the `kyc_id` used on orders |
 | `name`           | string         | Yes      | Full name |
-| `date_of_birth`  | string         | Yes      | Customer date of birth, ISO `YYYY-MM-DD` |
+| `dob`            | string         | Yes      | Customer date of birth, ISO `YYYY-MM-DD` |
 | `email`          | string         | Conditional | At least one of `email` or `phone` must be provided |
 | `phone`          | string         | Conditional | At least one of `email` or `phone` must be provided |
 | `address`        | string         | Yes      | Residential address |
@@ -131,7 +131,7 @@ The request body is the same for create and update:
 ```json
 {
   "name": "Jane Doe",
-  "date_of_birth": "1992-03-18",
+  "dob": "1992-03-18",
   "email": "jane@example.com",
   "phone": "+84123456789",
   "address": "123 Le Loi, District 1, Ho Chi Minh City",
