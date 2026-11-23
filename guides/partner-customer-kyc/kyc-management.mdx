@@ -13,6 +13,7 @@ KYC endpoints use the same Ed25519 signed-API scheme as the MID endpoints — `P
 |------------------|----------------|----------|-------|
 | `id`             | string (path)  | Yes      | Partner-provided unique id for this customer; this is the `kyc_id` used on orders |
 | `name`           | string         | Yes      | Full name |
+| `date_of_birth`  | string         | Yes      | Customer date of birth, ISO `YYYY-MM-DD` |
 | `email`          | string         | Conditional | At least one of `email` or `phone` must be provided |
 | `phone`          | string         | Conditional | At least one of `email` or `phone` must be provided |
 | `address`        | string         | Yes      | Residential address |
@@ -22,21 +23,34 @@ KYC endpoints use the same Ed25519 signed-API scheme as the MID endpoints — `P
 | `nationality`    | string         | Yes      | Nationality |
 | `date_of_issue`  | string         | Yes      | Identity document issue date, ISO `YYYY-MM-DD` |
 | `date_of_expiry` | string         | No       | Identity document expiry date, ISO `YYYY-MM-DD`. Omit when the document does not expire. |
-| `id_front_img`   | object         | No       | Photo of the identity document front — see [Images](#images) |
-| `id_back_img`    | object         | No       | Photo of the identity document back — see [Images](#images) |
-| `selfie_img`     | object         | No       | Selfie photo of the customer — see [Images](#images) |
+| `id_front_img`   | object         | Yes      | Photo of the identity document front — see [Images](#images) |
+| `id_back_img`    | object         | Conditional | Required when `id_type` is `1` (Citizen ID) — see [Images](#images) |
+| `selfie_img`     | object         | Yes      | Selfie photo of the customer — see [Images](#images) |
 
 <Note>
-  All fields marked **Yes** are mandatory. `email` and `phone` are conditional: at least one of them must be provided, but you don't need both. A create or update is rejected with `MISSING_REQUIRED_FIELD` if a required field is empty (or, for `id_type` / `sex`, left unspecified / `0`).
+  All fields marked **Yes** are mandatory. Two fields are conditional:
+
+  - `email` / `phone` — at least one of the two must be provided, but you don't need both.
+  - `id_back_img` — required when `id_type` is `1` (Citizen ID). A passport (`2`) or driver license (`3`) does not need a back image.
+
+  A create is rejected with `MISSING_REQUIRED_FIELD` if a required field is empty (or, for `id_type` / `sex`, left unspecified / `0`).
 </Note>
 
 <Warning>
-  Holdstation Pay configures the **required set per partner**, so fields marked optional here — including the three images — may be mandatory for your account. Contact Holdstation to confirm which apply to you.
+  Holdstation Pay configures the **required set per partner**, so a field marked optional here may still be mandatory for your account. Contact Holdstation to confirm which apply to you.
 </Warning>
 
 ## Images
 
-The three image fields are **optional and independent**: send any of them, all of them, or none.
+Images are **mandatory**, not optional:
+
+| Field | When required |
+|-------|---------------|
+| `id_front_img` | Always |
+| `selfie_img` | Always |
+| `id_back_img` | Only when `id_type` is `1` (Citizen ID) |
+
+A Citizen ID submission therefore carries all three images; a passport or driver license carries two.
 
 ### Image object
 
@@ -68,7 +82,11 @@ Responses return stored metadata only — `file_ref`, `content_type`, and `size`
 
 ### Updating an image
 
-An image field you **omit on update is left as it was stored** — an update never clears an image. Sending one replaces the stored image, and the old one is deleted. There is no way to remove an image without replacing it.
+The mandatory rule above applies to **create**. On update, an image field you **omit is left as it was stored** — an update never clears an image, so the record keeps satisfying the requirement without you re-uploading. Sending one replaces the stored image, and the old one is deleted. There is no way to remove an image without replacing it.
+
+<Note>
+  If you change `id_type` to `1` on a record that has no stored `id_back_img`, send `id_back_img` in that same update — the record would otherwise be a Citizen ID without a back image.
+</Note>
 
 ### Limits
 
@@ -113,6 +131,7 @@ The request body is the same for create and update:
 ```json
 {
   "name": "Jane Doe",
+  "date_of_birth": "1992-03-18",
   "email": "jane@example.com",
   "phone": "+84123456789",
   "address": "123 Le Loi, District 1, Ho Chi Minh City",

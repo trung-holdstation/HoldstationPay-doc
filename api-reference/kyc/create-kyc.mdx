@@ -31,11 +31,15 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
 ## Body Parameters
 
 <Note>
-  At least one of `email` or `phone` must be provided. `date_of_expiry` is optional. Every other body field is mandatory.
+  At least one of `email` or `phone` must be provided. `id_back_img` is required only when `id_type` is `1` (Citizen ID). `date_of_expiry` is optional. Every other body field is mandatory, including `id_front_img` and `selfie_img`.
 </Note>
 
 <ParamField body="name" type="string" required>
   Full name.
+</ParamField>
+
+<ParamField body="date_of_birth" type="string" required>
+  Customer date of birth in ISO `YYYY-MM-DD` format.
 </ParamField>
 
 <ParamField body="email" type="string">
@@ -74,26 +78,27 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
   Optional. Identity document expiry date in ISO `YYYY-MM-DD` format. Omit when the document does not expire.
 </ParamField>
 
-<ParamField body="id_front_img" type="object">
-  Optional. Photo of the identity document front. `{ "content_type": "image/jpeg|image/png|image/heic", "data": "<base64>" }` — see [Images](/guides/partner-customer-kyc/kyc-management#images).
+<ParamField body="id_front_img" type="object" required>
+  Photo of the identity document front. `{ "content_type": "image/jpeg|image/png|image/heic", "data": "<base64>" }` — see [Images](/guides/partner-customer-kyc/kyc-management#images).
 </ParamField>
 
 <ParamField body="id_back_img" type="object">
-  Optional. Photo of the identity document back. Same shape as `id_front_img`.
+  Photo of the identity document back. **Required when `id_type` is `1`** (Citizen ID); not required for `2` (Passport) or `3` (Driver License). Same shape as `id_front_img`.
 </ParamField>
 
-<ParamField body="selfie_img" type="object">
-  Optional. Selfie photo of the customer. Same shape as `id_front_img`.
+<ParamField body="selfie_img" type="object" required>
+  Selfie photo of the customer. Same shape as `id_front_img`.
 </ParamField>
 
 <Note>
-  The three image fields are optional and independent — send any, all, or none. Each is `content_type` (`image/jpeg`, `image/png`, or `image/heic`; **PDF is not accepted**) plus base64 `data`. There is no `filename`: the stored name comes from the field, so `selfie_img` is stored as `selfie_img.jpg`. Each image is capped at **10 MB decoded** and the whole body at **32 MB encoded**. See [Images](/guides/partner-customer-kyc/kyc-management#images).
+  `id_front_img` and `selfie_img` are always required; `id_back_img` is required only when `id_type` is `1` (Citizen ID). Each is `content_type` (`image/jpeg`, `image/png`, or `image/heic`; **PDF is not accepted**) plus base64 `data`. There is no `filename`: the stored name comes from the field, so `selfie_img` is stored as `selfie_img.jpg`. Each image is capped at **10 MB decoded** and the whole body at **32 MB encoded**. See [Images](/guides/partner-customer-kyc/kyc-management#images).
 </Note>
 
 <RequestExample>
 ```json Request
 {
   "name": "Jane Doe",
+  "date_of_birth": "1992-03-18",
   "email": "jane@example.com",
   "phone": "+84123456789",
   "address": "123 Le Loi, District 1, Ho Chi Minh City",
@@ -126,6 +131,7 @@ See the [Partner Customer KYC guide](/guides/partner-customer-kyc/overview) for 
   "data": {
     "id": "cust-001",
     "name": "Jane Doe",
+    "date_of_birth": "1992-03-18",
     "email": "jane@example.com",
     "phone": "+84123456789",
     "address": "123 Le Loi, District 1, Ho Chi Minh City",
